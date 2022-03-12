@@ -1,0 +1,8 @@
+.vscode
+venv
+.idea
+src/static
+/src/.env
+/src/.env_server
+__pycache__
+*.pyc

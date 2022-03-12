@@ -1,0 +1,79 @@
+version: '3.7'
+
+services:
+  web:
+    build: .
+    container_name: mdp_web
+    command: gunicorn mdp.wsgi:application --bind 0.0.0.0:8000
+
+    volumes:
+      - ./src:/src/
+      - ./src/static:/src/static/
+      - ./src/media:/src/media/
+    expose:
+      - 8000
+    env_file:
+      - src/.env
+    depends_on:
+      - redis
+
+  asgiserver:
+    build: .
+    volumes:
+      - ./src:/src/
+    command: daphne mdp.asgi:application --bind 0.0.0.0 --port 8010
+    depends_on:
+      - redis
+    expose:
+      - 8010
+
+  nginx:
+    build: ./docker/nginx
+    container_name: mdp_nginx
+    volumes:
+      - ./src/static:/src/static/
+      - ./src/media:/src/media/
+    ports:
+      - 8008:80
+    depends_on:
+      - web
+
+  redis:
+    image: redis:6-alpine
+    restart: unless-stopped
+    ports: [ '127.0.0.1:6379:6379' ]
+
+
+  celery:
+    build: .
+    restart: unless-stopped
+    command: celery -A mdp worker -l info
+    volumes:
+      - ./celery/:/var/lib/celery/
+      - ./src/media:/src/media/
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=dbaa1_i7%*3r9-=z-+021z4r-!qeed@(-a_r31(g@k8jo8y3r27%m
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+    depends_on:
+      - redis
+
+  celery-beat:
+    build: .
+    restart: unless-stopped
+    command: celery -A mdp beat -l info
+    volumes:
+      - ./celery/:/var/lib/celery/
+      - ./src/media:/src/media/
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=dbaa1_i7%*3r9-=z-+021z4r-!qeed@(-a_r31(g@k8jo8y3r27%m
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+    depends_on:
+      - redis
+
+
+volumes:
+  postgres_data:
+  staticfiles:
+  mediafiles:
