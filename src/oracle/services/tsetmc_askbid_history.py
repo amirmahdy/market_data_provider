@@ -11,8 +11,7 @@ def get_askbid_history(tse_isin: str, date: str) -> List[Dict]:
     resp = session.get(url)
     all_askbid_changes = resp.json()['bestLimitsHistory']
     all_askbid_rows = []
-    current_captured_askbid = {'time': 0,
-                               'buy_price_1': 0, 'buy_volume_1': 0, 'buy_count_1': 0, 'sell_price_1': 0,
+    current_captured_askbid = {'time': 0, 'buy_price_1': 0, 'buy_volume_1': 0, 'buy_count_1': 0, 'sell_price_1': 0,
                                'sell_volume_1': 0, 'sell_count_1': 0,
                                'buy_price_2': 0, 'buy_volume_2': 0, 'buy_count_2': 0, 'sell_price_2': 0,
                                'sell_volume_2': 0, 'sell_count_2': 0,
