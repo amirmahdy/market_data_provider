@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import serializers
 
-from oracle.services import get_tse_instrument_data
+from oracle.services.tsetmc_market_data import get_tse_instrument_data
 
 
 class CaptchaSerializer(serializers.Serializer):
