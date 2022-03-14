@@ -44,3 +44,10 @@ class MarketDataType:
     tomorrow_high_allowed_price: int
     tomorrow_low_allowed_price: int
     market_status: str
+
+
+@dataclass
+class TradeDataType:
+    t = str  # YYYY-MM-DDTmm:hh:ss
+    p = int
+    q = int
