@@ -32,7 +32,7 @@ DEBUG = True
 CSRF_TRUSTED_ORIGINS = ['http://*.127.0.0.1:8008', 'http://127.0.0.1:8008']
 CSRF_COOKIE_SECURE = False
 
-ALLOWED_HOSTS = ["src", "127.0.0.1"]
+ALLOWED_HOSTS = ["127.0.0.1"]
 
 # Application definition
 
@@ -80,6 +80,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mdp.wsgi.application'
 
+SWAGGER_SETTINGS = {
+    'BASE_URL': "127.0.0.1:8008"
+}
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
