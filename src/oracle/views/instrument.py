@@ -8,6 +8,8 @@ import ast
 import csv
 from threading import Thread
 import environ
+from rest_framework.decorators import action
+from drf_yasg.utils import swagger_auto_schema
 
 env = environ.Env()
 
@@ -19,19 +21,28 @@ class InstrumentSerializer(serializers.Serializer):
 class InstrumentAppendAPIView(GenericAPIView):
     serializer_class = InstrumentSerializer
 
+    @swagger_auto_schema(methods=['post'], request_body=InstrumentSerializer)
+    @action(detail=False, methods=['post'])
     def post(self, request, *args, **kwargs):
-        cisins = request.data.get('isin')
-        if cisins is not None:
-            t = Thread(target=self.background_instrument_fetch, args=(cisins.split(','),))
-            t.start()
-        else:
-            with open("oracle/fixtures/instrument.csv", "rt") as fp:
-                cisins_csv = csv.reader(fp, delimiter=',')
-                cisins = [cisin_csv[0] for cisin_csv in cisins_csv]
+        """
+        A method for updating instrument DB
+        """
+        serializer = InstrumentSerializer(data=request.data)
+        if serializer.is_valid():
+            cisins = serializer.validated_data['isin']
+            if cisins is not None:
+                t = Thread(target=self.background_instrument_fetch, args=(cisins.split(','),))
+                t.start()
+            else:
+                with open("oracle/fixtures/instrument.csv", "rt") as fp:
+                    cisins_csv = csv.reader(fp, delimiter=',')
+                    cisins = [cisin_csv[0] for cisin_csv in cisins_csv]
 
-            t = Thread(target=self.background_instrument_fetch, args=(cisins,))
-            t.start()
-        return Response({"Response": "Process is undergoing"})
+                t = Thread(target=self.background_instrument_fetch, args=(cisins,))
+                t.start()
+            return Response({"Response": "Process is undergoing"})
+        else:
+            return Response({"Response": "Wrong ISIN data"})
 
     def get_tadbir_id(self, symbol, current_val):
         if current_val == '' or current_val is None:

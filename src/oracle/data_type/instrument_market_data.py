@@ -7,10 +7,10 @@ A web service for getting market data.
 
 
 class Instrument_Maker_Data:
-
-    def __call__(self, *args, **kwargs):
+    @staticmethod
+    def get(isin):
         ch = Cache()
-        raw_res = ch.get(ref_group="market", ref_value=kwargs["isin"])
+        raw_res = ch.get(ref_group="market", ref_value=isin)
         return json.loads(raw_res) if raw_res is not None else None
 
     """
