@@ -6,11 +6,11 @@ A web service for getting market data.
 """
 
 
-class Instrument_Maker_Data:
+class InstrumentData:
     @staticmethod
-    def get(isin):
+    def get(isin, ref_group):
         ch = Cache()
-        raw_res = ch.get(ref_group="market", ref_value=isin)
+        raw_res = ch.get(ref_group=ref_group, ref_value=isin)
         return json.loads(raw_res) if raw_res is not None else None
 
     """
@@ -18,17 +18,17 @@ class Instrument_Maker_Data:
     """
 
     @staticmethod
-    def update(isin, value):
+    def update(isin, ref_group, value):
         ch = Cache()
         try:
-            prev_val = ch.get(ref_group="market", ref_value=isin)
+            prev_val = ch.get(ref_group=ref_group, ref_value=isin)
             if prev_val is not None:
                 prev_val = json.loads(prev_val)
                 prev_val.update(value)
                 value = prev_val
 
             value = json.dumps(value)
-            ch.set(ref_group="market", ref_value=isin, value=value)
+            ch.set(ref_group=ref_group, ref_value=isin, value=value)
             return True
         except Exception as e:
             print(e)

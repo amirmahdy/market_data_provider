@@ -1,4 +1,5 @@
-import os, django
+import os
+import django
 from django.test import TestCase
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mdp.settings")
@@ -7,9 +8,9 @@ django.setup()
 
 class Test_Redis(TestCase):
     def test_redis(self):
-        from oracle.data_type.instrument_market_data import Instrument_Maker_Data
-        res = Instrument_Maker_Data.get(isin="IRO1BANK0001")
-        Instrument_Maker_Data.update("IRO1BANK0001", {"dat": 32})
+        from oracle.data_type.instrument_market_data import InstrumentData
+        res = InstrumentData.get(isin="IRO1BANK0001", ref_group="market")
+        InstrumentData.update("IRO1BANK0001", "market", {"dat": 32})
         print(res)
 
     def test_get_instrument_list(self):

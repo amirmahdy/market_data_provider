@@ -1,6 +1,5 @@
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
-from rest_framework import serializers
 from oracle.models import Instrument, InstrumentType
 import requests
 import xmltodict
@@ -10,12 +9,9 @@ from threading import Thread
 import environ
 from rest_framework.decorators import action
 from drf_yasg.utils import swagger_auto_schema
+from oracle.serializers import InstrumentSerializer
 
 env = environ.Env()
-
-
-class InstrumentSerializer(serializers.Serializer):
-    isin = serializers.CharField(max_length=200)
 
 
 class InstrumentAppendAPIView(GenericAPIView):
