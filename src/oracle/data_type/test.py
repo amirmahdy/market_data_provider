@@ -28,5 +28,5 @@ class Test_Redis(TestCase):
         market_data_update()
         print(time.time() - start)
 
-# tr = Test_Redis()
-# tr.test_tsetmc_speed_limit()
+tr = Test_Redis()
+tr.test_redis()

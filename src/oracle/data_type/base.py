@@ -48,6 +48,6 @@ class MarketDataType:
 
 @dataclass
 class TradeDataType:
-    t = str  # YYYY-MM-DDTmm:hh:ss
-    p = int
-    q = int
+    t: str  # YYYY-MM-DDTmm:hh:ss
+    p: int
+    q: int

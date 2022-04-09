@@ -24,7 +24,7 @@ def get_askbid_history(tse_isin: str, date: str) -> List[Dict]:
                                }
 
     for item in all_askbid_changes:
-        if item['hEven'] != current_captured_askbid['time']:
+        if item['hEven'] != current_captured_askbid['time'] and current_captured_askbid['time'] != 0:
             all_askbid_rows.append(copy.deepcopy(current_captured_askbid))
         current_captured_askbid['time'] = item['hEven']
         current_captured_askbid['buy_price_{num}'.format(

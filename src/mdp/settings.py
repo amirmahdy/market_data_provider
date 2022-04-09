@@ -32,7 +32,7 @@ DEBUG = True
 CSRF_TRUSTED_ORIGINS = ['http://*.127.0.0.1:8008', 'http://127.0.0.1:8008']
 CSRF_COOKIE_SECURE = False
 
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ["src", "127.0.0.1"]
 
 # Application definition
 
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'rest_framework',
     'channels',
     'drf_yasg',
