@@ -24,7 +24,8 @@ class Instrument_Maker_Data:
             prev_val = ch.get(ref_group="market", ref_value=isin)
             if prev_val is not None:
                 prev_val = json.loads(prev_val)
-                value.update(prev_val)
+                prev_val.update(value)
+                value = prev_val
 
             value = json.dumps(value)
             ch.set(ref_group="market", ref_value=isin, value=value)

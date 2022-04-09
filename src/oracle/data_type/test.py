@@ -8,8 +8,8 @@ django.setup()
 class Test_Redis(TestCase):
     def test_redis(self):
         from oracle.data_type.instrument_market_data import Instrument_Maker_Data
-        res = Instrument_Maker_Data.get(isin="IRO1PARK0001")
-        Instrument_Maker_Data.update("IRO1BANK0001", {"dat": 34})
+        res = Instrument_Maker_Data.get(isin="IRO1BANK0001")
+        Instrument_Maker_Data.update("IRO1BANK0001", {"dat": 32})
         print(res)
 
     def test_get_instrument_list(self):
@@ -27,6 +27,7 @@ class Test_Redis(TestCase):
         start = time.time()
         market_data_update()
         print(time.time() - start)
+
 
 tr = Test_Redis()
 tr.test_redis()
