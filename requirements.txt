@@ -11,3 +11,4 @@ channels_redis
 redis
 requests
 xmltodict
+django_extensions

@@ -16,9 +16,14 @@ app.conf.beat_schedule = {
         'schedule': crontab(minute='*/1'),
         'args': ()
     },
-    'tsetmc_trade_data_update': {
-        'task': 'tsetmc_trade_data_update',
+    'tsetmc_trade_yesterday_update': {
+        'task': 'tsetmc_trade_yesterday_update',
         'schedule': crontab(hour='6', minute='0'),
+        'args': ()
+    },
+    'tsetmc_trade_today_update': {
+        'task': 'tsetmc_trade_today_update',
+        'schedule': crontab(minute='*/1'),
         'args': ()
     }
 }

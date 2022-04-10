@@ -492,8 +492,7 @@ class LS_Class:
         }
 
         # Cache data
-        InstrumentData.update(
-            isin, ref_group='market', value=data)
+        InstrumentData.update(isin, ref_group='market', value=data)
         data_askbid = []
 
         for i in range(5):
