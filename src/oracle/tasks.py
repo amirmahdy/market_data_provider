@@ -1,12 +1,15 @@
+from datetime import datetime
+from tkinter import E
 from celery import shared_task
-from oracle.services.tsetmc_market import get_tse_instrument_data
 from oracle.models import Instrument
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.cache.base import Cache
+from oracle.services.tsetmc_market import get_tse_instrument_data
 from oracle.services.tsetmc_trades import get_trades
 from oracle.services.tsetmc_askbid import get_askbid_history
 from datetime import datetime, timedelta
 
+from oracle.triggers.queue_condition import check_instrument_queue_status
 cache = Cache()
 
 
@@ -58,6 +61,18 @@ def trade_data_today_update():
         for instrument in instruments:
             today_trades = get_trades(instrument.tse_id)
             InstrumentData.update(instrument.isin, 'trades', today_trades)
+    except Exception as e:
+        print(e)
+        return e
+    return True
+
+
+@shared_task(name='check_queue_condition')
+def check_queue_condition():
+    try:
+        instruments = Instrument.get_instruments()
+        for instrument in instruments:
+            check_instrument_queue_status(instrument.isin)
     except Exception as e:
         print(e)
         return e

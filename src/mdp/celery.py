@@ -30,5 +30,10 @@ app.conf.beat_schedule = {
         'task': 'tsetmc_trade_today_update',
         'schedule': crontab(minute='*/1'),
         'args': ()
+    },
+    'check_queue_condition': {
+        'task': 'check_queue_condition',
+        'schedule': crontab(minute='*/1'),
+        'args': ()
     }
 }
