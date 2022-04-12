@@ -302,7 +302,9 @@ def singleton(class_):
 @singleton
 class LS_Class:
     def __init__(self):
-        self.instruments = Instrument.get_instruments()
+        self.instruments = {}
+        for instrument in Instrument.get_instruments():
+            self.instruments[instrument.isin] = instrument.__dict__
         self._ls_client = LSClient(
             "https://push2v7.etadbir.com/",
             "STOCKLISTDEMO_REMOTE",
@@ -315,9 +317,8 @@ class LS_Class:
             print("Unable to connect to Lightstreamer Server")
             print(traceback.format_exc())
 
-        # instruments_raw = ["IRO1BANK0001", "IRO1PARK0001"]
-        for ins_raw in self.instruments:
-            self.isin_subscribe(ins_raw)
+        for isin in self.instruments:
+            self.isin_subscribe(isin)
             self.index_subscribe()
 
     def renew(self):
