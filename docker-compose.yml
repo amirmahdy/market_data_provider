@@ -10,6 +10,7 @@ services:
       - ./src:/src/
       - ./src/static:/src/static/
       - ./src/media:/src/media/
+      - ./src/data:/src/data/
     expose:
       - 8000
     env_file:
@@ -33,6 +34,7 @@ services:
     volumes:
       - ./src/static:/src/static/
       - ./src/media:/src/media/
+      - ./src/data:/src/data/
     ports:
       - 8008:80
     depends_on:
@@ -51,6 +53,7 @@ services:
     volumes:
       - ./celery/:/var/lib/celery/
       - ./src/media:/src/media/
+      - ./src/data:/src/data/
     environment:
       - DEBUG=1
       - SECRET_KEY=dbaa1_i7%*3r9-=z-+021z4r-!qeed@(-a_r31(g@k8jo8y3r27%m
@@ -65,6 +68,7 @@ services:
     volumes:
       - ./celery/:/var/lib/celery/
       - ./src/media:/src/media/
+      - ./src/data:/src/data/
     environment:
       - DEBUG=1
       - SECRET_KEY=dbaa1_i7%*3r9-=z-+021z4r-!qeed@(-a_r31(g@k8jo8y3r27%m

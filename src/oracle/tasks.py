@@ -4,7 +4,7 @@ from oracle.models import Instrument
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.cache.base import Cache
 from oracle.services.tsetmc_trades import get_trades
-from datetime import datetime
+from datetime import datetime, timedelta
 
 cache = Cache()
 
@@ -26,9 +26,9 @@ def market_data_update():
 def trade_data_yesterday_update():
     try:
         instruments = Instrument.get_instruments()
-        today = datetime.now().strftime('%Y%m%d')
+        yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
         for instrument in instruments:
-            today_trades = get_trades(instrument.tse_id, today)
+            today_trades = get_trades(instrument.tse_id, yesterday)
             print(today_trades)
     except Exception as e:
         print(e)
