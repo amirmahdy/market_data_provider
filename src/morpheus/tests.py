@@ -1,5 +1,5 @@
-from django.test import TestCase
-
+from django.test import TestCase, RequestFactory
+from .views.trades_history import TradeDataAPIView
 # Create your tests here.
 
 
@@ -16,5 +16,5 @@ class MorpheusViewsTestCase(TestCase):
         factory = RequestFactory()
         request = factory.get(path='/morpheus/trades_history',
                               data={'isin': 'IRO1BANK0001'})
-        response = TradesHistoryAPIView.as_view()(request)
+        response = TradeDataAPIView.as_view()(request)
         self.assertEqual(response.status_code, 200)
