@@ -440,12 +440,6 @@ class LS_Class:
         local_vals = self.instruments[isin]
 
         data = {
-            # "first_symbol_state": local_vals["first_symbol_state"],
-            # "second_symbol_state": local_vals["second_symbol_state"],
-            # "max_percent_change": local_vals["max_percent_change"],
-            # "max_low_percent_change": local_vals["max_low_percent_change"],
-            # "theoretical_openning_price": local_vals["theoretical_openning_price"],
-            # "is_caution": local_vals["is_caution"],
             "tick_size": local_vals["tick_size"],
             "bid_ask_first_row": {
                 "best_buy_price": vals["BestBuyLimitPrice_1"],
@@ -458,13 +452,9 @@ class LS_Class:
             "symbol_isin": isin,
             "last_traded_price": vals["LastTradedPrice"],
             "closing_price": vals["ClosingPrice"],
-            "high_allowed_price": vals["HighAllowedPrice"],
-            "low_allowed_price": vals["LowAllowedPrice"],
             "price_var": vals["LastTradedPriceVarPercent"],
             "price_change": vals["LastTradedPriceVar"],
             "total_number_of_shares_traded": vals["TotalNumberOfSharesTraded"],
-            # "company_name": local_vals["company_name"],
-            # "en_company_name": local_vals["en_company_name"],
             "closing_price_var": vals["ClosingPriceVarPercent"],
             "closing_price_change": vals["ClosingPriceVar"],
             "order_max_size": local_vals["order_max_size"],
@@ -483,13 +473,6 @@ class LS_Class:
             "market_unit": "ETFStock",
             "market_code": local_vals["market_code"],
             "symbol_group_state": vals["SymbolStateId"],
-            # "symbol_group_code": local_vals["symbol_group_code"],
-            # "unit_count": local_vals["unit_count"],
-            # "sector_code": local_vals["sector_code"],
-            # "tomorrow_high_allowed_price": local_vals["tomorrow_high_allowed_price"],
-            # "tomorrow_low_allowed_price": local_vals["tomorrow_low_allowed_price"],
-            "market_status": "ALLOWED",
-            "market_status_text": "\u0645\u062c\u0627\u0632",
         }
 
         # Cache data

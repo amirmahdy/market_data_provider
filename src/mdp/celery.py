@@ -16,6 +16,11 @@ app.conf.beat_schedule = {
         'schedule': crontab(minute='*/1'),
         'args': ()
     },
+    'tsetmc_askbid_yesterday_update': {
+        'task': 'tsetmc_askbid_yesterday_update',
+        'schedule': crontab(hour='6', minute='30'),
+        'args': ()
+    },
     'tsetmc_trade_yesterday_update': {
         'task': 'tsetmc_trade_yesterday_update',
         'schedule': crontab(hour='6', minute='0'),

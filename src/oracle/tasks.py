@@ -4,6 +4,7 @@ from oracle.models import Instrument
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.cache.base import Cache
 from oracle.services.tsetmc_trades import get_trades
+from oracle.services.tsetmc_askbid import get_askbid_history
 from datetime import datetime, timedelta
 
 cache = Cache()
@@ -16,6 +17,20 @@ def market_data_update():
         for instrument in instruments:
             res = get_tse_instrument_data(instrument.tse_id)
             InstrumentData.update(instrument.isin, "market", res)
+    except Exception as e:
+        print(e)
+        return e
+    return True
+
+
+@shared_task(name="tsetmc_askbid_yesterday_update")
+def tsetmc_askbid_yesterday_update():
+    try:
+        instruments = Instrument.get_instruments()
+        yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
+        for instrument in instruments:
+            today_trades = get_askbid_history(instrument.tse_id, yesterday)
+            print(today_trades)
     except Exception as e:
         print(e)
         return e

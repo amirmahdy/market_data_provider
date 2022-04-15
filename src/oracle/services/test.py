@@ -9,8 +9,10 @@ django.setup()
 class Test_Service(TestCase):
 
     def test_askbid(self):
+        from oracle.data_type.instrument_market_data import InstrumentData
         from oracle.services.tsetmc_trades import get_trades
-        res = get_trades('48010225447410247', '20220309')
+        res = get_trades('48010225447410247', '20220101')
+        InstrumentData.update("IRO1BANK0001", "trades", res)
         print(res)
 
 

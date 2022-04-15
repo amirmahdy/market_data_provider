@@ -5,7 +5,6 @@ import requests
 from datetime import datetime, timedelta
 from typing import List
 import re, json
-from oracle.data_type.base import TradeDataType
 
 from mdp import settings
 
@@ -13,7 +12,7 @@ TRADE_HISTORY_TODAY_URL = "http://tsetmc.com/tsev2/data/TradeDetail.aspx?i={tse_
 TRADE_HISTORY_YESTERDAY_URL = "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/{tse_isin}/{date}/false"
 
 
-def get_trades(tse_isin: str, day=None) -> List[TradeDataType]:
+def get_trades(tse_isin: str, day=None):
     if day is None:
         today = datetime.now().strftime('%Y-%m-%dT')
         url = TRADE_HISTORY_TODAY_URL.format(tse_isin=tse_isin)
@@ -29,7 +28,7 @@ def get_trades(tse_isin: str, day=None) -> List[TradeDataType]:
         all_trades = re.findall(rgx, resp)
         all_trades_dc = []
         for trade in all_trades:
-            all_trades_dc.append(TradeDataType(t=(today + trade[0]), p=int(float(trade[2])), q=int(float(trade[1]))))
+            all_trades_dc.append({"t": (today + trade[0]), "p": int(float(trade[2])), "q": int(float(trade[1]))})
         return all_trades_dc
 
     else:
