@@ -8,8 +8,9 @@ from oracle.services.tsetmc_market import get_tse_instrument_data
 from oracle.services.tsetmc_trades import get_trades
 from oracle.services.tsetmc_askbid import get_askbid_history
 from datetime import datetime, timedelta
-
 from oracle.triggers.queue_condition import check_instrument_queue_status
+from morpheus.services.broadcast import broadcast_trigger
+
 cache = Cache()
 
 
@@ -20,6 +21,13 @@ def market_data_update():
         for instrument in instruments:
             res = get_tse_instrument_data(instrument.tse_id)
             InstrumentData.update(instrument.isin, "market", res)
+
+            # update market status
+            if res['market_status'] != instrument.market_status:
+                instrument.market_status = res['market_status']
+                instrument.save()
+                broadcast_trigger(
+                    data={'trigger_type': 'instrument_market_status_change', 'isin': instrument.isin})
     except Exception as e:
         print(e)
         return e
