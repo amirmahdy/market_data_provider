@@ -9,7 +9,6 @@ class MarketDataType:
     max_low_percent_change: int
     theoretical_openning_price: int
     is_caution: bool
-    price_tick_size: int
     symbol_isin: str
     last_traded_price: int
     closing_price: int
@@ -31,13 +30,8 @@ class MarketDataType:
     trade_date: str
     reference_price: int
     basis_volume: int
-    percent_of_basis_volume: float
     symbol_fa: str
     symbol_en: str
-    first_traded_price: int
-    market_unit: str
-    market_code: str
-    symbol_group_state: int
     symbol_group_code: str
     unit_count: int
     sector_code: str
