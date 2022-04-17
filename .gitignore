@@ -9,3 +9,5 @@ __pycache__
 poetry.lock
 pyproject.toml
 celerybeat-schedule
+src/data
+src/media
