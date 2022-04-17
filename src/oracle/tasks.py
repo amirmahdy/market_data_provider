@@ -28,8 +28,8 @@ def market_data_update():
                 instrument.save()
                 broadcast_trigger(
                     data={'trigger_type': 'instrument_market_status_change', 'isin': instrument.isin})
-                broadcast_market_data(isin=instrument.isin, data=InstrumentData.get(
-                    isin=instrument.isin, ref_group='market'))
+                broadcast_market_data(isin=instrument.isin,
+                                      market_data=InstrumentData.get(isin=instrument.isin, ref_group='market'))
 
     except Exception as e:
         print(e)

@@ -6,6 +6,7 @@ from datetime import datetime
 import time
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.models import Instrument
+from morpheus.services.broadcast import broadcast_market_data
 
 CONNECTION_URL_PATH = "lightstreamer/create_session.txt"
 BIND_URL_PATH = "lightstreamer/bind_session.txt"
@@ -477,6 +478,7 @@ class LS_Class:
 
         # Cache data
         InstrumentData.update(isin, ref_group='market', value=data)
+        broadcast_market_data(isin=isin, market_data=InstrumentData.get(isin=isin, ref_group='market'))
         data_askbid = []
 
         for i in range(5):
