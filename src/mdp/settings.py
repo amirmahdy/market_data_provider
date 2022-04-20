@@ -32,7 +32,7 @@ DEBUG = True
 CSRF_TRUSTED_ORIGINS = ['http://*.127.0.0.1:8000', 'http://127.0.0.1:8000']
 CSRF_COOKIE_SECURE = False
 
-ALLOWED_HOSTS = ["src", "127.0.0.1", "172.10.24.21"]
+ALLOWED_HOSTS = ["mdp", "127.0.0.1", "172.10.24.21"]
 
 # Application definition
 
