@@ -36,7 +36,7 @@ services:
       - ./src/media:/src/media/
       - ./src/data:/src/data/
     ports:
-      - 8008:80
+      - 8000:80
     depends_on:
       - web
 

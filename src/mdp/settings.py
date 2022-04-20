@@ -29,7 +29,7 @@ environ.Env.read_env(env_path)
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = True
 
-CSRF_TRUSTED_ORIGINS = ['http://*.127.0.0.1:8008', 'http://127.0.0.1:8008']
+CSRF_TRUSTED_ORIGINS = ['http://*.127.0.0.1:8000', 'http://127.0.0.1:8000']
 CSRF_COOKIE_SECURE = False
 
 ALLOWED_HOSTS = ["src", "127.0.0.1"]
@@ -82,7 +82,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'mdp.wsgi.application'
 
 SWAGGER_SETTINGS = {
-    'BASE_URL': "127.0.0.1:8008"
+    'BASE_URL': "127.0.0.1:8000"
 }
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
