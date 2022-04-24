@@ -7,9 +7,11 @@ from typing import List
 import re, json
 
 from mdp import settings
+from mdp.utils import create_csv, check_path
 
 TRADE_HISTORY_TODAY_URL = "http://tsetmc.com/tsev2/data/TradeDetail.aspx?i={tse_isin}"
 TRADE_HISTORY_YESTERDAY_URL = "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/{tse_isin}/{date}/false"
+GATHER_ONE_DAY_URL = "http://service.tsetmc.com/WebService/TsePublicV2.asmx?op=InstTrade"
 
 
 def get_trades(tse_isin: str, day=None):
@@ -70,3 +72,53 @@ def get_trades(tse_isin: str, day=None):
                 data = [item["t"], item["q"], item["p"]]
                 writer.writerow(data)
         return new_history_list
+
+
+def get_kline(from_date, to_date, tse_isin, val_user, val_pass, isin_symbol):
+    headers = {'content-type': 'text/xml', 'SOAPAction': 'http://tsetmc.com/InstTrade'}
+    body = """<?xml version="1.0" encoding="utf-8"?>
+                            <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                              <soap:Body>
+                                <InstTrade xmlns="http://tsetmc.com/">
+                                  <UserName>{0}</UserName>
+                                  <Password>{1}</Password>
+                                  <Inscode>{2}</Inscode>
+                                  <DateFrom>{3}</DateFrom>
+                                  <DateTo>{4}</DateTo>
+                                </InstTrade>
+                              </soap:Body>
+                            </soap:Envelope>""".format(val_user, val_pass, tse_isin, from_date, to_date)
+    session = requests.Session()
+    response = session.post(GATHER_ONE_DAY_URL, data=body, headers=headers)
+    xml_raw = response.content.decode('utf-8')
+    xml_data = re.findall(
+        '<DEven>(\d*\.?\d*)<\/DEven>[\s|\r]*'
+        '<HEven>(\d*\.?\d*)[\s|\r]*<\/HEven>[\s|\r]*'
+        '<PClosing>(\d*\.?\d*)<\/PClosing>[\s|\r]*'
+        '<IClose>(\d*\.?\d*)<\/IClose>[\s|\r]*'
+        '<YClose>(\d*\.?\d*)<\/YClose>[\s|\r]*'
+        '<PDrCotVal>(\d*\.?\d*)<\/PDrCotVal>[\s|\r]*'
+        '<ZTotTran>(\d*\.?\d*)<\/ZTotTran>[\s|\r]*'
+        '<QTotTran5J>(\d*\.?\d*)<\/QTotTran5J>[\s|\r]*'
+        '<QTotCap>(\d*\.?\d*)<\/QTotCap>[\s|\r]*'
+        '<PriceChange>(\-?\d*\.?\d*)<\/PriceChange>[\s|\r]*'
+        '<PriceMin>(\d*\.?\d*)<\/PriceMin>[\s|\r]*'
+        '<PriceMax>(\d*\.?\d*)<\/PriceMax>[\s|\r]*'
+        '<PriceYesterday>(\d*\.?\d*)<\/PriceYesterday>[\s|\r]*'
+        '<PriceFirst>(\d*\.?\d*)<\/PriceFirst>[\s|\r]*', xml_raw)
+
+    if xml_data == []:
+        return
+    exist_path = check_path(settings.DATA_ROOT)
+    equity_path = exist_path + '/trade2'
+    exist_path = check_path(equity_path)
+    symbol_path = exist_path + '/{}'.format(isin_symbol)
+    exist_path = check_path(symbol_path)
+    csv_path = exist_path + '/' + tse_isin + '.csv'
+    xml_row = []
+    for xml_ins in xml_data:
+        xml_row.append([xml_ins[0] + ' 00:00', "{:.0f}".format(float(xml_ins[12])),
+                        "{:.0f}".format(float(xml_ins[11])), "{:.0f}".format(float(xml_ins[10])),
+                        "{:.0f}".format(float(xml_ins[2])), "{:.0f}".format(float(xml_ins[8]))])
+    create_csv(csv_path, xml_row)
+    return True
