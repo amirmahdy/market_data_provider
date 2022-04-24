@@ -8,7 +8,7 @@ def check_instrument_queue_status(isin):
         market_data = get_tse_instrument_data(isin)
     if market_data['high_allowed_price'] == market_data['bid_ask_first_row']['best_buy_price']:
         broadcast_trigger(
-            data={'trigger_type': 'queue_condition', 'isin': isin, 'queue_side': 'buy'})
+            isin=isin, data={'trigger_type': 'queue_condition', 'queue_side': 'buy'})
     if market_data['low_allowed_price'] == market_data['bid_ask_first_row']['best_sell_price']:
         broadcast_trigger(
-            data={'trigger_type': 'queue_condition', 'isin': isin, 'queue_side': 'buy'})
+            isin=isin, data={'trigger_type': 'queue_condition', 'queue_side': 'buy'})

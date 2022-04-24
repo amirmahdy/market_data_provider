@@ -27,7 +27,7 @@ def market_data_update():
                 instrument.market_status = res['market_status']
                 instrument.save()
                 broadcast_trigger(
-                    data={'trigger_type': 'instrument_market_status_change', 'isin': instrument.isin})
+                    isin=instrument.isin, data={'trigger_type': 'instrument_market_status_change'})
                 broadcast_market_data(isin=instrument.isin,
                                       market_data=InstrumentData.get(isin=instrument.isin, ref_group='market'))
 
