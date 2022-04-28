@@ -18,6 +18,7 @@ services:
 
   asgiserver:
     build: .
+    container_name: mdp_asgiserver
     volumes:
       - ./src:/src/
     command: daphne mdp.asgi:application --bind 0.0.0.0 --port 8010
@@ -39,12 +40,14 @@ services:
 
   redis:
     image: redis:6-alpine
+    container_name: mdp_redis
     restart: unless-stopped
     ports: [ '127.0.0.1:6379:6379' ]
 
 
   celery:
     build: .
+    container_name: mdp_celery
     restart: unless-stopped
     command: celery -A mdp worker -l info
     volumes:
@@ -59,6 +62,7 @@ services:
 
   celery-beat:
     build: .
+    container_name: mdp_celery_beat
     restart: unless-stopped
     command: celery -A mdp beat -l info
     volumes:
