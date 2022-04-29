@@ -1,12 +1,11 @@
-from pytse.pytse import SymbolData, PyTse
+from pytse.pytse import PyTse
 from oracle.data_type.instrument_market_data import InstrumentData
 
 
-def get_tse_instrument_full_data(tse_isin):
-    PyTse.request_timeout = 20  # changing timeout default=30 !apply to all requests
-    pytse = PyTse()  # read_symbol_data=True,read_client_type=False
+def get_tse_instrument_full_data(isin, tse_isin):
+    PyTse.request_timeout = 20
+    pytse = PyTse()
     data = pytse.symbols_data_by_id[tse_isin]
-    #
     instrument_data = {
         "symbol_isin": data['l18'],
         "last_traded_price": data['pl'],
@@ -22,5 +21,11 @@ def get_tse_instrument_full_data(tse_isin):
         'closing_price': data['pc'],
         'closing_price_change': data['pcc']
     }
-    InstrumentData.update(
-        instrument_data['symbol_isin'], 'market', instrument_data)
+    InstrumentData.update(isin, 'market', instrument_data)
+
+
+def initial_setup():
+    from oracle.models import Instrument
+    instruments = Instrument.get_instruments()
+    for instrument in instruments:
+        get_tse_instrument_full_data(instrument, instruments[instrument].tse_id)

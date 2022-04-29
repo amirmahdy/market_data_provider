@@ -30,6 +30,12 @@ class Test_Service(TestCase):
         res = trade_data_yesterday_update()
         print(res)
 
+    def test_get_tse_instrument_full_data(self):
+        from oracle.models import Instrument
+        from oracle.services.tsetmc_market_full_data import get_tse_instrument_full_data
+        instruments = Instrument.get_instruments()
+        get_tse_instrument_full_data("IRO1BANK0001", instruments["IRO1BANK0001"].tse_id)
+
 
 tr = Test_Service()
-tr.test_task_kline()
+tr.test_get_tse_instrument_full_data()
