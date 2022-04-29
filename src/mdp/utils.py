@@ -2,13 +2,14 @@ import csv
 import os
 
 
-def create_csv(header, path, content):
-    with open(path, 'w', encoding='UTF8', newline='') as f:
+def create_csv(path, content, frmt="w"):
+    path_dir = os.path.dirname(path)
+    if not os.path.exists(path_dir):
+        os.makedirs(path_dir)
+
+    with open(path, frmt, encoding='UTF8', newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(header)
-        for item in content:
-            data = [item["t"], item["q"], item["p"]]
-            writer.writerow(data)
+        writer.writerows(content)
     return True
 
 

@@ -1,17 +1,21 @@
-from datetime import datetime
-from tkinter import E
+import environ
 from celery import shared_task
+from mdp import settings
+import fsutil
+import zipfile
+from mdp.utils import create_csv
 from oracle.models import Instrument
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.cache.base import Cache
 from oracle.services.tsetmc_market import get_tse_instrument_data
-from oracle.services.tsetmc_trades import get_trades
+from oracle.services.tsetmc_trades import get_trades, get_kline
 from oracle.services.tsetmc_askbid import get_askbid_history
 from datetime import datetime, timedelta
 from oracle.triggers.queue_condition import check_instrument_queue_status
 from morpheus.services.broadcast import broadcast_trigger, broadcast_market_data
 
 cache = Cache()
+env = environ.Env()
 
 
 @shared_task(name="tsetmc_market_data_update")
@@ -56,9 +60,14 @@ def trade_data_yesterday_update():
     try:
         instruments = Instrument.get_instruments()
         yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
+        path = settings.DATA_ROOT + "/trade/"
+
         for instrument in instruments:
             today_trades = get_trades(instrument.tse_id, yesterday)
-            print(today_trades)
+            if today_trades:
+                sym = instrument.en_symbol.lower()
+                create_csv(path + sym + "/" + yesterday + ".csv", today_trades, "w+")
+
     except Exception as e:
         print(e)
         return e
@@ -72,6 +81,33 @@ def trade_data_today_update():
         for instrument in instruments:
             today_trades = get_trades(instrument.tse_id)
             InstrumentData.update(instrument.isin, 'trades', today_trades)
+    except Exception as e:
+        print(e)
+        return e
+    return True
+
+
+@shared_task(name="tsetmc_trade_kline")
+def tsetmc_trade_kline():
+    try:
+        instruments = Instrument.get_instruments()
+        to_date = datetime.strftime(datetime.now(), '%Y%m%d')
+        from_date = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
+        path = settings.DATA_ROOT + "/equity/usa/daily/"
+
+        for instrument in instruments:
+            rows = get_kline(from_date, to_date, instrument.tse_id, env("TSETMC_USERNAME"), env("TSETMC_PASSWORD"))
+            sym = instrument.en_symbol
+
+            if fsutil.exists(path + sym.lower() + ".zip"):
+                zipfile.ZipFile("data/equity/usa/daily/" + sym.lower() + ".zip", "r").extractall(path)
+                fsutil.remove_file(path + sym.lower() + ".zip")
+
+            create_csv(path + sym.upper() + ".csv", rows, "a")
+            zipfile.ZipFile(path + sym.lower() + ".zip", "w", zipfile.ZIP_DEFLATED). \
+                write(path + sym.upper() + ".csv", arcname=sym.upper() + ".csv")
+            fsutil.remove_file(path + sym.upper() + ".csv")
+
     except Exception as e:
         print(e)
         return e

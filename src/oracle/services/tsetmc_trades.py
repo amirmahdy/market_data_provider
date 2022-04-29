@@ -1,13 +1,6 @@
-import csv
-import os
-
 import requests
-from datetime import datetime, timedelta
-from typing import List
+from datetime import datetime
 import re, json
-
-from mdp import settings
-from mdp.utils import create_csv, check_path
 
 TRADE_HISTORY_TODAY_URL = "http://tsetmc.com/tsev2/data/TradeDetail.aspx?i={tse_isin}"
 TRADE_HISTORY_YESTERDAY_URL = "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/{tse_isin}/{date}/false"
@@ -38,8 +31,6 @@ def get_trades(tse_isin: str, day=None):
         tse_full_data = session.get(TRADE_HISTORY_YESTERDAY_URL.format(tse_isin=tse_isin, date=day))
         tse_res = json.loads(tse_full_data.text)
         new_history_list = []
-        print(tse_res['tradeHistory'])
-        file_name_d = str(day)
         day = datetime.strptime(day, '%Y%m%d').strftime('%Y-%m-%dT')
         for item in tse_res['tradeHistory']:
             heven = str(item['hEven'])
@@ -50,31 +41,11 @@ def get_trades(tse_isin: str, day=None):
                 "p": int(item['pTran']),
             }
             new_history_list.append(new_dict)
-        # Save as CSV
 
-        csv_header = ['t', 'q', 'p']
-        file_name = str(file_name_d) + '.csv'
-
-        if not os.path.exists(settings.DATA_ROOT):
-            os.mkdir(settings.DATA_ROOT)
-        trade_path = settings.DATA_ROOT + '/trade'
-        if not os.path.exists(trade_path):
-            os.mkdir(trade_path)
-        isin_path = trade_path + '/{}'.format(tse_isin)
-        if not os.path.exists(isin_path):
-            os.mkdir(isin_path)
-        csv_path = isin_path + '/' + file_name
-        with open(csv_path, 'w', encoding='UTF8', newline='') as f:
-            writer = csv.writer(f)
-            writer.writerow(csv_header)
-            for item in new_history_list:
-                print(item)
-                data = [item["t"], item["q"], item["p"]]
-                writer.writerow(data)
         return new_history_list
 
 
-def get_kline(from_date, to_date, tse_isin, val_user, val_pass, isin_symbol):
+def get_kline(from_date, to_date, tse_isin, val_user, val_pass):
     headers = {'content-type': 'text/xml', 'SOAPAction': 'http://tsetmc.com/InstTrade'}
     body = """<?xml version="1.0" encoding="utf-8"?>
                             <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -109,16 +80,9 @@ def get_kline(from_date, to_date, tse_isin, val_user, val_pass, isin_symbol):
 
     if xml_data == []:
         return
-    exist_path = check_path(settings.DATA_ROOT)
-    equity_path = exist_path + '/trade2'
-    exist_path = check_path(equity_path)
-    symbol_path = exist_path + '/{}'.format(isin_symbol)
-    exist_path = check_path(symbol_path)
-    csv_path = exist_path + '/' + tse_isin + '.csv'
     xml_row = []
     for xml_ins in xml_data:
         xml_row.append([xml_ins[0] + ' 00:00', "{:.0f}".format(float(xml_ins[12])),
                         "{:.0f}".format(float(xml_ins[11])), "{:.0f}".format(float(xml_ins[10])),
                         "{:.0f}".format(float(xml_ins[2])), "{:.0f}".format(float(xml_ins[8]))])
-    create_csv(csv_path, xml_row)
-    return True
+    return xml_row

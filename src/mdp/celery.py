@@ -35,5 +35,10 @@ app.conf.beat_schedule = {
         'task': 'check_queue_condition',
         'schedule': crontab(minute='*/1'),
         'args': ()
+    },
+    'tsetmc_trade_kline': {
+        'task': 'trade_kline',
+        'schedule': crontab(hour='5', minute='0'),
+        'args': ()
     }
 }

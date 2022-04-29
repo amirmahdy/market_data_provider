@@ -12,3 +12,4 @@ redis
 requests
 xmltodict
 django_extensions
+python-fsutil
