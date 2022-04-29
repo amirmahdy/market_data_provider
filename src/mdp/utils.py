@@ -13,6 +13,15 @@ def create_csv(path, content, frmt="w"):
     return True
 
 
+def read_csv(path):
+    if not os.path.exists(path):
+        return False
+
+    with open(path, "r", encoding='UTF8', newline='') as f:
+        reader = csv.reader(f)
+        return [read for read in reader]
+
+
 def check_path(path):
     if not os.path.exists(path):
         os.mkdir(path)

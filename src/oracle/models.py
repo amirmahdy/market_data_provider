@@ -82,5 +82,7 @@ class Instrument(models.Model):
     def get_instruments():
         from django.core.cache import cache
         if cache.get("INSTRUMENT") is None:
-            cache.set("INSTRUMENT", pickle.dumps(list(Instrument.objects.all())), 60)
+            instruments = Instrument.objects.all()
+            instruments_dict = {instrument.isin: instrument for instrument in instruments}
+            cache.set("INSTRUMENT", pickle.dumps(instruments_dict), 60)
         return pickle.loads(cache.get("INSTRUMENT"))

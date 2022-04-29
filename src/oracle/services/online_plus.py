@@ -303,9 +303,7 @@ def singleton(class_):
 @singleton
 class LS_Class:
     def __init__(self):
-        self.instruments = {}
-        for instrument in Instrument.get_instruments():
-            self.instruments[instrument.isin] = instrument.__dict__
+        self.instruments = Instrument.get_instruments()
         self._ls_client = LSClient(
             "https://push2v7.etadbir.com/",
             "STOCKLISTDEMO_REMOTE",
