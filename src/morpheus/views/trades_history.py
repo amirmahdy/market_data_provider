@@ -33,8 +33,7 @@ class TradeDataAPIView(GenericAPIView):
                 res = InstrumentData.get(isin=data["isin"], ref_group="trades")
 
             else:
-                instruments = Instrument.get_instruments()
-                instrument = instruments[data["isin"]]
+                instrument = Instrument.get_instrument(data["isin"])
                 date = datetime.strftime(data["date"], "%Y%m%d")
 
                 path = settings.DATA_ROOT + "/trade/" + instrument.en_symbol.lower() + "/" + date + ".csv"

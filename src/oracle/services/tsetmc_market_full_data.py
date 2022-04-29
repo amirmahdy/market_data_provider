@@ -28,4 +28,4 @@ def initial_setup():
     from oracle.models import Instrument
     instruments = Instrument.get_instruments()
     for instrument in instruments:
-        get_tse_instrument_full_data(instrument, instruments[instrument].tse_id)
+        get_tse_instrument_full_data(instrument.isin, instrument.tse_id)

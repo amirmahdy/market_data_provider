@@ -303,7 +303,8 @@ def singleton(class_):
 @singleton
 class LS_Class:
     def __init__(self):
-        self.instruments = Instrument.get_instruments()
+        instruments_list = Instrument.get_instruments()
+        self.instruments = {instrument.isin: instrument for instrument in instruments_list}
         self._ls_client = LSClient(
             "https://push2v7.etadbir.com/",
             "STOCKLISTDEMO_REMOTE",
