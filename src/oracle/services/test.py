@@ -45,6 +45,12 @@ class Test_Service(TestCase):
         instruments = Instrument.get_instrument("IRO1BANK0001")
         get_tse_instrument_data(instruments[0].tse_id)
 
+    def test_get_history_indices(self):
+        from oracle.services.tsetmc_indices import get_indices_history
+        res = get_indices_history(date_from = "2022-01-01", date_to = "2022-04-01")
+        print(res)
+
 
 tr = Test_Service()
 tr.test_get_live_askbid()
+tr.test_get_history_indices()
