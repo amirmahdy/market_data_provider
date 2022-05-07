@@ -8,7 +8,7 @@ class OracleConfig(AppConfig):
 
     def ready(self):
         from .services.online_plus import LS_Class
-        from oracle.services.tsetmc_market_full_data import initial_setup
+        from oracle.services.base import initial_setup
 
         if "worker" not in sys.argv:
             return True
