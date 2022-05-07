@@ -1,17 +1,28 @@
-import requests
+from oracle.models import Instrument
+from pytse_client import Ticker
 
-TSE_DATA_URL = "http://tsetmc.com/tsev2/data/instinfodata.aspx?i={tse_isin}&c=27"
 
-
-def get_tse_instrument_data(tse_isin):
-    session = requests.Session()
-    tse_full_data = session.get(TSE_DATA_URL.format(tse_isin=tse_isin)).text.split(',')
-
-    # Seems status for instrument in TSETMC defined as "A " or "IS"
+def get_tse_instrument_data(tse_isin: str):
+    ticker = Ticker(symbol='', index=tse_isin)
+    symbol_isin = None
+    try:
+        symbol_isin = Instrument.objects.get(tse_id=tse_isin).isin
+    except:
+        pass
     instrument_data = {
-        "reference_price": tse_full_data[5],
-        "market_status": "ALLOWED" if tse_full_data[1] == 'A ' else "STOPPED",
-        "high_allowed_price": tse_full_data[6],
-        "low_allowed_price": tse_full_data[7],
+        "symbol_isin": symbol_isin,
+        "last_traded_price": ticker.last_price,
+        'high_allowed_price': ticker.sta_max,
+        'low_allowed_price': ticker.sta_min,
+        'total_number_of_shares_traded': ticker.volume,
+        'company_name': ticker.title,
+        'total_number_of_trades': ticker.count,
+        'total_trade_value': ticker.value,
+        'basis_volume': ticker.base_volume,
+        'first_traded_price': ticker.open_price,
+        'closing_price': ticker.adj_close,
+        "reference_price": ticker.yesterday_price,
+        "market_status": ticker.state,
     }
+
     return instrument_data

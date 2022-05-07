@@ -39,11 +39,11 @@ class Test_Service(TestCase):
         print(res)
 
 
-    def test_get_tse_instrument_full_data(self):
+    def test_get_tse_instrument_data(self):
         from oracle.models import Instrument
-        from oracle.services.tsetmc_market_full_data import get_tse_instrument_full_data
+        from oracle.services.tsetmc_market import get_tse_instrument_data
         instruments = Instrument.get_instrument("IRO1BANK0001")
-        get_tse_instrument_full_data("IRO1BANK0001", instruments[0].tse_id)
+        get_tse_instrument_data(instruments[0].tse_id)
 
 
 tr = Test_Service()
