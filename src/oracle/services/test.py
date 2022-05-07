@@ -30,12 +30,21 @@ class Test_Service(TestCase):
         res = trade_data_yesterday_update()
         print(res)
 
+    def test_get_live_askbid(self):
+        from oracle.models import Instrument
+        from oracle.services.tsetmc_askbid import get_live_askbid
+        instruments = Instrument.get_instrument("IRO1BANK0001")
+
+        res = get_live_askbid(instruments[0].tse_id)
+        print(res)
+
+
     def test_get_tse_instrument_full_data(self):
         from oracle.models import Instrument
         from oracle.services.tsetmc_market_full_data import get_tse_instrument_full_data
         instruments = Instrument.get_instrument("IRO1BANK0001")
-        get_tse_instrument_full_data("IRO1BANK0001", instruments.tse_id)
+        get_tse_instrument_full_data("IRO1BANK0001", instruments[0].tse_id)
 
 
 tr = Test_Service()
-tr.test_get_tse_instrument_full_data()
+tr.test_get_live_askbid()

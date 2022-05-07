@@ -1,6 +1,7 @@
 import requests
 import copy
 from typing import List, Dict
+from pytse_client import Ticker
 
 BESTLIMITS_BASE_URL = "http://cdn.tsetmc.com/api/BestLimits/{isin}/{date}"
 
@@ -41,3 +42,35 @@ def get_askbid_history(tse_isin: str, date: str) -> List[Dict]:
             num=item['number'])] = item['zOrdMeOf']
 
     return all_askbid_rows
+
+
+def get_live_askbid(tse_id: str):
+    ticker = Ticker(symbol='', index=tse_id)
+    realtime_data = ticker.get_ticker_real_time_info_response()
+
+    askbid_output = []
+    empty_askbid_row = {
+        "no_best_buy": 0,
+        "best_buy_price": 0,
+        "best_sell_price": 0,
+        "best_buy_quantity": 0,
+        "best_sell_quantity": 0,
+        "no_best_sell": 0,
+    }
+    for i in range(5):
+        askbid_output.append(copy.deepcopy(empty_askbid_row))
+        try:
+            askbid_output[i]['no_best_buy'] = realtime_data.buy_orders[i].count
+            askbid_output[i]['best_buy_price'] = realtime_data.buy_orders[i].price
+            askbid_output[i]['best_buy_quantity'] = realtime_data.buy_orders[i].volume
+        except Exception as e:
+            # no order in askbid realtime data so should left empty
+            pass
+        try:
+            askbid_output[i]['no_best_sell'] = realtime_data.sell_orders[i].count
+            askbid_output[i]['best_sell_price'] = realtime_data.sell_orders[i].price
+            askbid_output[i]['best_sell_quantity'] = realtime_data.sell_orders[i].volume
+        except Exception as e:
+            # no order in askbid realtime data so should left empty
+            pass
+    return askbid_output
