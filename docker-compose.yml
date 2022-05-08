@@ -3,6 +3,7 @@ version: '3.7'
 services:
   web:
     build: .
+    restart: always
     container_name: mdp_web
     command: gunicorn mdp.wsgi:application --bind 0.0.0.0:8000
     volumes:
@@ -18,6 +19,7 @@ services:
 
   asgiserver:
     build: .
+    restart: always
     container_name: mdp_asgiserver
     volumes:
       - ./src:/src/
@@ -29,6 +31,7 @@ services:
 
   nginx:
     build: ./docker/nginx
+    restart: always
     container_name: mdp_nginx
     volumes:
       - ./src/static:/src/static/
@@ -40,15 +43,15 @@ services:
 
   redis:
     image: redis:6-alpine
+    restart: always
     container_name: mdp_redis
-    restart: unless-stopped
     ports: [ '127.0.0.1:6379:6379' ]
 
 
   celery:
     build: .
+    restart: always
     container_name: mdp_celery
-    restart: unless-stopped
     command: celery -A mdp worker -l info
     volumes:
       - ./celery/:/var/lib/celery/
@@ -62,8 +65,8 @@ services:
 
   celery-beat:
     build: .
+    restart: always
     container_name: mdp_celery_beat
-    restart: unless-stopped
     command: celery -A mdp beat -l info
     volumes:
       - ./celery/:/var/lib/celery/
