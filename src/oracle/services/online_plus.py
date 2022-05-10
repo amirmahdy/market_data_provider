@@ -9,6 +9,7 @@ from morpheus.services.broadcast import broadcast_market_data
 import base64
 import gzip
 import ast
+
 CONNECTION_URL_PATH = "lightstreamer/create_session.txt"
 BIND_URL_PATH = "lightstreamer/bind_session.txt"
 CONTROL_URL_PATH = "lightstreamer/control.txt"
@@ -438,7 +439,7 @@ class LS_Class:
         local_vals = self.instruments[isin]
 
         data = {
-            "tick_size": local_vals["tick_size"],
+            "tick_size": local_vals.tick_size,
             "bid_ask_first_row": {
                 "best_buy_price": vals["BestBuyLimitPrice_1"],
                 "best_sell_price": vals["BestSellLimitPrice_1"],
@@ -455,8 +456,8 @@ class LS_Class:
             "total_number_of_shares_traded": vals["TotalNumberOfSharesTraded"],
             "closing_price_var": vals["ClosingPriceVarPercent"],
             "closing_price_change": vals["ClosingPriceVar"],
-            "order_max_size": local_vals["order_max_size"],
-            "order_min_size": local_vals["order_min_size"],
+            "order_max_size": local_vals.order_max_size,
+            "order_min_size": local_vals.order_min_size,
             "total_number_of_trades": vals["TotalNumberOfTrades"],
             "total_trade_value": vals["TotalTradeValue"],
             "low_price": vals["LowPrice"],
@@ -465,11 +466,11 @@ class LS_Class:
             "reference_price": vals["YesterdayPrice"],
             "basis_volume": vals["BasisVolume"],
             "percent_of_basis_volume": vals["BasisVolume"],
-            "fa_symbol_30": local_vals["fa_symbol_30"],
-            "en_symbol": local_vals["en_symbol"],
+            "fa_symbol_30": local_vals.fa_symbol_30,
+            "en_symbol": local_vals.en_symbol,
             "first_traded_price": vals["FirstTradedPrice"],
             "market_unit": "ETFStock",
-            "market_code": local_vals["market_code"],
+            "market_code": local_vals.market_code,
             "symbol_group_state": vals["SymbolStateId"],
         }
 
@@ -547,7 +548,3 @@ class LS_Class:
             "data": mydata
         }
         print(data)
-
-        # Cache data
-        InstrumentData.update(isin, ref_group='market', value=data)
-        broadcast_market_data(isin=isin, market_data=InstrumentData.get(isin=isin, ref_group='market'))
