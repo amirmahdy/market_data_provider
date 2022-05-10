@@ -67,7 +67,7 @@ tr_pattern = re.compile(r'<tr>(.*?)</tr>')
 td_pattern = re.compile(r'<td>(.*?)</td>')
 a_pattern = re.compile(r'>(.*?)</a>')
 th_pattern = re.compile(r'<th>([^>]+)</th>')
-tse_id_patttern = re.compile('i=(\d+)')
+tse_id_patttern = re.compile('\d{10,}')
 
 # get_indices_history
 def get_indices_history(date_from = None, date_to = None):
@@ -115,14 +115,17 @@ def get_indices_live():
         if len(cells) > 0:
             title = a_pattern.findall(cells[0])
             id = tse_id_patttern.findall(cells[0])
+            id = id[0] if len(id) > 0  else ""
+            isin_data = [item for item in indices_info if item['tse_id'] == id]
+            isin_data = isin_data[0]["symbol_isin"] if len(isin_data) > 0 else ""
             indices.append({
                 "day_of_event": str(datetime.datetime.today().date())  + 'T' + str(cells[1]) ,
                 "index_changes": ToFloat(cells[3]),
                 "last_index_value": ToFloat(cells[2]),
                 "percent_variation": ToFloat(cells[4]),
                 "symbol_title": title[0] if len(title) > 0  else "",
-                "tse_id": id[0] if len(id) > 0  else "",
+                "tse_id": id,
+                "symbol_isin" : isin_data
             })
-
 
     return indices
