@@ -8,6 +8,7 @@ from oracle.models import Instrument
 from morpheus.services.broadcast import broadcast_market_data
 import base64
 import gzip
+import ast
 CONNECTION_URL_PATH = "lightstreamer/create_session.txt"
 BIND_URL_PATH = "lightstreamer/bind_session.txt"
 CONTROL_URL_PATH = "lightstreamer/control.txt"
@@ -538,11 +539,14 @@ class LS_Class:
         vals = item_update["values"]
         coded_string = vals["data"]
         decoded = base64.b64decode(coded_string)
-        decoded_data = gzip.decompress(decoded)
+        decompressed_data = gzip.decompress(decoded)
+        decompressed_data = decompressed_data.decode("UTF-8")
+        mydata = ast.literal_eval(decompressed_data)
         data = {
             "symbol_isin": isin,
-            "data": decoded_data
+            "data": mydata
         }
+        print(data)
 
         # Cache data
         InstrumentData.update(isin, ref_group='market', value=data)
