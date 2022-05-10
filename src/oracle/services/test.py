@@ -55,8 +55,14 @@ class Test_Service(TestCase):
         res = get_indices_history(date_from = "2022-01-01", date_to = "2022-04-01")
         print(res)
 
+    def test_get_indices_live(self):
+        from oracle.services.tsetmc_indices import get_indices_live
+        res = get_indices_live()
+        print(res)
+
 
 tr = Test_Service()
 tr.test_get_index()
 tr.test_get_live_askbid()
 tr.test_get_history_indices()
+tr.test_get_indices_live()
