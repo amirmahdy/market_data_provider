@@ -45,6 +45,11 @@ class Test_Service(TestCase):
         instruments = Instrument.get_instrument("IRO1BANK0001")
         get_tse_instrument_data(instruments[0].tse_id)
 
+    def test_get_index(self):
+        from pytse_client.download import download_financial_indexes
+        indexs = download_financial_indexes(symbols="all", write_to_csv=True, base_path="hello")
+        print(indexs)
+
     def test_get_history_indices(self):
         from oracle.services.tsetmc_indices import get_indices_history
         res = get_indices_history(date_from = "2022-01-01", date_to = "2022-04-01")
@@ -52,5 +57,6 @@ class Test_Service(TestCase):
 
 
 tr = Test_Service()
+tr.test_get_index()
 tr.test_get_live_askbid()
 tr.test_get_history_indices()

@@ -15,6 +15,7 @@ import os
 import environ
 import datetime
 
+
 SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
 env = environ.Env(
     DEBUG=(bool, False),
@@ -50,7 +51,6 @@ INSTALLED_APPS = [
     'oracle',
     'morpheus'
 ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

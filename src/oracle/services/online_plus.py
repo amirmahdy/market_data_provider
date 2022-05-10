@@ -2,12 +2,12 @@ import threading
 import traceback
 from urllib.request import urlopen as _urlopen
 from urllib.parse import urlparse as parse_url, urljoin, urlencode
-from datetime import datetime
 import time
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.models import Instrument
 from morpheus.services.broadcast import broadcast_market_data
-
+import base64
+import gzip
 CONNECTION_URL_PATH = "lightstreamer/create_session.txt"
 BIND_URL_PATH = "lightstreamer/bind_session.txt"
 CONTROL_URL_PATH = "lightstreamer/control.txt"
@@ -318,15 +318,16 @@ class LS_Class:
             print(traceback.format_exc())
 
         for isin in self.instruments:
-            self.isin_subscribe(isin)
+            self.market_subscribe(isin)
             self.index_subscribe()
+            self.ask_bid_subscribe(isin)
 
     def renew(self):
         self._ls_client.disconnect()
         time.sleep(5)
         self.__init__()
 
-    def isin_subscribe(self, isin):
+    def market_subscribe(self, isin):
         subscription = Subscription(
             mode="MERGE",
             items=[f"{isin.lower()}_lightrlc"],
@@ -400,13 +401,9 @@ class LS_Class:
             adapter="TadbirLightRLC",
         )
 
-        subscription.addlistener(self.on_public_update_rlc)
+        subscription.addlistener(self.on_market_update_rlc)
         sub_key = self._ls_client.subscribe(subscription)
         return sub_key
-
-    def isin_unsubscribe(self, sub_key):
-        self._ls_client.unsubscribe(sub_key)
-        return True
 
     def index_subscribe(self):
         subscription = Subscription(
@@ -434,7 +431,7 @@ class LS_Class:
         res.update(item_update['values'])
         print(res)
 
-    def on_public_update_rlc(self, item_update):
+    def on_market_update_rlc(self, item_update):
         isin = item_update["name"][:12].upper()
         vals = item_update["values"]
         local_vals = self.instruments[isin]
@@ -521,3 +518,32 @@ class LS_Class:
             print(data_indinst)
         except Exception as e:
             pass
+
+    def ask_bid_subscribe(self, isin):
+        subscription = Subscription(
+            mode="MERGE",
+            items=[f"{isin.lower()}_marketdepth"],
+            fields=[
+                "data",
+            ],
+            adapter="MarketDepthAdapter",
+        )
+
+        subscription.addlistener(self.on_ask_bid_update_rlc)
+        sub_key = self._ls_client.subscribe(subscription)
+        return sub_key
+
+    def on_ask_bid_update_rlc(self, item_update):
+        isin = item_update["name"][:12].upper()
+        vals = item_update["values"]
+        coded_string = vals["data"]
+        decoded = base64.b64decode(coded_string)
+        decoded_data = gzip.decompress(decoded)
+        data = {
+            "symbol_isin": isin,
+            "data": decoded_data
+        }
+
+        # Cache data
+        InstrumentData.update(isin, ref_group='market', value=data)
+        broadcast_market_data(isin=isin, market_data=InstrumentData.get(isin=isin, ref_group='market'))
