@@ -4,7 +4,7 @@ import copy
 import re
 from pytse_client.download import download_financial_indexes
 
-BASE_URL = 'http://www.tsetmc.com/tsev2/chart/data/Index.aspx?i={}&t=value'
+BASE_URL = 'http://www.tsetmc.com/Loader.aspx?Partree=151315&Flow=1'
 indices_info= [
     {
         "day_of_event": "2020-11-18T16:29:00",
@@ -61,6 +61,13 @@ indices_info= [
         "tse_id": "32097828799138957"
     },
 ]
+#regex
+float_pattern = re.compile('\d+\.\d+')
+tr_pattern = re.compile(r'<tr>(.*?)</tr>')
+td_pattern = re.compile(r'<td>(.*?)</td>')
+a_pattern = re.compile(r'>(.*?)</a>')
+th_pattern = re.compile(r'<th>([^>]+)</th>')
+tse_id_patttern = re.compile('i=(\d+)')
 
 # get_indices_history
 def get_indices_history(date_from = None, date_to = None):
@@ -81,34 +88,41 @@ def get_indices_history(date_from = None, date_to = None):
 
 
 def ToFloat(item):
-    float_pattern = re.compile('\d+\.\d+')
     float_items = float_pattern.findall(item)
     if len(float_items) > 0:
         return float(float_items[0])
     else:
         return 0
 
+
 # get_live_indices
 def get_indices_live():
-    indices_info_copy = copy.deepcopy(indices_info)
-    for item in indices_info_copy:
-        data_all = requests.get(url=BASE_URL.format(item['tse_id']))
-        item_current_value = str(data_all.content).split(',')
-        if len(item_current_value)>0:
-            try:
-                item_current_value = item_current_value[-1]
-                item_last_value = str(data_all.content).split(',')[-2].split(';')[0]
-                item_current_value = ToFloat(item_current_value)
-                item_last_value = ToFloat(item_last_value)
-            except:
-                item_last_value = 0
-                item_current_value = 0
-            diff  = item_current_value - item_last_value
-            item.update({
-                "day_of_event": datetime.datetime.now(),
-                "index_changes": diff ,
-                "last_index_value": item_current_value,
-                "percent_variation": 100 * diff/(item_last_value) if item_last_value > 0 else 0,
+    template =  {
+        "day_of_event": "2020-11-18T16:10:00",
+        "index_changes": 298.259766,
+        "last_index_value": 16646.92,
+        "symbol_isin": "IRXZXOCI0006",
+        "percent_variation": 1.82436967,
+        "symbol_title": "شاخص كل فرابورس",
+        "tse_id": "32097828799138957"
+    }
+    data_live = requests.get(url=BASE_URL)
+    data_live_processed =  tr_pattern.findall(re.sub('\s+', ' ', data_live.text))
+    indices = []
+
+    for row in data_live_processed:
+        cells = td_pattern.findall(row)
+        if len(cells) > 0:
+            title = a_pattern.findall(cells[0])
+            id = tse_id_patttern.findall(cells[0])
+            indices.append({
+                "day_of_event": str(datetime.datetime.today().date())  + 'T' + str(cells[1]) ,
+                "index_changes": ToFloat(cells[3]),
+                "last_index_value": ToFloat(cells[2]),
+                "percent_variation": ToFloat(cells[4]),
+                "symbol_title": title[0] if len(title) > 0  else "",
+                "tse_id": id[0] if len(id) > 0  else "",
             })
 
-    return indices_info_copy
+
+    return indices
