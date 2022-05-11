@@ -8,6 +8,8 @@ from oracle.models import Instrument
 from morpheus.services.broadcast import broadcast_market_data
 import base64
 import gzip
+import ast
+
 CONNECTION_URL_PATH = "lightstreamer/create_session.txt"
 BIND_URL_PATH = "lightstreamer/bind_session.txt"
 CONTROL_URL_PATH = "lightstreamer/control.txt"
@@ -437,38 +439,38 @@ class LS_Class:
         local_vals = self.instruments[isin]
 
         data = {
-            "tick_size": local_vals["tick_size"],
+            "tick_size": local_vals.tick_size,
             "bid_ask_first_row": {
-                "best_buy_price": vals["BestBuyLimitPrice_1"],
-                "best_sell_price": vals["BestSellLimitPrice_1"],
-                "best_sell_quantity": vals["BestSellLimitQuantity_1"],
-                "best_buy_quantity": vals["BestBuyLimitQuantity_1"],
-                "no_best_buy": vals["NumberOfOrdersAtBestBuy_1"],
-                "no_best_sell": vals["NumberOfOrdersAtBestSell_1"],
+                "best_buy_price": int(vals["BestBuyLimitPrice_1"]),
+                "best_sell_price": int(vals["BestSellLimitPrice_1"]),
+                "best_sell_quantity": int(vals["BestSellLimitQuantity_1"]),
+                "best_buy_quantity": int(vals["BestBuyLimitQuantity_1"]),
+                "no_best_buy": int(vals["NumberOfOrdersAtBestBuy_1"]),
+                "no_best_sell": int(vals["NumberOfOrdersAtBestSell_1"]),
             },
             "symbol_isin": isin,
-            "last_traded_price": vals["LastTradedPrice"],
-            "closing_price": vals["ClosingPrice"],
-            "price_var": vals["LastTradedPriceVarPercent"],
-            "price_change": vals["LastTradedPriceVar"],
-            "total_number_of_shares_traded": vals["TotalNumberOfSharesTraded"],
-            "closing_price_var": vals["ClosingPriceVarPercent"],
-            "closing_price_change": vals["ClosingPriceVar"],
-            "order_max_size": local_vals["order_max_size"],
-            "order_min_size": local_vals["order_min_size"],
-            "total_number_of_trades": vals["TotalNumberOfTrades"],
-            "total_trade_value": vals["TotalTradeValue"],
-            "low_price": vals["LowPrice"],
-            "high_price": vals["HighPrice"],
+            "last_traded_price": int(vals["LastTradedPrice"]),
+            "closing_price": int(vals["ClosingPrice"]),
+            "price_var": float(vals["LastTradedPriceVarPercent"]),
+            "price_change": int(vals["LastTradedPriceVar"]),
+            "total_number_of_shares_traded": int(vals["TotalNumberOfSharesTraded"]),
+            "closing_price_var": float(vals["ClosingPriceVarPercent"]),
+            "closing_price_change": int(vals["ClosingPriceVar"]),
+            "order_max_size": int(local_vals.order_max_size),
+            "order_min_size": int(local_vals.order_min_size),
+            "total_number_of_trades": int(vals["TotalNumberOfTrades"]),
+            "total_trade_value": int(vals["TotalTradeValue"]),
+            "low_price": int(vals["LowPrice"]),
+            "high_price": int(vals["HighPrice"]),
             "trade_date": vals["TradeDate"],
-            "reference_price": vals["YesterdayPrice"],
-            "basis_volume": vals["BasisVolume"],
-            "percent_of_basis_volume": vals["BasisVolume"],
-            "fa_symbol_30": local_vals["fa_symbol_30"],
-            "en_symbol": local_vals["en_symbol"],
-            "first_traded_price": vals["FirstTradedPrice"],
+            "reference_price": int(vals["YesterdayPrice"]),
+            "basis_volume": int(vals["BasisVolume"]),
+            "percent_of_basis_volume": float(vals["BasisVolume"]),
+            "fa_symbol_30": local_vals.fa_symbol_30,
+            "en_symbol": local_vals.en_symbol,
+            "first_traded_price": int(vals["FirstTradedPrice"]),
             "market_unit": "ETFStock",
-            "market_code": local_vals["market_code"],
+            "market_code": local_vals.market_code,
             "symbol_group_state": vals["SymbolStateId"],
         }
 
@@ -538,12 +540,11 @@ class LS_Class:
         vals = item_update["values"]
         coded_string = vals["data"]
         decoded = base64.b64decode(coded_string)
-        decoded_data = gzip.decompress(decoded)
+        decompressed_data = gzip.decompress(decoded)
+        decompressed_data = decompressed_data.decode("UTF-8")
+        mydata = ast.literal_eval(decompressed_data)
         data = {
             "symbol_isin": isin,
-            "data": decoded_data
+            "data": mydata
         }
-
-        # Cache data
-        InstrumentData.update(isin, ref_group='market', value=data)
-        broadcast_market_data(isin=isin, market_data=InstrumentData.get(isin=isin, ref_group='market'))
+        print(data)
