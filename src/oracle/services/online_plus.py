@@ -5,7 +5,7 @@ from urllib.parse import urlparse as parse_url, urljoin, urlencode
 import time
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.models import Instrument
-from morpheus.services.broadcast import broadcast_market_data
+from morpheus.services.broadcast import broadcast_market_data, broadcast_askbid_data
 import base64
 import gzip
 import ast
@@ -322,7 +322,7 @@ class LS_Class:
         for isin in self.instruments:
             self.market_subscribe(isin)
             self.index_subscribe()
-            self.ask_bid_subscribe(isin)
+            self.askbid_subscribe(isin)
 
     def renew(self):
         self._ls_client.disconnect()
@@ -499,7 +499,10 @@ class LS_Class:
                 }
             )
 
-        print(data_askbid)
+        # Cache data
+        InstrumentData.update(isin, ref_group='askbid', value=data)
+        broadcast_askbid_data(isin=isin, askbid_data=InstrumentData.get(isin=isin, ref_group='askbid'))
+
         try:
             data_indinst = {
                 "symbol_isin": isin,
@@ -521,7 +524,7 @@ class LS_Class:
         except Exception as e:
             pass
 
-    def ask_bid_subscribe(self, isin):
+    def askbid_subscribe(self, isin):
         subscription = Subscription(
             mode="MERGE",
             items=[f"{isin.lower()}_marketdepth"],
@@ -531,20 +534,17 @@ class LS_Class:
             adapter="MarketDepthAdapter",
         )
 
-        subscription.addlistener(self.on_ask_bid_update_rlc)
+        subscription.addlistener(self.on_full_askbid_update_rlc)
         sub_key = self._ls_client.subscribe(subscription)
         return sub_key
 
-    def on_ask_bid_update_rlc(self, item_update):
+    def on_full_askbid_update_rlc(self, item_update):
         isin = item_update["name"][:12].upper()
         vals = item_update["values"]
         coded_string = vals["data"]
         decoded = base64.b64decode(coded_string)
         decompressed_data = gzip.decompress(decoded)
         decompressed_data = decompressed_data.decode("UTF-8")
-        mydata = ast.literal_eval(decompressed_data)
-        data = {
-            "symbol_isin": isin,
-            "data": mydata
-        }
-        print(data)
+        data = ast.literal_eval(decompressed_data)
+
+        InstrumentData.update(isin, ref_group='full_askbid', value=data)
