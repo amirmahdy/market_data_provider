@@ -118,14 +118,15 @@ def get_indices_live():
             id = id[0] if len(id) > 0  else ""
             isin_data = [item for item in indices_info if item['tse_id'] == id]
             isin_data = isin_data[0]["symbol_isin"] if len(isin_data) > 0 else ""
-            indices.append({
-                "day_of_event": str(datetime.datetime.today().date())  + 'T' + str(cells[1]) ,
-                "index_changes": ToFloat(cells[3]),
-                "last_index_value": ToFloat(cells[2]),
-                "percent_variation": ToFloat(cells[4]),
-                "symbol_title": title[0] if len(title) > 0  else "",
-                "tse_id": id,
-                "symbol_isin" : isin_data
-            })
+            if isin_data != "":
+                indices.append({
+                    "day_of_event": str(datetime.datetime.today().date())  + 'T' + str(cells[1]) ,
+                    "index_changes": ToFloat(cells[3]),
+                    "last_index_value": ToFloat(cells[2]),
+                    "percent_variation": ToFloat(cells[4]),
+                    "symbol_title": title[0] if len(title) > 0  else "",
+                    "tse_id": id,
+                    "symbol_isin" : isin_data
+                })
 
     return indices
