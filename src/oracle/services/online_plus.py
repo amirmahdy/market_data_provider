@@ -481,8 +481,8 @@ class LS_Class:
         # Cache data
         InstrumentData.update(isin, ref_group='market', value=data)
         broadcast_market_data(isin=isin, market_data=InstrumentData.get(isin=isin, ref_group='market'))
-        data_askbid = []
 
+        data_askbid = []
         for i in range(5):
             data_askbid.append(
                 {
@@ -504,7 +504,7 @@ class LS_Class:
             )
 
         # Cache data
-        InstrumentData.update(isin, ref_group='askbid', value=data)
+        InstrumentData.update(isin, ref_group='askbid', value=data_askbid)
         broadcast_askbid_data(isin=isin, askbid_data=InstrumentData.get(isin=isin, ref_group='askbid'))
 
         try:
