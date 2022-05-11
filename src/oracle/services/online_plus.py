@@ -434,7 +434,7 @@ class LS_Class:
         res.update(item_update['values'])
         # Cache data
         InstrumentData.update(res["SymbolISIN"], 'index', res)
-        broadcast_indices_data(index_data=InstrumentData.get(res["SymbolISIN"], ref_group='index'))
+        broadcast_indices_data(res["SymbolISIN"], index_data=InstrumentData.get(res["SymbolISIN"], ref_group='index'))
         print(res)
 
     def on_market_update_rlc(self, item_update):
