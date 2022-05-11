@@ -234,7 +234,7 @@ class LSClient(object):
                 self._subscriptions[table].notifyupdate(item)
             else:
                 print("No subscription found!")
-        except Exception:
+        except Exception as e:
             print(traceback.format_exc())
 
     def _receive(self):
