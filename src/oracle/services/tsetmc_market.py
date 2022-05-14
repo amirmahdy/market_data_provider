@@ -2,15 +2,10 @@ from oracle.models import Instrument
 from pytse_client import Ticker
 
 
-def get_tse_instrument_data(tse_isin: str):
-    ticker = Ticker(symbol='', index=tse_isin)
-    symbol_isin = None
-    try:
-        symbol_isin = Instrument.objects.get(tse_id=tse_isin).isin
-    except:
-        pass
+def get_tse_instrument_data(instrument):
+    ticker = Ticker(symbol='', index=instrument.tse_id)
     instrument_data = {
-        "symbol_isin": symbol_isin,
+        "symbol_isin": instrument.isin,
         "last_traded_price": ticker.last_price,
         'high_allowed_price': ticker.sta_max,
         'low_allowed_price': ticker.sta_min,
@@ -23,6 +18,15 @@ def get_tse_instrument_data(tse_isin: str):
         'closing_price': ticker.adj_close,
         "reference_price": ticker.yesterday_price,
         "market_status": ticker.state,
+        "tick_size": instrument.tick_size,
+        "price_var": float("%.2f" % (100 * (ticker.last_price - ticker.yesterday_price) / ticker.yesterday_price)),
+        "price_change": int(ticker.last_price - ticker.yesterday_price),
+        "closing_price_var": float(
+            "%.2f" % (100 * (ticker.adj_close - ticker.yesterday_price) / ticker.yesterday_price)),
+        "closing_price_change": int(ticker.adj_close - ticker.yesterday_price),
+        "max_quantity_order": int(instrument.order_max_size),
+        "min_quantity_order": int(instrument.order_min_size),
+        "symbol_fa": instrument.symbol,
     }
 
     return instrument_data

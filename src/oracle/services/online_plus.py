@@ -440,10 +440,7 @@ class LS_Class:
     def on_market_update_rlc(self, item_update):
         isin = item_update["name"][:12].upper()
         vals = item_update["values"]
-        local_vals = self.instruments[isin]
-
         data = {
-            "tick_size": local_vals.tick_size,
             "bid_ask_first_row": {
                 "best_buy_price": int(vals["BestBuyLimitPrice_1"]),
                 "best_sell_price": int(vals["BestSellLimitPrice_1"]),
@@ -460,8 +457,6 @@ class LS_Class:
             "total_number_of_shares_traded": int(vals["TotalNumberOfSharesTraded"]),
             "closing_price_var": float(vals["ClosingPriceVarPercent"]),
             "closing_price_change": int(vals["ClosingPriceVar"]),
-            "order_max_size": int(local_vals.order_max_size),
-            "order_min_size": int(local_vals.order_min_size),
             "total_number_of_trades": int(vals["TotalNumberOfTrades"]),
             "total_trade_value": int(vals["TotalTradeValue"]),
             "low_price": int(vals["LowPrice"]),
@@ -470,11 +465,7 @@ class LS_Class:
             "reference_price": int(vals["YesterdayPrice"]),
             "basis_volume": int(vals["BasisVolume"]),
             "percent_of_basis_volume": float(vals["BasisVolume"]),
-            "fa_symbol_30": local_vals.fa_symbol_30,
-            "en_symbol": local_vals.en_symbol,
             "first_traded_price": int(vals["FirstTradedPrice"]),
-            "market_unit": "ETFStock",
-            "market_code": local_vals.market_code,
             "symbol_group_state": vals["SymbolStateId"],
         }
 
@@ -486,20 +477,12 @@ class LS_Class:
         for i in range(5):
             data_askbid.append(
                 {
-                    "order_side": "SELL",
-                    "price": vals[f"BestSellLimitPrice_{i + 1}"],
-                    "quantity": vals[f"BestSellLimitQuantity_{i + 1}"],
-                    "count": vals[f"NumberOfOrdersAtBestSell_{i + 1}"],
-                    "type": "MARKET",
-                }
-            )
-            data_askbid.append(
-                {
-                    "order_side": "BUY",
-                    "price": vals[f"BestBuyLimitPrice_{i + 1}"],
-                    "quantity": vals[f"BestBuyLimitQuantity_{i + 1}"],
-                    "count": vals[f"NumberOfOrdersAtBestBuy_{i + 1}"],
-                    "type": "MARKET",
+                    "best_sell_price": vals[f"BestSellLimitPrice_{i + 1}"],
+                    "best_sell_quantity": vals[f"BestSellLimitQuantity_{i + 1}"],
+                    "no_best_sell": vals[f"NumberOfOrdersAtBestSell_{i + 1}"],
+                    "best_buy_price": vals[f"BestBuyLimitPrice_{i + 1}"],
+                    "best_buy_quantity": vals[f"BestBuyLimitQuantity_{i + 1}"],
+                    "no_best_buy": vals[f"NumberOfOrdersAtBestBuy_{i + 1}"],
                 }
             )
 
