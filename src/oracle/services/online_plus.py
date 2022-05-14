@@ -436,10 +436,7 @@ class LS_Class:
     def on_market_update_rlc(self, item_update):
         isin = item_update["name"][:12].upper()
         vals = item_update["values"]
-        local_vals = self.instruments[isin]
-
         data = {
-            "tick_size": local_vals.tick_size,
             "bid_ask_first_row": {
                 "best_buy_price": int(vals["BestBuyLimitPrice_1"]),
                 "best_sell_price": int(vals["BestSellLimitPrice_1"]),
@@ -456,8 +453,6 @@ class LS_Class:
             "total_number_of_shares_traded": int(vals["TotalNumberOfSharesTraded"]),
             "closing_price_var": float(vals["ClosingPriceVarPercent"]),
             "closing_price_change": int(vals["ClosingPriceVar"]),
-            "max_quantity_order": int(local_vals.order_max_size),
-            "min_quantity_order": int(local_vals.order_min_size),
             "total_number_of_trades": int(vals["TotalNumberOfTrades"]),
             "total_trade_value": int(vals["TotalTradeValue"]),
             "low_price": int(vals["LowPrice"]),
@@ -467,11 +462,7 @@ class LS_Class:
             "basis_volume": int(vals["BasisVolume"]),
             "percent_of_basis_volume": float(vals["BasisVolume"]),
             "first_traded_price": int(vals["FirstTradedPrice"]),
-            "market_unit": "ETFStock",
-            "market_code": local_vals.market_code,
             "symbol_group_state": vals["SymbolStateId"],
-            "symbol_fa": local_vals.symbol,
-
         }
 
         # Cache data
