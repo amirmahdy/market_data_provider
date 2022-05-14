@@ -21,6 +21,9 @@ def get_tse_instrument_data(instrument):
         "tick_size": instrument.tick_size,
         "price_var": float("%.2f" % (100 * (ticker.last_price - ticker.yesterday_price) / ticker.yesterday_price)),
         "price_change": int(ticker.last_price - ticker.yesterday_price),
+        "closing_price_var": float(
+            "%.2f" % (100 * (ticker.adj_close - ticker.yesterday_price) / ticker.yesterday_price)),
+        "closing_price_change": int(ticker.adj_close - ticker.yesterday_price),
         "max_quantity_order": int(instrument.order_max_size),
         "min_quantity_order": int(instrument.order_min_size),
         "symbol_fa": instrument.symbol,
