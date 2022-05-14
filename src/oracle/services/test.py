@@ -38,7 +38,6 @@ class Test_Service(TestCase):
         res = get_live_askbid(instruments[0].tse_id)
         print(res)
 
-
     def test_get_tse_instrument_data(self):
         from oracle.models import Instrument
         from oracle.services.tsetmc_market import get_tse_instrument_data
@@ -50,6 +49,12 @@ class Test_Service(TestCase):
         indexs = download_financial_indexes(symbols="all", write_to_csv=True, base_path="hello")
         print(indexs)
 
+    def test_get_tse_instrument_data(self):
+        from oracle.models import Instrument
+        instruments = Instrument.get_instrument("IRO1BANK0001")[0]
+        from oracle.services.tsetmc_market import get_tse_instrument_data
+        res = get_tse_instrument_data(instruments)
+        print(res)
 
 tr = Test_Service()
-tr.test_get_index()
+tr.test_get_tse_instrument_data()
