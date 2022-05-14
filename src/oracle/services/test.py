@@ -51,10 +51,11 @@ class Test_Service(TestCase):
 
     def test_get_tse_instrument_data(self):
         from oracle.models import Instrument
-        instruments = Instrument.get_instrument("IRO1BANK0001")[0]
+        instruments = Instrument.get_instrument("IRO1SMAZ0001")[0]
         from oracle.services.tsetmc_market import get_tse_instrument_data
         res = get_tse_instrument_data(instruments)
         print(res)
 
+
 tr = Test_Service()
-tr.test_get_tse_instrument_data()
+tr.test_get_live_askbid()
