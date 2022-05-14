@@ -473,20 +473,12 @@ class LS_Class:
         for i in range(5):
             data_askbid.append(
                 {
-                    "order_side": "SELL",
-                    "price": vals[f"BestSellLimitPrice_{i + 1}"],
-                    "quantity": vals[f"BestSellLimitQuantity_{i + 1}"],
-                    "count": vals[f"NumberOfOrdersAtBestSell_{i + 1}"],
-                    "type": "MARKET",
-                }
-            )
-            data_askbid.append(
-                {
-                    "order_side": "BUY",
-                    "price": vals[f"BestBuyLimitPrice_{i + 1}"],
-                    "quantity": vals[f"BestBuyLimitQuantity_{i + 1}"],
-                    "count": vals[f"NumberOfOrdersAtBestBuy_{i + 1}"],
-                    "type": "MARKET",
+                    "best_sell_price": vals[f"BestSellLimitPrice_{i + 1}"],
+                    "best_sell_quantity": vals[f"BestSellLimitQuantity_{i + 1}"],
+                    "no_best_sell": vals[f"NumberOfOrdersAtBestSell_{i + 1}"],
+                    "best_buy_price": vals[f"BestBuyLimitPrice_{i + 1}"],
+                    "best_buy_quantity": vals[f"BestBuyLimitQuantity_{i + 1}"],
+                    "no_best_buy": vals[f"NumberOfOrdersAtBestBuy_{i + 1}"],
                 }
             )
 
