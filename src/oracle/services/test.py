@@ -5,9 +5,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mdp.settings")
 django.setup()
 
 
-class Test_Service(TestCase):
+class TestService(TestCase):
 
-    def test_askbid(self):
+    def test_trades(self):
         from oracle.data_type.instrument_market_data import InstrumentData
         from oracle.services.tsetmc_trades import get_trades
         res = get_trades('48010225447410247', '20220101')
@@ -60,8 +60,16 @@ class Test_Service(TestCase):
         res = get_indices_live()
         print(res)
 
+    def test_get_tse_instrument_data(self):
+        from oracle.models import Instrument
+        instruments = Instrument.get_instrument("IRO1SMAZ0001")[0]
+        from oracle.services.tsetmc_market import get_tse_instrument_data
+        res = get_tse_instrument_data(instruments)
+        print(res)
+
 
 tr = Test_Service()
+tr.test_get_live_askbid()
 tr.test_get_index()
 tr.test_get_live_askbid()
 tr.test_get_history_indices()

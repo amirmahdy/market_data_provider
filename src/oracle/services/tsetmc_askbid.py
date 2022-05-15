@@ -60,16 +60,16 @@ def get_live_askbid(tse_id: str):
     for i in range(5):
         askbid_output.append(copy.deepcopy(empty_askbid_row))
         try:
-            askbid_output[i]['no_best_buy'] = realtime_data.buy_orders[i].count
-            askbid_output[i]['best_buy_price'] = realtime_data.buy_orders[i].price
-            askbid_output[i]['best_buy_quantity'] = realtime_data.buy_orders[i].volume
+            askbid_output[i]['no_best_buy'] = int(realtime_data.buy_orders[i].count)
+            askbid_output[i]['best_buy_price'] = int(realtime_data.buy_orders[i].price)
+            askbid_output[i]['best_buy_quantity'] = int(realtime_data.buy_orders[i].volume)
         except Exception as e:
             # no order in askbid realtime data so should left empty
             pass
         try:
-            askbid_output[i]['no_best_sell'] = realtime_data.sell_orders[i].count
-            askbid_output[i]['best_sell_price'] = realtime_data.sell_orders[i].price
-            askbid_output[i]['best_sell_quantity'] = realtime_data.sell_orders[i].volume
+            askbid_output[i]['no_best_sell'] = int(realtime_data.sell_orders[i].count)
+            askbid_output[i]['best_sell_price'] = int(realtime_data.sell_orders[i].price)
+            askbid_output[i]['best_sell_quantity'] = int(realtime_data.sell_orders[i].volume)
         except Exception as e:
             # no order in askbid realtime data so should left empty
             pass
