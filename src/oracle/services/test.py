@@ -5,9 +5,9 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mdp.settings")
 django.setup()
 
 
-class Test_Service(TestCase):
+class TestService(TestCase):
 
-    def test_askbid(self):
+    def test_trades(self):
         from oracle.data_type.instrument_market_data import InstrumentData
         from oracle.services.tsetmc_trades import get_trades
         res = get_trades('48010225447410247', '20220101')
