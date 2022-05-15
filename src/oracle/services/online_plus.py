@@ -234,7 +234,7 @@ class LSClient(object):
                 self._subscriptions[table].notifyupdate(item)
             else:
                 print("No subscription found!")
-        except Exception as e:
+        except Exception:
             print(traceback.format_exc())
 
     def _receive(self):
@@ -323,7 +323,6 @@ class LS_Class:
             self.market_subscribe(isin)
             self.index_subscribe()
             self.askbid_subscribe(isin)
-
 
     def renew(self):
         self._ls_client.disconnect()
@@ -535,4 +534,3 @@ class LS_Class:
         data = ast.literal_eval(decompressed_data)
 
         InstrumentData.update(isin, ref_group='full_askbid', value=data)
-
