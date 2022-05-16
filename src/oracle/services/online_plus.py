@@ -461,7 +461,6 @@ class LS_Class:
             "low_price": int(vals["LowPrice"]),
             "high_price": int(vals["HighPrice"]),
             "trade_date": vals["TradeDate"],
-            "reference_price": int(vals["YesterdayPrice"]),
             "basis_volume": int(vals["BasisVolume"]),
             "percent_of_basis_volume": float(vals["BasisVolume"]),
             "first_traded_price": int(vals["FirstTradedPrice"]),
