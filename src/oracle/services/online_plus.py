@@ -5,7 +5,7 @@ from urllib.parse import urlparse as parse_url, urljoin, urlencode
 import time
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.models import Instrument
-from morpheus.services.broadcast import broadcast_market_data, broadcast_askbid_data
+from morpheus.services.broadcast import broadcast_market_data, broadcast_askbid_data, broadcast_indices_data
 import base64
 import gzip
 import ast
@@ -431,6 +431,9 @@ class LS_Class:
     def on_index_update_rlc(self, item_update):
         res = {"SymbolISIN": item_update['name'].upper()[:12], }
         res.update(item_update['values'])
+        # Cache data
+        InstrumentData.update(res["SymbolISIN"], 'index', res)
+        broadcast_indices_data(res["SymbolISIN"], index_data=InstrumentData.get(res["SymbolISIN"], ref_group='index'))
         print(res)
 
     def on_market_update_rlc(self, item_update):

@@ -18,3 +18,8 @@ def broadcast_askbid_data(isin: str, askbid_data):
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(f"askbid_{isin}", {
         "type": "send_data", "msg_type": "askbid_data", "data": askbid_data})
+
+def broadcast_indices_data(symbol_isin: str, index_data):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(f"index_{symbol_isin}", {
+        "type": "send_data", "msg_type": "index_data", "data": index_data})

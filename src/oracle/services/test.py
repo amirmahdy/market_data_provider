@@ -38,6 +38,7 @@ class TestService(TestCase):
         res = get_live_askbid(instruments[0].tse_id)
         print(res)
 
+
     def test_get_tse_instrument_data(self):
         from oracle.models import Instrument
         from oracle.services.tsetmc_market import get_tse_instrument_data
@@ -56,6 +57,28 @@ class TestService(TestCase):
         res = get_tse_instrument_data(instruments)
         print(res)
 
+    def test_get_history_indices(self):
+        from oracle.services.tsetmc_indices import get_indices_history
+        res = get_indices_history(date_from = "2022-01-01", date_to = "2022-04-01")
+        print(res)
+
+    def test_get_indices_live(self):
+        from oracle.services.tsetmc_indices import get_indices_live
+        res = get_indices_live()
+        print(res)
+
+    def test_get_tse_instrument_data(self):
+        from oracle.models import Instrument
+        instruments = Instrument.get_instrument("IRO1SMAZ0001")[0]
+        from oracle.services.tsetmc_market import get_tse_instrument_data
+        res = get_tse_instrument_data(instruments)
+        print(res)
+
 
 tr = Test_Service()
+tr.test_get_live_askbid()
+tr.test_get_index()
+tr.test_get_live_askbid()
+tr.test_get_history_indices()
+tr.test_get_indices_live()
 tr.test_get_live_askbid()
