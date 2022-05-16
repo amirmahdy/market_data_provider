@@ -5,7 +5,7 @@ from urllib.parse import urlparse as parse_url, urljoin, urlencode
 import time
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.models import Instrument
-from morpheus.services.broadcast import broadcast_market_data, broadcast_askbid_data, broadcast_indices_data
+from morpheus.services.broadcast import broadcast_market_data, broadcast_askbid_data, broadcast_indices_data, broadcast_indinst_data
 import base64
 import gzip
 import ast
@@ -507,6 +507,10 @@ class LS_Class:
             }
 
             print(data_indinst)
+            # Cache data_indinst
+            InstrumentData.update(isin, ref_group='indinst', value=data_indinst)
+            broadcast_indinst_data(isin=isin, indinst_data=InstrumentData.get(isin=isin, ref_group='indinst'))
+
         except Exception as e:
             pass
 

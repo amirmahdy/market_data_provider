@@ -23,3 +23,8 @@ def broadcast_indices_data(symbol_isin: str, index_data):
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(f"index_{symbol_isin}", {
         "type": "send_data", "msg_type": "index_data", "data": index_data})
+
+def broadcast_indinst_data(isin: str, indinst_data):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(f"indinst_{isin}", {
+        "type": "send_data", "msg_type": "indinst_data", "data": indinst_data})
