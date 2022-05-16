@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
-from oracle.serializers import InstrumentSerializer
+from oracle.serializers import InstrumentDateSerializer
 from oracle.data_type.instrument_market_data import InstrumentData
 from rest_framework import status
 from drf_yasg import openapi
@@ -16,7 +16,7 @@ date_param = openapi.Parameter('date', openapi.IN_QUERY, description="Date Param
 
 
 class TradeDataAPIView(GenericAPIView):
-    serializer_class = InstrumentSerializer
+    serializer_class = InstrumentDateSerializer
 
     @swagger_auto_schema(methods=["get"], manual_parameters=[isin_param, date_param])
     @action(detail=False, methods=["get"])
@@ -26,7 +26,7 @@ class TradeDataAPIView(GenericAPIView):
         input   -- Date
         output  -- Trades History
         """
-        serializer = InstrumentSerializer(data=request.GET)
+        serializer = self.serializer_class(data=request.GET)
         if serializer.is_valid():
             data = serializer.validated_data
             if data.get("date") is None:
