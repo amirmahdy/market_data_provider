@@ -23,15 +23,14 @@ def market_data_update():
     try:
         instruments = Instrument.get_instruments()
         for instrument in instruments:
-            res = get_tse_instrument_data(instrument.tse_id)
+            res = get_tse_instrument_data(instrument)
             InstrumentData.update(instrument.isin, "market", res)
 
             # update market status
             if res['market_status'] != instrument.market_status:
                 instrument.market_status = res['market_status']
                 instrument.save()
-                broadcast_trigger(
-                    isin=instrument.isin, data={'trigger_type': 'instrument_market_status_change'})
+                broadcast_trigger(isin=instrument.isin, data={'trigger_type': 'instrument_market_status_change'})
                 broadcast_market_data(isin=instrument.isin,
                                       market_data=InstrumentData.get(isin=instrument.isin, ref_group='market'))
 
@@ -119,7 +118,7 @@ def check_queue_condition():
     try:
         instruments = Instrument.get_instruments()
         for instrument in instruments:
-            check_instrument_queue_status(instrument.isin)
+            check_instrument_queue_status(instrument)
     except Exception as e:
         print(e)
         return e

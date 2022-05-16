@@ -43,7 +43,7 @@ class TestService(TestCase):
         from oracle.models import Instrument
         from oracle.services.tsetmc_market import get_tse_instrument_data
         instruments = Instrument.get_instrument("IRO1BANK0001")
-        get_tse_instrument_data(instruments[0].tse_id)
+        get_tse_instrument_data(instruments[0])
 
     def test_get_index(self):
         from pytse_client.download import download_financial_indexes
