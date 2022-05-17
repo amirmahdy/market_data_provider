@@ -7,8 +7,9 @@ class MDPConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         await self.accept()
 
-    async def disconnect(self):
-        pass
+    async def disconnect(self, close_code):
+        for group in self.groups:
+            await self.channel_layer.group_discard(group, self.channel_name)
 
     async def receive_json(self, content):
         try:
