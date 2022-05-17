@@ -5,7 +5,7 @@ import re
 from pytse_client.download import download_financial_indexes
 
 BASE_URL = 'http://www.tsetmc.com/Loader.aspx?Partree=151315&Flow=1'
-indices_info= [
+indices_info = [
     {
         "day_of_event": "2020-11-18T16:29:00",
         "index_changes": 2979.07031,
@@ -61,7 +61,7 @@ indices_info= [
         "tse_id": "32097828799138957"
     },
 ]
-#regex
+# regex
 float_pattern = re.compile('\d+\.\d+')
 tr_pattern = re.compile(r'<tr>(.*?)</tr>')
 td_pattern = re.compile(r'<td>(.*?)</td>')
@@ -69,8 +69,9 @@ a_pattern = re.compile(r'>(.*?)</a>')
 th_pattern = re.compile(r'<th>([^>]+)</th>')
 tse_id_patttern = re.compile('\d{10,}')
 
+
 # get_indices_history
-def get_indices_history(date_from = None, date_to = None):
+def get_indices_history(date_from=None, date_to=None):
     indices_raw = download_financial_indexes(symbols="all")
     indices = []
     for key, value in indices_raw.items():
@@ -79,8 +80,8 @@ def get_indices_history(date_from = None, date_to = None):
         if date_to:
             value = value[value['date'] <= date_to]
         indices.append({
-            "title":key,
-            "dates" : list(value['date']),
+            "title": key,
+            "dates": list(value['date']),
             "values": list(value['value'])
         })
 
@@ -97,7 +98,7 @@ def ToFloat(item):
 
 # get_live_indices
 def get_indices_live():
-    template =  {
+    template = {
         "day_of_event": "2020-11-18T16:10:00",
         "index_changes": 298.259766,
         "last_index_value": 16646.92,
@@ -107,7 +108,7 @@ def get_indices_live():
         "tse_id": "32097828799138957"
     }
     data_live = requests.get(url=BASE_URL)
-    data_live_processed =  tr_pattern.findall(re.sub('\s+', ' ', data_live.text))
+    data_live_processed = tr_pattern.findall(re.sub('\s+', ' ', data_live.text))
     indices = []
 
     for row in data_live_processed:
@@ -115,18 +116,18 @@ def get_indices_live():
         if len(cells) > 0:
             title = a_pattern.findall(cells[0])
             id = tse_id_patttern.findall(cells[0])
-            id = id[0] if len(id) > 0  else ""
+            id = id[0] if len(id) > 0 else ""
             isin_data = [item for item in indices_info if item['tse_id'] == id]
             isin_data = isin_data[0]["symbol_isin"] if len(isin_data) > 0 else ""
             if isin_data != "":
                 indices.append({
-                    "day_of_event": str(datetime.datetime.today().date())  + 'T' + str(cells[1]) ,
+                    "day_of_event": str(datetime.datetime.today().date()) + 'T' + str(cells[1]),
                     "index_changes": ToFloat(cells[3]),
                     "last_index_value": ToFloat(cells[2]),
                     "percent_variation": ToFloat(cells[4]),
-                    "symbol_title": title[0] if len(title) > 0  else "",
+                    "symbol_title": title[0] if len(title) > 0 else "",
                     "tse_id": id,
-                    "symbol_isin" : isin_data
+                    "symbol_isin": isin_data
                 })
 
     return indices
