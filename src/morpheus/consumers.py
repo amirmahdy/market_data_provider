@@ -26,7 +26,7 @@ class MDPConsumer(AsyncJsonWebsocketConsumer):
             )
 
     async def send_data(self, event):
-        await self.send_json({"msg_type": event['msg_type'], "data": event['data']})
+        await self.send_json(event)
 
     async def add_to_group(self, group_name: str):
         await self.channel_layer.group_add(group_name, self.channel_name)
