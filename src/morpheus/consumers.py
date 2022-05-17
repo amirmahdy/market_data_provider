@@ -73,10 +73,7 @@ class MDPConsumer(AsyncJsonWebsocketConsumer):
                 await self.subscribe_to_topic(
                     f"askbid_{isin}")
         elif request["topic"] == "index":
-            isins = request["isins"]
-            for isin in isins:
-                await self.subscribe_to_topic(
-                    f"index_{isin}")
+            await self.subscribe_to_topic(f"index")
 
     async def handle_unsubscription(self, request):
         if request["topic"] == "trigger":
@@ -95,7 +92,4 @@ class MDPConsumer(AsyncJsonWebsocketConsumer):
                 await self.unsubscribe_to_topic(
                     f"askbid_{isin}")
         elif request["topic"] == "index":
-            isins = request["isins"]
-            for isin in isins:
-                await self.unsubscribe_to_topic(
-                    f"index_{isin}")
+            await self.unsubscribe_to_topic(f"index")
