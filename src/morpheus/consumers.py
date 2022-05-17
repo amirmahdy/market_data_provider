@@ -60,18 +60,15 @@ class MDPConsumer(AsyncJsonWebsocketConsumer):
         if request["topic"] == "trigger":
             isins = request["isins"]
             for isin in isins:
-                await self.subscribe_to_topic(
-                    f"trigger_{isin}")
+                await self.subscribe_to_topic(f"trigger_{isin}")
         elif request["topic"] == "market":
             isins = request["isins"]
             for isin in isins:
-                await self.subscribe_to_topic(
-                    f"market_{isin}")
+                await self.subscribe_to_topic(f"market_{isin}")
         elif request["topic"] == "askbid":
             isins = request["isins"]
             for isin in isins:
-                await self.subscribe_to_topic(
-                    f"askbid_{isin}")
+                await self.subscribe_to_topic(f"askbid_{isin}")
         elif request["topic"] == "index":
             await self.subscribe_to_topic(f"index")
 
@@ -79,17 +76,14 @@ class MDPConsumer(AsyncJsonWebsocketConsumer):
         if request["topic"] == "trigger":
             isins = request["isins"]
             for isin in isins:
-                await self.unsubscribe_to_topic(
-                    f"trigger_{isin}")
+                await self.unsubscribe_to_topic(f"trigger_{isin}")
         elif request["topic"] == "market":
             isins = request["isins"]
             for isin in isins:
-                await self.unsubscribe_to_topic(
-                    f"market_{isin}")
+                await self.unsubscribe_to_topic(f"market_{isin}")
         elif request["topic"] == "askbid":
             isins = request["isins"]
             for isin in isins:
-                await self.unsubscribe_to_topic(
-                    f"askbid_{isin}")
+                await self.unsubscribe_to_topic(f"askbid_{isin}")
         elif request["topic"] == "index":
             await self.unsubscribe_to_topic(f"index")
