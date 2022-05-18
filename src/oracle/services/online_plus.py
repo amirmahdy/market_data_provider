@@ -449,7 +449,6 @@ class LS_Class:
                 "no_best_buy": int(vals["NumberOfOrdersAtBestBuy_1"]),
                 "no_best_sell": int(vals["NumberOfOrdersAtBestSell_1"]),
             },
-            "symbol_isin": isin,
             "last_traded_price": int(vals["LastTradedPrice"]),
             "closing_price": int(vals["ClosingPrice"]),
             "price_var": float(vals["LastTradedPriceVarPercent"]),
@@ -462,10 +461,6 @@ class LS_Class:
             "low_price": int(vals["LowPrice"]),
             "high_price": int(vals["HighPrice"]),
             "trade_date": vals["TradeDate"],
-            "basis_volume": int(vals["BasisVolume"]),
-            "percent_of_basis_volume": float(vals["BasisVolume"]),
-            "first_traded_price": int(vals["FirstTradedPrice"]),
-            "symbol_group_state": vals["SymbolStateId"],
         }
 
         # Cache data

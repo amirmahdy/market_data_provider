@@ -13,7 +13,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'tsetmc_market_data_update': {
         'task': 'tsetmc_market_data_update',
-        'schedule': crontab(minute='*/1'),
+        'schedule': crontab(hour='6', minute='0'),
         'args': ()
     },
     'tsetmc_askbid_yesterday_update': {
