@@ -24,6 +24,6 @@ def initial_setup():
 
     instrument_indices = get_indices_live()
     for index in instrument_indices:
-        InstrumentData.update(index['symbol_isin'], 'index', index)
+        InstrumentData.update(index['SymbolISIN'], 'index', index)
 
 
