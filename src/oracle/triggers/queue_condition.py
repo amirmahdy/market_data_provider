@@ -19,4 +19,5 @@ def broadcast_instrument_queue_status(instrument):
     queue_condition = check_instrument_queue_status(instrument)
     instrument_state = {"queue": queue_condition}
     InstrumentData.update(instrument.isin, "state", instrument_state)
-    broadcast_trigger(isin=instrument.isin, data={"trigger_type": "queue_condition", "queue_side": queue_condition})
+    if queue_condition:
+        broadcast_trigger(isin=instrument.isin, data={"trigger_type": "queue_condition", "queue_side": queue_condition})
