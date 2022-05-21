@@ -10,6 +10,8 @@ def check_instrument_queue_status(instrument):
     if market_data["low_allowed_price"] == market_data["bid_ask_first_row"]["best_sell_price"]:
         return "sell"
 
+    return False
+
 
 def broadcast_instrument_queue_status(instrument):
     from morpheus.services.broadcast import broadcast_trigger
