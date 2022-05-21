@@ -11,7 +11,7 @@ from oracle.services.tsetmc_market import get_tse_instrument_data
 from oracle.services.tsetmc_trades import get_trades, get_kline
 from oracle.services.tsetmc_askbid import get_askbid_history
 from datetime import datetime, timedelta
-from oracle.triggers.queue_condition import check_instrument_queue_status
+from oracle.triggers.queue_condition import broadcast_instrument_queue_status
 from morpheus.services.broadcast import broadcast_trigger, broadcast_market_data
 
 cache = Cache()
@@ -128,7 +128,7 @@ def check_queue_condition():
     try:
         instruments = Instrument.get_instruments()
         for instrument in instruments:
-            check_instrument_queue_status(instrument)
+            broadcast_instrument_queue_status(instrument)
     except Exception as e:
         print(e)
         return e
