@@ -19,6 +19,8 @@ def get_tse_instrument_data(instrument):
         "last_traded_price": ticker.last_price,
         'high_allowed_price': ticker.sta_max,
         'low_allowed_price': ticker.sta_min,
+        "low_price": int(realtime_data.low_price),
+        "high_price": int(realtime_data.high_price),
         'total_number_of_shares_traded': ticker.volume,
         'company_name': ticker.title,
         'total_number_of_trades': ticker.count,
