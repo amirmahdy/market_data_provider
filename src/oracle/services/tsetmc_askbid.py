@@ -8,8 +8,14 @@ BESTLIMITS_BASE_URL = "http://cdn.tsetmc.com/api/BestLimits/{isin}/{date}"
 
 def get_askbid_history(tse_isin: str, date: str) -> List[Dict]:
     url = BESTLIMITS_BASE_URL.format(isin=tse_isin, date=date)
-    session = requests.Session()
-    resp = session.get(url)
+    headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0",
+               "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+               "Host": "cdn.tsetmc.com",
+               "Accept-Encoding": "gzip, deflate",
+               "Accept-Language": "en-US,en;q=0.5",
+               "Upgrade-Insecure-Requests": "1"
+               }
+    resp = requests.get(url, headers=headers)
     all_askbid_changes = resp.json()['bestLimitsHistory']
     all_askbid_rows = []
     current_captured_askbid = {'time': 0, 'buy_price_1': 0, 'buy_volume_1': 0, 'buy_count_1': 0, 'sell_price_1': 0,

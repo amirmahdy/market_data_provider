@@ -35,7 +35,6 @@ class TradeDataAPIView(GenericAPIView):
             else:
                 instrument = Instrument.get_instrument(data["isin"])[0]
                 date = datetime.strftime(data["date"], "%Y%m%d")
-
                 path = settings.DATA_ROOT + "/trade/" + instrument.en_symbol.lower() + "/" + date + ".csv"
                 res = read_csv(path, ['t', 'q', 'p'])
 

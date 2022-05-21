@@ -41,6 +41,22 @@ class TestService(TestCase):
         res = get_live_askbid(instruments[0].tse_id)
         print(res)
 
+    def test_get_history_askbid(self):
+        from oracle.models import Instrument
+        from oracle.services.tsetmc_askbid import get_askbid_history
+        instruments = Instrument.get_instrument("IRO1BANK0001")
+        res = get_askbid_history(instruments[0].tse_id, "20220517")
+        sym = 'bank1'
+        create_csv('./data/askbid/' + sym + "/" + '20220517' + ".csv", res,
+                   fieldnames=["time", "buy_price_1", "buy_volume_1", "buy_count_1", "sell_price_1",
+                               "sell_volume_1", "sell_count_1", "buy_price_2", "buy_volume_2", "buy_count_2",
+                               "sell_price_2", "sell_volume_2", "sell_count_2", "buy_price_3", "buy_volume_3",
+                               "buy_count_3", "sell_price_3", "sell_volume_3", "sell_count_3", "buy_price_4",
+                               "buy_volume_4", "buy_count_4", "sell_price_4", "sell_volume_4", "sell_count_4",
+                               "buy_price_5", "buy_volume_5", "buy_count_5", "sell_price_5", "sell_volume_5",
+                               "sell_count_5"], frmt="w+")
+        print(res)
+
     def test_get_tse_instrument_data(self):
         from oracle.models import Instrument
         from oracle.services.tsetmc_market import get_tse_instrument_data
@@ -78,4 +94,4 @@ class TestService(TestCase):
 
 
 tr = TestService()
-tr.test_trades()
+tr.test_get_history_askbid()
