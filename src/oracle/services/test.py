@@ -10,7 +10,7 @@ class TestService(TestCase):
     def test_trades(self):
         from oracle.data_type.instrument_market_data import InstrumentData
         from oracle.services.tsetmc_trades import get_trades
-        res = get_trades('48010225447410247', '20220101')
+        res = get_trades('48010225447410247', '20220517')
         InstrumentData.update("IRO1BANK0001", "trades", res)
         print(res)
 
@@ -75,10 +75,5 @@ class TestService(TestCase):
         print(res)
 
 
-tr = Test_Service()
-tr.test_get_live_askbid()
-tr.test_get_index()
-tr.test_get_live_askbid()
-tr.test_get_history_indices()
-tr.test_get_indices_live()
-tr.test_get_live_askbid()
+tr = TestService()
+tr.test_trades()

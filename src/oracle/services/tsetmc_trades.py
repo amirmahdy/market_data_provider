@@ -27,13 +27,20 @@ def get_trades(tse_isin: str, day=None):
         return all_trades_dc
 
     else:
-        session = requests.Session()
-        tse_full_data = session.get(TRADE_HISTORY_YESTERDAY_URL.format(tse_isin=tse_isin, date=day))
+        headers = {
+            "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "Host": "cdn.tsetmc.com",
+            "Accept-Encoding": "gzip, deflate",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Upgrade-Insecure-Requests": "1"
+        }
+        tse_full_data = requests.get(TRADE_HISTORY_YESTERDAY_URL.format(tse_isin=tse_isin, date=day), headers=headers)
         tse_res = json.loads(tse_full_data.text)
         new_history_list = []
         day = datetime.strptime(day, '%Y%m%d').strftime('%Y-%m-%dT')
         for item in tse_res['tradeHistory']:
-            heven = str(item['hEven'])
+            heven = ("%06d" % item["hEven"])
             h = heven[0:2] + ":" + heven[2:4] + ":" + heven[4:6]
             new_dict = {
                 "t": day + h,  # YYYY-MM-DDTmm:hh:ss
@@ -41,7 +48,7 @@ def get_trades(tse_isin: str, day=None):
                 "p": int(item['pTran']),
             }
             new_history_list.append(new_dict)
-
+        new_history_list.reverse()
         return new_history_list
 
 
