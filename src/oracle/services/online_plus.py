@@ -437,9 +437,15 @@ class LS_Class:
         broadcast_indices_data(index_data=InstrumentData.get(res["SymbolISIN"], ref_group='index'))
         print(res)
 
+    def verify(self, vals, res, key, local_key, type):
+        if vals.get(key) is None:
+            return res.get(local_key)
+        return type(vals.get(key))
+
     def on_market_update_rlc(self, item_update):
         isin = item_update["name"][:12].upper()
         vals = item_update["values"]
+        res = InstrumentData.get(isin=isin, ref_group='market')
         data = {
             "bid_ask_first_row": {
                 "best_buy_price": int(vals["BestBuyLimitPrice_1"]),
@@ -449,20 +455,20 @@ class LS_Class:
                 "no_best_buy": int(vals["NumberOfOrdersAtBestBuy_1"]),
                 "no_best_sell": int(vals["NumberOfOrdersAtBestSell_1"]),
             },
-            "last_traded_price": int(vals["LastTradedPrice"]),
-            "closing_price": int(vals["ClosingPrice"]),
-            "price_var": float(vals["LastTradedPriceVarPercent"]),
-            "price_change": int(vals["LastTradedPriceVar"]),
-            "total_number_of_shares_traded": int(vals["TotalNumberOfSharesTraded"]),
-            "closing_price_var": float(vals["ClosingPriceVarPercent"]),
-            "closing_price_change": int(vals["ClosingPriceVar"]),
-            "total_number_of_trades": int(vals["TotalNumberOfTrades"]),
-            "total_trade_value": int(vals["TotalTradeValue"]),
-            "low_price": int(vals["LowPrice"]),
-            "high_price": int(vals["HighPrice"]),
-            "trade_date": vals["TradeDate"],
+            "last_traded_price": self.verify(vals, res, "LastTradedPrice", "last_traded_price", int),
+            "closing_price": self.verify(vals, res, "ClosingPrice", "closing_price", int),
+            "price_var": self.verify(vals, res, "LastTradedPriceVarPercent", "price_var", float),
+            "price_change": self.verify(vals, res, "LastTradedPriceVar", "price_change", int),
+            "total_number_of_shares_traded": self.verify(vals, res, "TotalNumberOfSharesTraded",
+                                                         "total_number_of_shares_traded", int),
+            "closing_price_var": self.verify(vals, res, "ClosingPriceVarPercent", "closing_price_var", float),
+            "closing_price_change": self.verify(vals, res, "ClosingPriceVar", "closing_price_change", int),
+            "total_number_of_trades": self.verify(vals, res, "TotalNumberOfTrades", "total_number_of_trades", int),
+            "total_trade_value": self.verify(vals, res, "TotalTradeValue", "total_trade_value", int),
+            "low_price": self.verify(vals, res, "LowPrice", "low_price", int),
+            "high_price": self.verify(vals, res, "HighPrice", "high_price", int),
+            "trade_date": self.verify(vals, res, "TradeDate", "trade_date", str),
         }
-
         # Cache data
         InstrumentData.update(isin, ref_group='market', value=data)
         broadcast_market_data(isin=isin, market_data=InstrumentData.get(isin=isin, ref_group='market'))
