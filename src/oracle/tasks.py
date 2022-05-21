@@ -11,7 +11,7 @@ from oracle.services.tsetmc_market import get_tse_instrument_data
 from oracle.services.tsetmc_trades import get_trades, get_kline
 from oracle.services.tsetmc_askbid import get_askbid_history
 from datetime import datetime, timedelta
-from oracle.triggers.queue_condition import check_instrument_queue_status
+from oracle.triggers.queue_condition import broadcast_instrument_queue_status
 from morpheus.services.broadcast import broadcast_trigger, broadcast_market_data
 
 cache = Cache()
@@ -30,6 +30,10 @@ def market_data_update():
             if res['market_status'] != instrument.market_status:
                 instrument.market_status = res['market_status']
                 instrument.save()
+                instrument_state = {
+                    'state': res['market_status']
+                }
+                InstrumentData.update(instrument.isin, 'state', instrument_state)
                 broadcast_trigger(isin=instrument.isin, data={'trigger_type': 'instrument_market_status_change'})
                 broadcast_market_data(isin=instrument.isin,
                                       market_data=InstrumentData.get(isin=instrument.isin, ref_group='market'))
@@ -128,7 +132,7 @@ def check_queue_condition():
     try:
         instruments = Instrument.get_instruments()
         for instrument in instruments:
-            check_instrument_queue_status(instrument)
+            broadcast_instrument_queue_status(instrument)
     except Exception as e:
         print(e)
         return e

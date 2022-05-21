@@ -4,9 +4,11 @@ from morpheus.views.trades_history import TradeDataAPIView
 from morpheus.views.askbid_data import AskBidDataAPIView, FullAskBidDataAPIView
 from morpheus.views.indices_data import IndicesDataAPIView
 from morpheus.views.indinst_data import IndInstDataAPIView
+from morpheus.views.state_data import StateDataAPIView
 
 urlpatterns = [
     path("market", MarketDataAPIView.as_view(), name="market"),
+    path("state", StateDataAPIView.as_view(), name="state"),
     path("askbid", AskBidDataAPIView.as_view(), name="askbid"),
     path("indices", IndicesDataAPIView.as_view(), name="index"),
     path("indinst", IndInstDataAPIView.as_view(), name="indinst"),
