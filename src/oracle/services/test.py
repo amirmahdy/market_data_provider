@@ -1,6 +1,8 @@
 import os, django
 from django.test import TestCase
 
+from mdp.utils import create_csv
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mdp.settings")
 django.setup()
 
@@ -11,7 +13,8 @@ class TestService(TestCase):
         from oracle.data_type.instrument_market_data import InstrumentData
         from oracle.services.tsetmc_trades import get_trades
         res = get_trades('48010225447410247', '20220517')
-        InstrumentData.update("IRO1BANK0001", "trades", res)
+        sym = 'bank1'
+        create_csv('./data/trade/' + sym + "/" + "20220517" + ".csv", res, ['t', 'q', 'p'], "w+")
         print(res)
 
     def test_get_kline(self):
@@ -38,7 +41,6 @@ class TestService(TestCase):
         res = get_live_askbid(instruments[0].tse_id)
         print(res)
 
-
     def test_get_tse_instrument_data(self):
         from oracle.models import Instrument
         from oracle.services.tsetmc_market import get_tse_instrument_data
@@ -59,7 +61,7 @@ class TestService(TestCase):
 
     def test_get_history_indices(self):
         from oracle.services.tsetmc_indices import get_indices_history
-        res = get_indices_history(date_from = "2022-01-01", date_to = "2022-04-01")
+        res = get_indices_history(date_from="2022-01-01", date_to="2022-04-01")
         print(res)
 
     def test_get_indices_live(self):

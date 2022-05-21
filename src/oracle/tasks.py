@@ -60,12 +60,11 @@ def trade_data_yesterday_update():
         instruments = Instrument.get_instruments()
         yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
         path = settings.DATA_ROOT + "/trade/"
-
         for instrument in instruments:
             today_trades = get_trades(instrument.tse_id, yesterday)
             if today_trades:
                 sym = instrument.en_symbol.lower()
-                create_csv(path + sym + "/" + yesterday + ".csv", today_trades, "w+")
+                create_csv(path + sym + "/" + yesterday + ".csv", today_trades, fieldnames=['t', 'q', 'p'], frmt="w+")
 
     except Exception as e:
         print(e)
@@ -102,7 +101,7 @@ def tsetmc_trade_kline():
                 zipfile.ZipFile("data/equity/usa/daily/" + sym.lower() + ".zip", "r").extractall(path)
                 fsutil.remove_file(path + sym.lower() + ".zip")
 
-            create_csv(path + sym.upper() + ".csv", rows, "a")
+            create_csv(path + sym.upper() + ".csv", rows, fieldnames=None, frmt="a")
             zipfile.ZipFile(path + sym.lower() + ".zip", "w", zipfile.ZIP_DEFLATED). \
                 write(path + sym.upper() + ".csv", arcname=sym.upper() + ".csv")
             fsutil.remove_file(path + sym.upper() + ".csv")

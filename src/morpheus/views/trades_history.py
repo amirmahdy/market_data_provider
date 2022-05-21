@@ -37,7 +37,7 @@ class TradeDataAPIView(GenericAPIView):
                 date = datetime.strftime(data["date"], "%Y%m%d")
 
                 path = settings.DATA_ROOT + "/trade/" + instrument.en_symbol.lower() + "/" + date + ".csv"
-                res = read_csv(path)
+                res = read_csv(path, ['t', 'q', 'p'])
 
             return Response({"message": res}, status=status.HTTP_200_OK)
 
