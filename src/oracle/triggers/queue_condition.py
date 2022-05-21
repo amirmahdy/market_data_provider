@@ -13,5 +13,11 @@ def check_instrument_queue_status(instrument):
 
 def broadcast_instrument_queue_status(instrument):
     from morpheus.services.broadcast import broadcast_trigger
+    from oracle.data_type.instrument_market_data import InstrumentData
+    queue_condition = check_instrument_queue_status(instrument)
+    instrument_state = {
+        'queue' : queue_condition
+    }
+    InstrumentData.update(instrument.isin, 'state', instrument_state)
     broadcast_trigger(
-            isin=instrument.isin, data={'trigger_type': 'queue_condition', 'queue_side': check_instrument_queue_status(instrument)})
+            isin=instrument.isin, data={'trigger_type': 'queue_condition', 'queue_side': queue_condition})

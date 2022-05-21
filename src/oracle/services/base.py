@@ -13,7 +13,6 @@ def initial_setup():
         instrument_askbid = get_live_askbid(instrument.tse_id)
         instrument_indinst = get_live_indinst(instrument.tse_id, instrument.isin)
         instrument_state = {
-            'isin' : instrument.isin,
             'state': instrument_data['market_status'],
             'queue' : check_instrument_queue_status(instrument)
         }
