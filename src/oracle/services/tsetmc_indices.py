@@ -99,13 +99,13 @@ def ToFloat(item):
 # get_live_indices
 def get_indices_live():
     template = {
-        "day_of_event": "2020-11-18T16:10:00",
-        "index_changes": 298.259766,
-        "last_index_value": 16646.92,
-        "symbol_isin": "IRXZXOCI0006",
-        "percent_variation": 1.82436967,
-        "symbol_title": "شاخص كل فرابورس",
-        "tse_id": "32097828799138957"
+        "DayOfEvent": "2020-11-18T16:10:00",
+        "IndexChanges": 298.259766,
+        "LastIndexValue": 16646.92,
+        "SymbolISIN": "IRXZXOCI0006",
+        "PercentVariation": 1.82436967,
+        "SymbolTitle": "شاخص كل فرابورس",
+        "TseId": "32097828799138957"
     }
     data_live = requests.get(url=BASE_URL)
     data_live_processed = tr_pattern.findall(re.sub('\s+', ' ', data_live.text))
@@ -121,13 +121,13 @@ def get_indices_live():
             isin_data = isin_data[0]["symbol_isin"] if len(isin_data) > 0 else ""
             if isin_data != "":
                 indices.append({
-                    "day_of_event": str(datetime.datetime.today().date()) + 'T' + str(cells[1]),
-                    "index_changes": ToFloat(cells[3]),
-                    "last_index_value": ToFloat(cells[2]),
-                    "percent_variation": ToFloat(cells[4]),
-                    "symbol_title": title[0] if len(title) > 0 else "",
-                    "tse_id": id,
-                    "symbol_isin": isin_data
+                    "DayOfEvent": str(datetime.datetime.today().date()) + 'T' + str(cells[1]),
+                    "IndexChanges": ToFloat(cells[3]),
+                    "LastIndexValue": ToFloat(cells[2]),
+                    "PercentVariation": ToFloat(cells[4]),
+                    "SymbolTitle": title[0] if len(title) > 0 else "",
+                    "TseId": id,
+                    "SymbolISIN": isin_data
                 })
 
     return indices
