@@ -477,12 +477,12 @@ class LS_Class:
         for i in range(5):
             data_askbid.append(
                 {
-                    "best_sell_price": vals[f"BestSellLimitPrice_{i + 1}"],
-                    "best_sell_quantity": vals[f"BestSellLimitQuantity_{i + 1}"],
-                    "no_best_sell": vals[f"NumberOfOrdersAtBestSell_{i + 1}"],
-                    "best_buy_price": vals[f"BestBuyLimitPrice_{i + 1}"],
-                    "best_buy_quantity": vals[f"BestBuyLimitQuantity_{i + 1}"],
-                    "no_best_buy": vals[f"NumberOfOrdersAtBestBuy_{i + 1}"],
+                    "best_sell_price": int(vals[f"BestSellLimitPrice_{i + 1}"]),
+                    "best_sell_quantity": int(vals[f"BestSellLimitQuantity_{i + 1}"]),
+                    "no_best_sell": int(vals[f"NumberOfOrdersAtBestSell_{i + 1}"]),
+                    "best_buy_price": int(vals[f"BestBuyLimitPrice_{i + 1}"]),
+                    "best_buy_quantity": int(vals[f"BestBuyLimitQuantity_{i + 1}"]),
+                    "no_best_buy": int(vals[f"NumberOfOrdersAtBestBuy_{i + 1}"]),
                 }
             )
 
