@@ -62,7 +62,7 @@ indices_info = [
     },
 ]
 # regex
-float_pattern = re.compile('\d+\.\d+')
+float_pattern = re.compile('\d+\.?\d+')
 tr_pattern = re.compile(r'<tr>(.*?)</tr>')
 td_pattern = re.compile(r'<td>(.*?)</td>')
 a_pattern = re.compile(r'>(.*?)</a>')
@@ -89,7 +89,7 @@ def get_indices_history(date_from=None, date_to=None):
 
 
 def ToFloat(item):
-    float_items = float_pattern.findall(item)
+    float_items = float_pattern.findall(item.replace(',', ''))
     if len(float_items) > 0:
         return float(float_items[0])
     else:
