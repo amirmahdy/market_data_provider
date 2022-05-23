@@ -431,7 +431,7 @@ class LS_Class:
 
     def on_index_update_rlc(self, item_update):
         res = {"SymbolISIN": item_update['name'].upper()[:12], }
-        res.update(item_update['values'])
+        res.update({key: float(item_update['values'][key]) for key in item_update['values'].keys()})
         # Cache data
         InstrumentData.update(res["SymbolISIN"], 'index', res)
         broadcast_indices_data(index_data=InstrumentData.get(res["SymbolISIN"], ref_group='index'))
