@@ -2,18 +2,26 @@ from oracle.models import Instrument
 from pytse_client import Ticker
 
 
+# Validating askbid input data
+def v(inp, index, ky, default=0):
+    if len(inp) > 0:
+        return int(getattr(inp[index], ky))
+    else:
+        return default
+
+
 def get_tse_instrument_data(instrument):
     ticker = Ticker(symbol='', index=instrument.tse_id)
     realtime_data = ticker.get_ticker_real_time_info_response()
 
     instrument_data = {
         "bid_ask_first_row": {
-            "best_buy_price": int(realtime_data.buy_orders[0].price),
-            "best_sell_price": int(realtime_data.sell_orders[0].price),
-            "best_sell_quantity": int(realtime_data.sell_orders[0].volume),
-            "best_buy_quantity": int(realtime_data.buy_orders[0].volume),
-            "no_best_buy": int(realtime_data.buy_orders[0].count),
-            "no_best_sell": int(realtime_data.sell_orders[0].count),
+            "best_buy_price": v(realtime_data.buy_orders, 0, "price", 0),
+            "best_sell_price": v(realtime_data.sell_orders, 0, "price", 0),
+            "best_sell_quantity": v(realtime_data.sell_orders, 0, "volume", 0),
+            "best_buy_quantity": v(realtime_data.buy_orders, 0, "volume", 0),
+            "no_best_buy": v(realtime_data.buy_orders, 0, "count", 0),
+            "no_best_sell": v(realtime_data.sell_orders, 0, "count", 0),
         },
         "symbol_isin": instrument.isin,
         "last_traded_price": ticker.last_price,

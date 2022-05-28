@@ -92,6 +92,10 @@ class TestService(TestCase):
         res = get_tse_instrument_data(instruments)
         print(res)
 
+    def test_market_data_update(self):
+        from oracle.tasks import market_data_update
+        market_data_update()
+
 
 tr = TestService()
-tr.test_get_history_askbid()
+tr.test_market_data_update()
