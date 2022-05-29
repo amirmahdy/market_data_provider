@@ -111,7 +111,7 @@ def tsetmc_trade_kline():
             sym = instrument.en_symbol
 
             if fsutil.exists(path + sym.lower() + ".zip"):
-                zipfile.ZipFile("data/equity/usa/daily/" + sym.lower() + ".zip", "r").extractall(path)
+                zipfile.ZipFile(path + sym.lower() + ".zip", "r").extractall(path)
                 fsutil.remove_file(path + sym.lower() + ".zip")
 
             create_csv(path + sym.upper() + ".csv", rows, fieldnames=None, frmt="a")
