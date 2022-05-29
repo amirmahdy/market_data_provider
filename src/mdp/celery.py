@@ -21,6 +21,11 @@ app.conf.beat_schedule = {
         'schedule': crontab(hour='6', minute='30'),
         'args': ()
     },
+    'tsetmc_trade_kline': {
+        'task': 'trade_kline',
+        'schedule': crontab(hour='6', minute='15'),
+        'args': ()
+    },
     'tsetmc_trade_yesterday_update': {
         'task': 'tsetmc_trade_yesterday_update',
         'schedule': crontab(hour='6', minute='0'),
@@ -36,9 +41,4 @@ app.conf.beat_schedule = {
         'schedule': crontab(minute='*/1'),
         'args': ()
     },
-    'tsetmc_trade_kline': {
-        'task': 'trade_kline',
-        'schedule': crontab(hour='5', minute='0'),
-        'args': ()
-    }
 }
