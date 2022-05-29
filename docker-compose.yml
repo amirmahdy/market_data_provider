@@ -16,6 +16,8 @@ services:
       - src/.env
     depends_on:
       - redis
+    environment:
+      - TZ=Asia/Tehran
 
   asgiserver:
     build: .
@@ -57,6 +59,7 @@ services:
       - ./celery/:/var/lib/celery/
       - ./data:/data/
     environment:
+      - TZ=Asia/Tehran
       - DEBUG=1
       - SECRET_KEY=dbaa1_i7%*3r9-=z-+021z4r-!qeed@(-a_r31(g@k8jo8y3r27%m
       - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
@@ -72,11 +75,13 @@ services:
       - ./celery/:/var/lib/celery/
       - ./data:/data/
     environment:
+      - TZ=Asia/Tehran
       - DEBUG=1
       - SECRET_KEY=dbaa1_i7%*3r9-=z-+021z4r-!qeed@(-a_r31(g@k8jo8y3r27%m
       - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
     depends_on:
       - redis
+
 
 
 volumes:
