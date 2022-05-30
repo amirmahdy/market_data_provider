@@ -19,17 +19,17 @@ app.conf.beat_schedule = {
     'tsetmc_askbid_yesterday_update': {
         'task': 'tsetmc_askbid_yesterday_update',
         'schedule': crontab(hour='6', minute='30'),
-        'args': ()
+        'args': (1,)
     },
     'tsetmc_trade_kline': {
         'task': 'trade_kline',
         'schedule': crontab(hour='6', minute='15'),
-        'args': ()
+        'args': (1,)
     },
     'tsetmc_trade_yesterday_update': {
         'task': 'tsetmc_trade_yesterday_update',
         'schedule': crontab(hour='6', minute='0'),
-        'args': ()
+        'args': (1,)
     },
     'tsetmc_trade_today_update': {
         'task': 'tsetmc_trade_today_update',

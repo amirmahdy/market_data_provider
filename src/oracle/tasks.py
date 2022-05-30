@@ -43,10 +43,10 @@ def market_data_update():
 
 
 @shared_task(name="tsetmc_askbid_yesterday_update")
-def tsetmc_askbid_yesterday_update():
+def tsetmc_askbid_yesterday_update(days):
     try:
         instruments = Instrument.get_instruments()
-        yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
+        yesterday = datetime.strftime(datetime.now() - timedelta(days), '%Y%m%d')
         path = settings.DATA_ROOT + "/askbid/"
         for instrument in instruments:
             today_askbids = get_askbid_history(instrument.tse_id, yesterday)
@@ -68,10 +68,10 @@ def tsetmc_askbid_yesterday_update():
 
 
 @shared_task(name="tsetmc_trade_yesterday_update")
-def trade_data_yesterday_update():
+def trade_data_yesterday_update(days):
     try:
         instruments = Instrument.get_instruments()
-        yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
+        yesterday = datetime.strftime(datetime.now() - timedelta(days), '%Y%m%d')
         path = settings.DATA_ROOT + "/trade/"
         for instrument in instruments:
             today_trades = get_trades(instrument.tse_id, yesterday)
@@ -99,11 +99,11 @@ def trade_data_today_update():
 
 
 @shared_task(name="tsetmc_trade_kline")
-def tsetmc_trade_kline():
+def tsetmc_trade_kline(days):
     try:
         instruments = Instrument.get_instruments()
         to_date = datetime.strftime(datetime.now(), '%Y%m%d')
-        from_date = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
+        from_date = datetime.strftime(datetime.now() - timedelta(days), '%Y%m%d')
         path = settings.DATA_ROOT + "/equity/usa/daily/"
 
         for instrument in instruments:
