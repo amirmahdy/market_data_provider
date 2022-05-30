@@ -85,7 +85,8 @@ def trade_data_yesterday_update(days):
                 today_trades = get_trades(instrument.tse_id, yesterday)
                 if today_trades:
                     sym = instrument.en_symbol.lower()
-                    create_csv(path + sym + "/" + yesterday + ".csv", today_trades, fieldnames=['t', 'q', 'p'], frmt="w+")
+                    create_csv(path + sym + "/" + yesterday + ".csv", today_trades,
+                               fieldnames=['t', 'q', 'p'], frmt="w+")
 
     except Exception as e:
         print(e)
