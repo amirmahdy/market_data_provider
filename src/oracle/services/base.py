@@ -5,16 +5,17 @@ from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.services.tsetmc_indinst import get_live_indinst
 from oracle.triggers.queue_condition import check_instrument_queue_status
 
+
 def initial_setup():
     from oracle.models import Instrument
     instruments = Instrument.get_instruments()
     for instrument in instruments:
-        instrument_data = get_tse_instrument_data(instrument)
+        instrument_data = get_tse_instrument_data(instrument, init=True)
         instrument_askbid = get_live_askbid(instrument.tse_id)
         instrument_indinst = get_live_indinst(instrument.tse_id, instrument.isin)
         instrument_state = {
             'state': instrument_data['market_status'],
-            'queue' : check_instrument_queue_status(instrument)
+            'queue': check_instrument_queue_status(instrument)
         }
 
         InstrumentData.update(instrument.isin, 'market', instrument_data)
@@ -25,5 +26,3 @@ def initial_setup():
     instrument_indices = get_indices_live()
     for index in instrument_indices:
         InstrumentData.update(index['SymbolISIN'], 'index', index)
-
-
