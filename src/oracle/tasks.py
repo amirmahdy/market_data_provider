@@ -46,20 +46,27 @@ def market_data_update():
 def tsetmc_askbid_yesterday_update(days):
     try:
         instruments = Instrument.get_instruments()
-        yesterday = datetime.strftime(datetime.now() - timedelta(days), '%Y%m%d')
-        path = settings.DATA_ROOT + "/askbid/"
-        for instrument in instruments:
-            today_askbids = get_askbid_history(instrument.tse_id, yesterday)
-            if today_askbids:
-                sym = instrument.en_symbol.lower()
-                create_csv(path + sym + "/" + yesterday + ".csv", today_askbids,
-                           fieldnames=["time", "buy_price_1", "buy_volume_1", "buy_count_1", "sell_price_1",
-                                       "sell_volume_1", "sell_count_1", "buy_price_2", "buy_volume_2", "buy_count_2",
-                                       "sell_price_2", "sell_volume_2", "sell_count_2", "buy_price_3", "buy_volume_3",
-                                       "buy_count_3", "sell_price_3", "sell_volume_3", "sell_count_3", "buy_price_4",
-                                       "buy_volume_4", "buy_count_4", "sell_price_4", "sell_volume_4", "sell_count_4",
-                                       "buy_price_5", "buy_volume_5", "buy_count_5", "sell_price_5", "sell_volume_5",
-                                       "sell_count_5"], frmt="w+")
+        for day in range(1, days + 1):
+            yesterday = datetime.strftime(datetime.now() - timedelta(day), '%Y%m%d')
+            path = settings.DATA_ROOT + "/askbid/"
+            for instrument in instruments:
+                today_askbids = get_askbid_history(instrument.tse_id, yesterday)
+                if today_askbids:
+                    sym = instrument.en_symbol.lower()
+                    create_csv(path + sym + "/" + yesterday + ".csv", today_askbids,
+                               fieldnames=["time", "buy_price_1", "buy_volume_1", "buy_count_1", "sell_price_1",
+                                           "sell_volume_1", "sell_count_1", "buy_price_2", "buy_volume_2",
+                                           "buy_count_2",
+                                           "sell_price_2", "sell_volume_2", "sell_count_2", "buy_price_3",
+                                           "buy_volume_3",
+                                           "buy_count_3", "sell_price_3", "sell_volume_3", "sell_count_3",
+                                           "buy_price_4",
+                                           "buy_volume_4", "buy_count_4", "sell_price_4", "sell_volume_4",
+                                           "sell_count_4",
+                                           "buy_price_5", "buy_volume_5", "buy_count_5", "sell_price_5",
+                                           "sell_volume_5",
+                                           "sell_count_5"], frmt="w+")
+
 
     except Exception as e:
         print(e)
@@ -71,13 +78,14 @@ def tsetmc_askbid_yesterday_update(days):
 def trade_data_yesterday_update(days):
     try:
         instruments = Instrument.get_instruments()
-        yesterday = datetime.strftime(datetime.now() - timedelta(days), '%Y%m%d')
-        path = settings.DATA_ROOT + "/trade/"
-        for instrument in instruments:
-            today_trades = get_trades(instrument.tse_id, yesterday)
-            if today_trades:
-                sym = instrument.en_symbol.lower()
-                create_csv(path + sym + "/" + yesterday + ".csv", today_trades, fieldnames=['t', 'q', 'p'], frmt="w+")
+        for day in range(1, days + 1):
+            yesterday = datetime.strftime(datetime.now() - timedelta(day), '%Y%m%d')
+            path = settings.DATA_ROOT + "/trade/"
+            for instrument in instruments:
+                today_trades = get_trades(instrument.tse_id, yesterday)
+                if today_trades:
+                    sym = instrument.en_symbol.lower()
+                    create_csv(path + sym + "/" + yesterday + ".csv", today_trades, fieldnames=['t', 'q', 'p'], frmt="w+")
 
     except Exception as e:
         print(e)
