@@ -129,7 +129,7 @@ def tsetmc_trade_kline():
 def trade_tick_data():
     try:
         instruments = Instrument.get_instruments()
-        cur_date = datetime.strftime(datetime.now() - timedelta(2), '%Y%m%d')
+        cur_date = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
         for instrument in instruments:
             rows = get_tick_data(instrument.tse_id, cur_date)
             sym = instrument.en_symbol

@@ -43,7 +43,7 @@ app.conf.beat_schedule = {
     },
     'trade_tick_data': {
         'task': 'trade_tick_data',
-        'schedule': crontab(hour='12', minute='0'),
+        'schedule': crontab(hour='24', minute='0'),
         'args': ()
     },
 }
