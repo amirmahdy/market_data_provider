@@ -34,10 +34,8 @@ def create_zip_on_csv(path, zip_filename, csv_filename, rows):
     zip_file_path = path + zip_filename
     csv_file_path = path + csv_filename
     if fsutil.exists(zip_file_path):
-        zipfile.ZipFile(zip_file_path, "r").extractall(path)
         fsutil.remove_file(zip_file_path)
-    create_csv(csv_file_path, rows, fieldnames=None, frmt="a")
-    zipfile.ZipFile(zip_file_path, "w", zipfile.ZIP_DEFLATED). \
-        write(csv_file_path, arcname=csv_filename)
+    create_csv(csv_file_path, rows, fieldnames=None, frmt="w")
+    zipfile.ZipFile(zip_file_path, "w", zipfile.ZIP_DEFLATED).write(csv_file_path, arcname=csv_filename)
     fsutil.remove_file(csv_file_path)
     return True

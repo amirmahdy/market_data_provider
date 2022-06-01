@@ -31,6 +31,11 @@ app.conf.beat_schedule = {
         'schedule': crontab(hour='6', minute='0'),
         'args': (1,)
     },
+    'trade_tick_data': {
+        'task': 'trade_tick_data',
+        'schedule': crontab(hour='5', minute='45'),
+        'args': ()
+    },
     'tsetmc_trade_today_update': {
         'task': 'tsetmc_trade_today_update',
         'schedule': crontab(minute='*/1'),
@@ -41,9 +46,5 @@ app.conf.beat_schedule = {
         'schedule': crontab(minute='*/1'),
         'args': ()
     },
-    'trade_tick_data': {
-        'task': 'trade_tick_data',
-        'schedule': crontab(hour='24', minute='0'),
-        'args': ()
-    },
+
 }
