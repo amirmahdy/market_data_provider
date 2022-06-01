@@ -1,7 +1,9 @@
 import requests
 from datetime import datetime
-import re, json
+import re
+import json
 
+TICK_BASE_URL = "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/{isin}/{cur_date}/true"
 TRADE_HISTORY_TODAY_URL = "http://tsetmc.com/tsev2/data/TradeDetail.aspx?i={tse_isin}"
 TRADE_HISTORY_YESTERDAY_URL = "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/{tse_isin}/{date}/false"
 GATHER_ONE_DAY_URL = "http://service.tsetmc.com/WebService/TsePublicV2.asmx?op=InstTrade"
@@ -93,3 +95,19 @@ def get_kline(from_date, to_date, tse_isin, val_user, val_pass):
                         "{:.0f}".format(float(xml_ins[11])), "{:.0f}".format(float(xml_ins[10])),
                         "{:.0f}".format(float(xml_ins[2])), "{:.0f}".format(float(xml_ins[8]))])
     return xml_row
+
+
+def get_tick_data(isin, cur_date):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
+    }
+    tse_full_data = requests.get(TICK_BASE_URL.format(isin=isin, cur_date=cur_date), headers=headers)
+    tse_res = json.loads(tse_full_data.text)
+    new_history_list = []
+    for item in tse_res['tradeHistory']:
+        heven = ("%06d" % item["hEven"])
+        h = heven[0:2] + ":" + heven[2:4] + ":" + heven[4:6]
+        new_dict = [h, int(item['qTitTran']), int(item['pTran']), "D", "@", 0]
+        new_history_list.append(new_dict)
+    new_history_list.reverse()
+    return new_history_list

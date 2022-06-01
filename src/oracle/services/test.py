@@ -2,6 +2,7 @@ import os, django
 from django.test import TestCase
 
 from mdp.utils import create_csv
+from oracle.services.tsetmc_trades import get_tick_data
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mdp.settings")
 django.setup()
@@ -28,6 +29,13 @@ class TestService(TestCase):
         res = get_kline("20220101", "20220103", instruments[0].tse_id, env("TSETMC_USERNAME"), env("TSETMC_PASSWORD"))
         print(res)
 
+    def test_get_tick_data(self):
+        from oracle.models import Instrument
+        instruments = Instrument.get_instruments()
+        print("instrument isin-------------", instruments[0].tse_id)
+        res = get_tick_data(instruments[0].tse_id, "20220529")
+        print(res)
+
     def test_task_kline(self):
         from oracle.tasks import trade_data_yesterday_update
         res = trade_data_yesterday_update()
@@ -37,7 +45,6 @@ class TestService(TestCase):
         from oracle.models import Instrument
         from oracle.services.tsetmc_askbid import get_live_askbid
         instruments = Instrument.get_instrument("IRO1BANK0001")
-
         res = get_live_askbid(instruments[0].tse_id)
         print(res)
 

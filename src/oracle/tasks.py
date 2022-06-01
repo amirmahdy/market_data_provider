@@ -3,12 +3,12 @@ from celery import shared_task
 from mdp import settings
 import fsutil
 import zipfile
-from mdp.utils import create_csv
+from mdp.utils import create_csv, create_zip_on_csv
 from oracle.models import Instrument
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.cache.base import Cache
 from oracle.services.tsetmc_market import get_tse_instrument_data
-from oracle.services.tsetmc_trades import get_trades, get_kline
+from oracle.services.tsetmc_trades import get_trades, get_kline, get_tick_data
 from oracle.services.tsetmc_askbid import get_askbid_history
 from datetime import datetime, timedelta
 from oracle.triggers.queue_condition import broadcast_instrument_queue_status
@@ -128,6 +128,24 @@ def tsetmc_trade_kline(days):
                 write(path + sym.upper() + ".csv", arcname=sym.upper() + ".csv")
             fsutil.remove_file(path + sym.upper() + ".csv")
 
+    except Exception as e:
+        print(e)
+        return e
+    return True
+
+
+@shared_task(name="trade_tick_data")
+def trade_tick_data():
+    try:
+        instruments = Instrument.get_instruments()
+        cur_date = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
+        for instrument in instruments:
+            rows = get_tick_data(instrument.tse_id, cur_date)
+            sym = instrument.en_symbol
+            path = settings.DATA_ROOT + "/equity/usa/tick/" + sym.upper() + "/"
+            zip_filename = cur_date + "_trade.zip"
+            csv_filename = cur_date + "_trade.csv"
+            create_zip_on_csv(path, zip_filename, csv_filename, rows)
     except Exception as e:
         print(e)
         return e
