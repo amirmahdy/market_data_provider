@@ -1,3 +1,4 @@
+import copy
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
 
@@ -8,7 +9,8 @@ class MDPConsumer(AsyncJsonWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        for group in self.groups:
+        groups = copy.deepcopy(self.groups)
+        for group in groups:
             await self.unsubscribe_to_topic(group)
 
     async def receive_json(self, content):
