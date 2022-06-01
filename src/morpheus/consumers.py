@@ -49,13 +49,6 @@ class MDPConsumer(AsyncJsonWebsocketConsumer):
 
     async def unsubscribe_to_topic(self, topic_name):
         await self.remove_from_group(topic_name)
-        await self.send_json(
-            {
-                "status": "ok",
-                "topic": topic_name,
-                "type": "unsubscription_result",
-            }
-        )
 
     async def handle_subscription(self, request):
         if request["topic"] == "trigger":
