@@ -16,7 +16,7 @@ def initial_setup():
         instrument_state = {
             'state': instrument_data['market_status'],
             'queue': check_instrument_queue_status(instrument),
-            'stateCode': translate_state(instrument_data['market_status'])
+            'state_code': translate_state(instrument_data['market_status'])
         }
 
         InstrumentData.update(instrument.isin, 'market', instrument_data)
