@@ -61,6 +61,10 @@ class MDPConsumer(AsyncJsonWebsocketConsumer):
             isins = request["isins"]
             for isin in isins:
                 await self.subscribe_to_topic(f"market_{isin}")
+        elif request["topic"] == "indinst":
+            isins = request["isins"]
+            for isin in isins:
+                await self.subscribe_to_topic(f"indinst_{isin}")
         elif request["topic"] == "askbid":
             isins = request["isins"]
             for isin in isins:
@@ -77,6 +81,10 @@ class MDPConsumer(AsyncJsonWebsocketConsumer):
             isins = request["isins"]
             for isin in isins:
                 await self.unsubscribe_to_topic(f"market_{isin}")
+        elif request["topic"] == "indinst":
+            isins = request["isins"]
+            for isin in isins:
+                await self.unsubscribe_to_topic(f"indinst_{isin}")
         elif request["topic"] == "askbid":
             isins = request["isins"]
             for isin in isins:
