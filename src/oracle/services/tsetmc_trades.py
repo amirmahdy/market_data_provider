@@ -91,9 +91,9 @@ def get_kline(from_date, to_date, tse_isin, val_user, val_pass):
         return
     xml_row = []
     for xml_ins in xml_data:
-        xml_row.append([xml_ins[0] + ' 00:00', "{:.0f}".format(float(xml_ins[12])),
+        xml_row.append([xml_ins[0] + ' 00:00', "{:.0f}".format(float(xml_ins[13])),
                         "{:.0f}".format(float(xml_ins[11])), "{:.0f}".format(float(xml_ins[10])),
-                        "{:.0f}".format(float(xml_ins[2])), "{:.0f}".format(float(xml_ins[8]))])
+                        "{:.0f}".format(float(xml_ins[2])), "{:.0f}".format(float(xml_ins[7]))])
     return xml_row
 
 
