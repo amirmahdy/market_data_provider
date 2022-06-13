@@ -1,10 +1,15 @@
+import os, django
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mdp.settings")
+django.setup()
 from django.test import TestCase, RequestFactory
-from .views.trades_history import TradeDataAPIView
+from morpheus.views.trades_history import TradeDataAPIView
+
+
 # Create your tests here.
 
 
 class MorpheusViewsTestCase(TestCase):
-
     fixtures = ['instrument']
 
     def test_today_trades_view(self):
@@ -18,3 +23,12 @@ class MorpheusViewsTestCase(TestCase):
                               data={'isin': 'IRO1BANK0001'})
         response = TradeDataAPIView.as_view()(request)
         self.assertEqual(response.status_code, 200)
+
+    def test_log_splunk(self):
+        from mdp.log import Log
+        log = Log()
+        log("Hello from app")
+
+
+test = MorpheusViewsTestCase()
+test.test_log_splunk()
