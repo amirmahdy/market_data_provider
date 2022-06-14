@@ -22,7 +22,7 @@ app.conf.beat_schedule = {
         'args': (1,)
     },
     'tsetmc_trade_kline': {
-        'task': 'trade_kline',
+        'task': 'tsetmc_trade_kline',
         'schedule': crontab(hour='6', minute='15'),
         'args': (1,)
     },
