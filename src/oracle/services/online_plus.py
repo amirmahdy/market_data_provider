@@ -458,6 +458,7 @@ class LS_Class:
             'high_allowed_price': self.verify(vals, res, "HighAllowedPrice", "high_allowed_price", int),
             'low_allowed_price': self.verify(vals, res, "LowAllowedPrice", "low_allowed_price", int),
             "last_traded_price": self.verify(vals, res, "LastTradedPrice", "last_traded_price", int),
+            "reference_price": self.verify(vals, res, "YesterdayPrice", "reference_price", int),
             "closing_price": self.verify(vals, res, "ClosingPrice", "closing_price", int),
             "price_var": self.verify(vals, res, "LastTradedPriceVarPercent", "price_var", float),
             "price_change": self.verify(vals, res, "LastTradedPriceVar", "price_change", int),
