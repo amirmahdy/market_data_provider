@@ -455,6 +455,8 @@ class LS_Class:
                 "no_best_buy": int(vals["NumberOfOrdersAtBestBuy_1"]),
                 "no_best_sell": int(vals["NumberOfOrdersAtBestSell_1"]),
             },
+            'high_allowed_price': self.verify(vals, res, "HighAllowedPrice", "high_allowed_price", int),
+            'low_allowed_price': self.verify(vals, res, "LowAllowedPrice", "low_allowed_price", int),
             "last_traded_price": self.verify(vals, res, "LastTradedPrice", "last_traded_price", int),
             "closing_price": self.verify(vals, res, "ClosingPrice", "closing_price", int),
             "price_var": self.verify(vals, res, "LastTradedPriceVarPercent", "price_var", float),
