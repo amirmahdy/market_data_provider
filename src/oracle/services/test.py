@@ -105,4 +105,4 @@ class TestService(TestCase):
 
 
 tr = TestService()
-tr.test_market_data_update()
+tr.test_get_indices_live()

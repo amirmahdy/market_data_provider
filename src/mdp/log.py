@@ -9,5 +9,8 @@ class Log:
         self.s = socket(AF_INET, SOCK_DGRAM, 0)
 
     def __call__(self, msg):
-        msg = f"<1>{msg}".encode('utf-8')
-        self.s.sendto(msg, (env("LOG_SERVER"), int(env("LOG_PORT"))))
+        try:
+            msg = f"<1>{msg}".encode('utf-8')
+            self.s.sendto(msg, (env("LOG_SERVER"), int(env("LOG_PORT"))))
+        except:
+            pass
