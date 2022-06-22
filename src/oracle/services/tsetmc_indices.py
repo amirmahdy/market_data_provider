@@ -31,7 +31,8 @@ def get_indices_history(date_from=None, date_to=None):
 
 
 def _f(flt):
-    return float(flt.replace(',', ''))
+    chars_to_remove = [',', '(', ')']
+    return float(''.join([c for c in flt if c not in chars_to_remove]))
 
 
 # get_live_indices
