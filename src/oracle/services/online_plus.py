@@ -10,6 +10,9 @@ from morpheus.services.broadcast import broadcast_market_data, broadcast_askbid_
 import base64
 import gzip
 import ast
+from mdp.log import Log
+
+log = Log()
 
 CONNECTION_URL_PATH = "lightstreamer/create_session.txt"
 BIND_URL_PATH = "lightstreamer/bind_session.txt"
@@ -470,6 +473,7 @@ class LS_Class:
             "trade_date": self.verify(vals, res, "TradeDate", "trade_date", str),
         }
         # Cache data
+        log({"src": "O+", "data": data})
         InstrumentData.update(isin, ref_group='market', value=data)
         broadcast_market_data(isin=isin, market_data=InstrumentData.get(isin=isin, ref_group='market'))
 

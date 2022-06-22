@@ -13,6 +13,9 @@ from oracle.services.tsetmc_askbid import get_askbid_history
 from datetime import datetime, timedelta
 from oracle.triggers.queue_condition import broadcast_instrument_queue_status
 from morpheus.services.broadcast import broadcast_trigger, broadcast_market_data
+from mdp.log import Log
+
+log = Log()
 
 cache = Cache()
 env = environ.Env()
@@ -24,6 +27,7 @@ def market_data_update():
         instruments = Instrument.get_instruments()
         for instrument in instruments:
             res = get_tse_instrument_data(instrument)
+            log({"src": "TSETMC", "data": res})
             InstrumentData.update(instrument.isin, "market", res)
 
             # update market status

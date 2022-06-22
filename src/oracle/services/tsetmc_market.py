@@ -3,24 +3,24 @@ from pytse_client import Ticker
 
 
 def translate_state(item):
-    ''' These are from pytse_client
-    states = {
-        "I ": "ممنوع",
-        "A": "مجاز",
-        "AG": "مجاز-مسدود",
-        "AS": "مجاز-متوقف",
-        "AR": "مجاز-محفوظ",
-        "IG": "ممنوع-مسدود",
-        "IS": "ممنوع-متوقف",
-        "IR": "ممنوع-محفوظ",
-    }
-    '''
+    # PYTSE_CLIENT State standard
+    # states = {
+    #         "I ": "ممنوع",
+    #         "A ": "مجاز",
+    #         "AG": "مجاز-مسدود",
+    #         "AS": "مجاز-متوقف",
+    #         "AR": "مجاز-محفوظ",
+    #         "IG": "ممنوع-مسدود",
+    #         "IS": "ممنوع-متوقف",
+    #         "IR": "ممنوع-محفوظ",
+    # }
+
     states = {
         "ممنوع": "I",
         "مجاز": "A",
         "مجاز-مسدود": "AG",
         "مجاز-متوقف": "AS",
-        "مجاز-محفوظ": "AS",
+        "مجاز-محفوظ": "AR",
         "ممنوع-مسدود": "IG",
         "ممنوع-متوقف": "IS",
         "ممنوع-محفوظ": "IR",
@@ -64,7 +64,7 @@ def get_tse_instrument_data(instrument, init=False):
             'first_traded_price': ticker.open_price,
             'closing_price': ticker.adj_close,
             "reference_price": ticker.yesterday_price,
-            "market_status": ticker.state,
+            "market_status": translate_state(ticker.state),
             "tick_size": instrument.tick_size,
             "price_var": float("%.2f" % (100 * (ticker.last_price - ticker.yesterday_price) / ticker.yesterday_price)),
             "price_change": int(ticker.last_price - ticker.yesterday_price),
