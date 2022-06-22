@@ -156,6 +156,18 @@ def trade_tick_data():
     return True
 
 
+@shared_task(name='online_plus_socket_renew')
+def online_plus_socket_renew():
+    try:
+        from oracle.services.online_plus import LS_Class
+        ls = LS_Class()
+        ls.renew()
+    except Exception as e:
+        print(e)
+        return e
+    return True
+
+
 @shared_task(name='check_queue_condition')
 def check_queue_condition():
     try:

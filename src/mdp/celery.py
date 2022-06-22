@@ -46,5 +46,10 @@ app.conf.beat_schedule = {
         'schedule': crontab(minute='*/1'),
         'args': ()
     },
+    'online_plus_socket_renew': {
+        'task': 'online_plus_socket_renew',
+        'schedule': crontab(hour='6', minute='0'),
+        'args': ()
+    },
 
 }
