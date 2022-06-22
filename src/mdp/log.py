@@ -4,6 +4,18 @@ import environ
 env = environ.Env()
 
 
+def singleton(class_):
+    instances = {}
+
+    def getinstance(*args, **kwargs):
+        if "Instance" not in instances:
+            instances["Instance"] = class_(*args, **kwargs)
+        return instances["Instance"]
+
+    return getinstance
+
+
+@singleton
 class Log:
     def __init__(self):
         self.s = socket(AF_INET, SOCK_DGRAM, 0)
