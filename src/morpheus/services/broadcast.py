@@ -55,3 +55,9 @@ async def broadcast_indinst_data_async(isin, indinst_data):
     data = {"isin": isin, "data": indinst_data}
     await channel_layer.group_send(f"indinst_{isin}", {
         "type": "send_data", "msg_type": "indinst_data", "data": data})
+
+
+async def broadcast_indices_data_async(index_data):
+    channel_layer = get_channel_layer()
+    await channel_layer.group_send(f"index", {
+        "type": "send_data", "msg_type": "index_data", "data": index_data})

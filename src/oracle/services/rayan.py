@@ -1,17 +1,43 @@
 import asyncio
-import time
+from datetime import datetime
 import environ
 import jdatetime
 import requests
 import websockets
 from morpheus.services.broadcast import broadcast_market_data_async, broadcast_indinst_data_async, \
-    broadcast_askbid_data_async
+    broadcast_askbid_data_async, broadcast_indices_data_async
 from oracle.models import Instrument
 
 env = environ.Env()
 RAYAN_SOCKET_RLC = env("RAYAN_SOCKET_RLC")
 RAYAN_USERNAME = env("RAYAN_USERNAME")
 RAYAN_PASSWORD = env("RAYAN_PASSWORD")
+indices_info = [
+    {
+        "symbol_title": "شاخص 30 شركت بزرگ",
+        "tse_id": "10523825119011581"
+    },
+    {
+        "symbol_title": "شاخص50شركت فعالتر",
+        "tse_id": "46342955726788357"
+    },
+    {
+        "symbol_title": "شاخص صنعت",
+        "tse_id": "43754960038275285"
+    },
+    {
+        "symbol_title": "شاخص كل",
+        "tse_id": "32097828799138957"
+    },
+    {
+        "symbol_title": "شاخص قيمت (هم وزن)",
+        "tse_id": "8384385859414435"
+    },
+    {
+        "symbol_title": "شاخص كل فرابورس",
+        "tse_id": "32097828799138957"
+    },
+]
 
 
 def gregorian_to_jdate(item):
@@ -35,6 +61,8 @@ async def rayan_websocket(rlc_auth_header, isins_list):
                 "DEVICE_INFO": "Web"
             }
             async with websockets.connect(RAYAN_SOCKET_RLC, extra_headers=header) as client:
+                for index in indices_info:
+                    await client.send("1,MI.{}".format(str(index['tse_id'])))
                 for isin in isins_list:
                     await client.send("1,MW.{}".format(str(isin)))
                 while True:
@@ -136,6 +164,28 @@ async def rayan_websocket(rlc_auth_header, isins_list):
                             await broadcast_askbid_data_async(isin=isin, askbid_data=askbid_data)
                             # InstrumentData.update(isin, ref_group='indinst', value=indinst_data)
                             await broadcast_indinst_data_async(isin=isin, indinst_data=indinst_data)
+                        elif message_string[0] == "MI":
+                            time = message_string[3]
+                            date = str(datetime.now().strftime("%Y/%m/%d")) + "T" + time[:2] + ":" + time[2:4]
+                            symbol_title = ""
+                            for item in indices_info:
+                                if item['tse_id'] == message_string[1]:
+                                    symbol_title = item['symbol_title']
+                                    break
+                            indices_data = {
+                                "DayOfEvent": date,
+                                "IndexChanges": float(message_string[4]),
+                                "LastIndexValue": float(message_string[2]),
+                                "PercentVariation": float(message_string[5]),
+                                "SymbolTitle": symbol_title,
+                                "TseId": message_string[1],
+                                "SymbolISIN": message_string[9]
+                            }
+                            # Cache data
+                            # InstrumentData.update(message_string[9], 'index', indices_data)
+                            await broadcast_indices_data_async(index_data=indices_data)
+                        else:
+                            pass
 
                     except Exception as e:
                         print(f'Failed in connecting RAYAN websocket (1): {e}')
