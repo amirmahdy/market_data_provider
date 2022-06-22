@@ -473,7 +473,7 @@ class LS_Class:
             "trade_date": self.verify(vals, res, "TradeDate", "trade_date", str),
         }
         # Cache data
-        log({"src": "O+", "data": data})
+        log({"src": "O+", "isin": isin, "data": data})
         InstrumentData.update(isin, ref_group='market', value=data)
         broadcast_market_data(isin=isin, market_data=InstrumentData.get(isin=isin, ref_group='market'))
 

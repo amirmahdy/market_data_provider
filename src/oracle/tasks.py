@@ -27,7 +27,7 @@ def market_data_update():
         instruments = Instrument.get_instruments()
         for instrument in instruments:
             res = get_tse_instrument_data(instrument)
-            log({"src": "TSETMC", "data": res})
+            log({"src": "TSETMC", "isin": instrument.isin, "data": res})
             InstrumentData.update(instrument.isin, "market", res)
 
             # update market status
