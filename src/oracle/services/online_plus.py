@@ -473,7 +473,6 @@ class LS_Class:
             "trade_date": self.verify(vals, res, "TradeDate", "trade_date", str),
         }
         # Cache data
-        log({"src": "O+", "isin": isin, "data": data})
         InstrumentData.update(isin, ref_group='market', value=data)
         broadcast_market_data(isin=isin, market_data=InstrumentData.get(isin=isin, ref_group='market'))
 
@@ -517,7 +516,7 @@ class LS_Class:
             broadcast_indinst_data(isin=isin, indinst_data=InstrumentData.get(isin=isin, ref_group='indinst'))
 
         except Exception as e:
-            pass
+            log({"severity": "high", "path": "services/online_plus/on_market_update_rlc", "error": str(e)})
 
     def askbid_subscribe(self, isin):
         subscription = Subscription(

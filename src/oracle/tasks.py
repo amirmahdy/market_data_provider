@@ -27,7 +27,6 @@ def market_data_update():
         instruments = Instrument.get_instruments()
         for instrument in instruments:
             res = get_tse_instrument_data(instrument)
-            log({"src": "TSETMC", "isin": instrument.isin, "data": res})
             InstrumentData.update(instrument.isin, "market", res)
 
             # update market status
@@ -41,7 +40,7 @@ def market_data_update():
                                       market_data=InstrumentData.get(isin=instrument.isin, ref_group='market'))
 
     except Exception as e:
-        print(e)
+        log({"severity": "high", "path": "tasks/market_data_update", "error": str(e)})
         return e
     return True
 
@@ -73,7 +72,7 @@ def tsetmc_askbid_yesterday_update(days):
 
 
     except Exception as e:
-        print(e)
+        log({"severity": "high", "path": "tasks/tsetmc_askbid_yesterday_update", "error": str(e)})
         return e
     return True
 
@@ -93,7 +92,7 @@ def trade_data_yesterday_update(days):
                                fieldnames=['t', 'q', 'p'], frmt="w+")
 
     except Exception as e:
-        print(e)
+        log({"severity": "high", "path": "tasks/trade_data_yesterday_update", "error": str(e)})
         return e
     return True
 
@@ -106,7 +105,7 @@ def trade_data_today_update():
             today_trades = get_trades(instrument.tse_id)
             InstrumentData.update(instrument.isin, 'trades', today_trades)
     except Exception as e:
-        print(e)
+        log({"severity": "high", "path": "tasks/trade_data_today_update", "error": str(e)})
         return e
     return True
 
@@ -133,7 +132,7 @@ def tsetmc_trade_kline(days):
             fsutil.remove_file(path + sym.upper() + ".csv")
 
     except Exception as e:
-        print(e)
+        log({"severity": "high", "path": "tasks/tsetmc_trade_kline", "error": str(e)})
         return e
     return True
 
@@ -151,7 +150,7 @@ def trade_tick_data():
             csv_filename = cur_date + "_trade.csv"
             create_zip_on_csv(path, zip_filename, csv_filename, rows)
     except Exception as e:
-        print(e)
+        log({"severity": "high", "path": "tasks/trade_tick_data", "error": str(e)})
         return e
     return True
 
@@ -163,7 +162,7 @@ def online_plus_socket_renew():
         ls = LS_Class()
         ls.renew()
     except Exception as e:
-        print(e)
+        log({"severity": "high", "path": "tasks/online_plus_socket_renew", "error": str(e)})
         return e
     return True
 
@@ -175,6 +174,6 @@ def check_queue_condition():
         for instrument in instruments:
             broadcast_instrument_queue_status(instrument)
     except Exception as e:
-        print(e)
+        log({"severity": "high", "path": "tasks/check_queue_condition", "error": str(e)})
         return e
     return True
