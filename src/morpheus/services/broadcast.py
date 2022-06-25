@@ -34,3 +34,30 @@ def broadcast_indinst_data(isin: str, indinst_data):
     data = {"isin": isin, "data": indinst_data}
     async_to_sync(channel_layer.group_send)(f"indinst_{isin}", {
         "type": "send_data", "msg_type": "indinst_data", "data": data})
+
+
+async def broadcast_market_data_async(isin, market_data):
+    channel_layer = get_channel_layer()
+    data = {"isin": isin, "data": market_data}
+    await channel_layer.group_send(f"market_{isin}", {
+        "type": "send_data", "msg_type": "market_data", "data": data})
+
+
+async def broadcast_askbid_data_async(isin, askbid_data):
+    channel_layer = get_channel_layer()
+    data = {"isin": isin, "data": askbid_data}
+    await channel_layer.group_send(f"askbid_{isin}", {
+        "type": "send_data", "msg_type": "askbid_data", "data": data})
+
+
+async def broadcast_indinst_data_async(isin, indinst_data):
+    channel_layer = get_channel_layer()
+    data = {"isin": isin, "data": indinst_data}
+    await channel_layer.group_send(f"indinst_{isin}", {
+        "type": "send_data", "msg_type": "indinst_data", "data": data})
+
+
+async def broadcast_indices_data_async(index_data):
+    channel_layer = get_channel_layer()
+    await channel_layer.group_send(f"index", {
+        "type": "send_data", "msg_type": "index_data", "data": index_data})
