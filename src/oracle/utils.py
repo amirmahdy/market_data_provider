@@ -54,3 +54,31 @@ def check_instrument_queue_status(instrument):
     status = queue_detection(askbid, market_data)
 
     return status
+
+
+def order_balance(askbid):
+    balance_check_multiplier = 1.5
+    total_buy_volume = 0
+    total_sell_volume = 0
+
+    for i in range(5):
+        if askbid[i]['best_buy_quantity'] and askbid[i]['best_buy_quantity'] > 0:
+            total_buy_volume = total_buy_volume + askbid[i]['best_buy_quantity']
+        if askbid[i]['best_sell_quantity'] and askbid[i]['best_sell_quantity'] > 0:
+            total_sell_volume = total_sell_volume + askbid[i]['best_sell_quantity']
+        
+    # check if each side has higher volume equal to multiplier
+    if total_buy_volume > balance_check_multiplier * total_sell_volume:
+        return 'Buy Heavier'
+    elif total_sell_volume > balance_check_multiplier * total_buy_volume:
+        return 'Sell Heavier'
+    else:
+        return 'Normal'
+        
+def check_order_balance_status(instrument):
+    from oracle.services.tsetmc_askbid import get_live_askbid
+
+    askbid = get_live_askbid(instrument)
+    status = order_balance(askbid)
+
+    return status

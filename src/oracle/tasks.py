@@ -11,7 +11,7 @@ from oracle.services.tsetmc_market import get_tse_instrument_data
 from oracle.services.tsetmc_trades import get_trades, get_kline, get_tick_data
 from oracle.services.tsetmc_askbid import get_askbid_history
 from datetime import datetime, timedelta
-from oracle.triggers.queue_condition import broadcast_instrument_queue_status
+from oracle.triggers import broadcast_instrument_queue_status, broadcast_order_balance_status
 from morpheus.services.broadcast import broadcast_trigger, broadcast_market_data
 from mdp.log import Log
 
@@ -181,5 +181,16 @@ def check_queue_condition():
             broadcast_instrument_queue_status(instrument)
     except Exception as e:
         log({"severity": "high", "path": "tasks/check_queue_condition", "error": str(e)})
+        return e
+    return True
+
+@shared_task(name='check_order_balance')
+def check_order_balance():
+    try:
+        instruments = Instrument.get_instruments()
+        for instrument in instruments:
+            broadcast_order_balance_status(instrument)
+    except Exception as e:
+        log({"severity": "high", "path": "tasks/check_order_balance", "error": str(e)})
         return e
     return True
