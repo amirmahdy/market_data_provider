@@ -451,12 +451,12 @@ class LS_Class:
         res = InstrumentData.get(isin=isin, ref_group='market')
         data = {
             "bid_ask_first_row": {
-                "best_buy_price": int(vals["BestBuyLimitPrice_1"]),
-                "best_sell_price": int(vals["BestSellLimitPrice_1"]),
-                "best_sell_quantity": int(vals["BestSellLimitQuantity_1"]),
-                "best_buy_quantity": int(vals["BestBuyLimitQuantity_1"]),
-                "no_best_buy": int(vals["NumberOfOrdersAtBestBuy_1"]),
-                "no_best_sell": int(vals["NumberOfOrdersAtBestSell_1"]),
+                "best_buy_price": self.verify(vals, res, "BestBuyLimitPrice_1", "best_buy_price", int),
+                "best_sell_price": self.verify(vals, res, "BestSellLimitPrice_1", "best_sell_price", int),
+                "best_sell_quantity": self.verify(vals, res, "BestSellLimitQuantity_1", "best_sell_quantity", int),
+                "best_buy_quantity": self.verify(vals, res, "BestBuyLimitQuantity_1", "best_buy_quantity", int),
+                "no_best_buy": self.verify(vals, res, "NumberOfOrdersAtBestBuy_1", "no_best_buy", int),
+                "no_best_sell": self.verify(vals, res, "NumberOfOrdersAtBestSell_1", "no_best_sell", int),
             },
             "last_traded_price": self.verify(vals, res, "LastTradedPrice", "last_traded_price", int),
             "closing_price": self.verify(vals, res, "ClosingPrice", "closing_price", int),

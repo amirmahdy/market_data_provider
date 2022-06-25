@@ -81,7 +81,8 @@ async def rayan_websocket(rlc_auth_header, isins_list):
                             price_var = float("%.2f" % ((price_change / float(message_string[13])) * 100))
                             closing_price_change = float(message_string[4]) - float(message_string[13])
                             closing_price_change_int = int(closing_price_change)
-                            closing_price_var = float("%.2f" % ((closing_price_change / float(message_string[13])) * 100))
+                            closing_price_var = float(
+                                "%.2f" % ((closing_price_change / float(message_string[13])) * 100))
                             date = gregorian_to_jdate(message_string[19])
                             market_data = {
                                 "bid_ask_first_row": {
