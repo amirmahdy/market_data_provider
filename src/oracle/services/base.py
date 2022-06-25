@@ -3,7 +3,7 @@ from oracle.services.tsetmc_askbid import get_live_askbid
 from oracle.services.tsetmc_indices import get_indices_live
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.services.tsetmc_indinst import get_live_indinst
-from oracle.triggers.queue_condition import check_instrument_queue_status
+from oracle.utils import check_instrument_queue_status
 
 
 def initial_setup():

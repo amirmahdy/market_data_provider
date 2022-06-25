@@ -1,0 +1,362 @@
+[
+{
+    "model": "oracle.instrumenttype",
+    "pk": 67,
+    "fields": {
+        "name": "شاخص",
+        "desc": "شاخص قيمت"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 68,
+    "fields": {
+        "name": "شاخص",
+        "desc": "شاخص"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 69,
+    "fields": {
+        "name": "شاخص",
+        "desc": "شاخص فرابورس"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 70,
+    "fields": {
+        "name": "اوراق مشاركت",
+        "desc": "صکوک اختصاصی"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 200,
+    "fields": {
+        "name": "اوراق مشاركت",
+        "desc": "اوراق مشارکت انرژی"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 206,
+    "fields": {
+        "name": "نا معلوم",
+        "desc": "نا معلوم"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 207,
+    "fields": {
+        "name": "اوراق مشاركت",
+        "desc": "اوراق مشارکت ارز صادراتی"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 208,
+    "fields": {
+        "name": "اوراق مشاركت",
+        "desc": "اوراق صكوك"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 263,
+    "fields": {
+        "name": "نا معلوم",
+        "desc": "نا معلوم"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 300,
+    "fields": {
+        "name": "سهام عادی",
+        "desc": "سهام"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 301,
+    "fields": {
+        "name": "اوراق مشاركت",
+        "desc": "اوراق مشاركت"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 303,
+    "fields": {
+        "name": "سهام عادی",
+        "desc": "اتیسی"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 304,
+    "fields": {
+        "name": "سهام عادی",
+        "desc": "آتی"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 305,
+    "fields": {
+        "name": "صندوق سرمايه گذاري",
+        "desc": "صندوق سرمايه گذاري در سهام بورس"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 306,
+    "fields": {
+        "name": "اوراق مشاركت",
+        "desc": "اوراق مشارکت اتیسی"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 307,
+    "fields": {
+        "name": "سهام عادی",
+        "desc": "تسهیلات فرابورس"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 308,
+    "fields": {
+        "name": "اوراق مشاركت",
+        "desc": "اوراق مشارکت کالا"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 309,
+    "fields": {
+        "name": "سهام عادی",
+        "desc": "پایه"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 311,
+    "fields": {
+        "name": "سهام عادی",
+        "desc": "اختیار خرید"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 312,
+    "fields": {
+        "name": "سهام عادی",
+        "desc": "اختیار فروش"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 313,
+    "fields": {
+        "name": "سهام عادی",
+        "desc": "شرکتهای کوچک و متوسط"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 315,
+    "fields": {
+        "name": "صندوق سرمايه گذاري",
+        "desc": "صندوق سرمایه گذاری قابل معامله انرژی"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 320,
+    "fields": {
+        "name": "نا معلوم",
+        "desc": "نا معلوم"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 321,
+    "fields": {
+        "name": "اختیار فولاد هرمزگان",
+        "desc": "."
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 322,
+    "fields": {
+        "name": "اختیار خ اخزا ( اسناد خزانه داری اسلامی )",
+        "desc": "."
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 323,
+    "fields": {
+        "name": "اختیارف اخزا ( اسناد خزانه داری اسلامی )",
+        "desc": "."
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 400,
+    "fields": {
+        "name": "حق تقدم",
+        "desc": "حق تقدم سهم"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 401,
+    "fields": {
+        "name": "نا معلوم",
+        "desc": "نا معلوم"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 402,
+    "fields": {
+        "name": "نا معلوم",
+        "desc": "نا معلوم"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 403,
+    "fields": {
+        "name": "حق تقدم",
+        "desc": "حق تقدم اتیسی"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 404,
+    "fields": {
+        "name": "حق تقدم",
+        "desc": "حق تقدم پایه"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 600,
+    "fields": {
+        "name": "اختیار",
+        "desc": "اختیار فروش تبعی"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 601,
+    "fields": {
+        "name": "اختیار فروش تبعی ( ذوب آهن اصفهان)",
+        "desc": "."
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 602,
+    "fields": {
+        "name": "اختیار",
+        "desc": "اختیار فروش تبعی فرابورس"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 603,
+    "fields": {
+        "name": "نا معلوم",
+        "desc": "نا معلوم"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 605,
+    "fields": {
+        "name": "نا معلوم",
+        "desc": "نا معلوم"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 701,
+    "fields": {
+        "name": "کالا",
+        "desc": "گواهی سپرده کالایی"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 706,
+    "fields": {
+        "name": "اوراق مشاركت",
+        "desc": "صکوک اختصاصی"
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 801,
+    "fields": {
+        "name": "سلف بورس انرژی",
+        "desc": "."
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 802,
+    "fields": {
+        "name": "سلف بورس انرژی",
+        "desc": "."
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 803,
+    "fields": {
+        "name": "سلف بورس انرژی",
+        "desc": "."
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 804,
+    "fields": {
+        "name": "سلف بورس انرژی",
+        "desc": "."
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 901,
+    "fields": {
+        "name": "انرژی",
+        "desc": "."
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 902,
+    "fields": {
+        "name": "انرژی",
+        "desc": "."
+    }
+},
+{
+    "model": "oracle.instrumenttype",
+    "pk": 903,
+    "fields": {
+        "name": "دارایی فکری",
+        "desc": "دارایی فکری"
+    }
+}
+]
