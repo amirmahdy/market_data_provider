@@ -16,7 +16,6 @@ class OracleConfig(AppConfig):
             return True
 
         initial_setup()
-        engine_listener_thread = Thread(target=manage_rayan_webscoket, args=())
-        engine_listener_thread.start()
+        # engine_listener_thread = Thread(target=manage_rayan_webscoket, args=())
+        # engine_listener_thread.start()
         LS_Class()
-        
