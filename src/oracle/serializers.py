@@ -6,7 +6,7 @@ class DateSerializer(serializers.Serializer):
 
 
 class InstrumentSerializer(serializers.Serializer):
-    isin = serializers.RegexField(regex=r'^(IR\w\d\w{4}\d{4})$', required=True)
+    isin = serializers.RegexField(regex=r'^(IR\w\d\w{4}\d{4},*)*$', required=True)
 
 
 class InstrumentDateSerializer(serializers.Serializer):
