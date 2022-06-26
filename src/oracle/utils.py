@@ -1,3 +1,6 @@
+import logging
+
+logger = logging.getLogger(__name__)
 
 def queue_detection(askbid, market_data):
 
@@ -80,5 +83,54 @@ def check_order_balance_status(instrument):
 
     askbid = get_live_askbid(instrument)
     status = order_balance(askbid)
+
+    return status
+
+def order_depth(askbid, side):
+    # TODO: This parameters should be provided out of the method
+    high_depth_threshold = 500000
+    low_depth_threshold = 200000
+    
+    try:
+        if side == 'BUY':
+            total_buy_volume = 0
+            for i in range(5):
+                if askbid[i]['best_buy_quantity']:
+                   total_buy_volume = total_buy_volume + askbid[i]['best_buy_quantity']
+            if total_buy_volume > high_depth_threshold:
+                return 'High'
+            elif total_buy_volume < low_depth_threshold:
+                return 'Low'
+            else:
+                return 'Normal'
+        elif side == 'SELL':
+            total_sell_volume = 0
+            for i in range(5):
+                if askbid[i]['best_sell_quantity']:
+                   total_sell_volume = total_sell_volume + askbid[i]['best_sell_quantity']
+            if total_sell_volume > high_depth_threshold:
+                return 'High'
+            elif total_sell_volume < low_depth_threshold:
+                return 'Low'
+            else:
+                return 'Normal'
+    except Exception as e:
+        logger.error(f'Error in order depth trigger examiner method: {e.__str__}')
+
+
+def check_buy_order_depth_status(instrument):
+    from oracle.services.tsetmc_askbid import get_live_askbid
+
+    askbid = get_live_askbid(instrument)
+    status = order_depth(askbid, 'BUY')
+
+    return status
+
+
+def check_sell_order_depth_status(instrument):
+    from oracle.services.tsetmc_askbid import get_live_askbid
+
+    askbid = get_live_askbid(instrument)
+    status = order_depth(askbid, 'SELL')
 
     return status

@@ -247,3 +247,25 @@ class Test_Service(TestCase):
 
         status = order_balance(self.askbid)
         self.assertEqual(status, 'Normal')
+
+    def test_order_depth_status(self):
+        from oracle.utils import order_depth
+
+        # 200000 low threshold
+        # 500000 high threshold
+
+        self.askbid[0]['best_buy_quantity'] = 400000
+        self.askbid[1]['best_buy_quantity'] = 200000
+        self.askbid[2]['best_buy_quantity'] = 100000
+        self.askbid[3]['best_buy_quantity'] = 0
+        self.askbid[4]['best_buy_quantity'] = 0
+        self.askbid[0]['best_sell_quantity'] = 50
+        self.askbid[1]['best_sell_quantity'] = 200
+        self.askbid[2]['best_sell_quantity'] = 300
+        self.askbid[3]['best_sell_quantity'] = 0
+        self.askbid[4]['best_sell_quantity'] = 0
+
+        buy_status = order_depth(self.askbid, 'BUY')
+        self.assertEqual(buy_status, 'High')
+        sell_status = order_depth(self.askbid, 'SELL')
+        self.assertEqual(sell_status, 'Low')
