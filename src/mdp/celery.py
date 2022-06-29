@@ -51,6 +51,16 @@ app.conf.beat_schedule = {
         'schedule': crontab(minute='*/1'),
         'args': ()
     },
+    'check_order_depth': {
+        'task': 'check_order_depth',
+        'schedule': crontab(minute='*/1'),
+        'args': ()
+    },
+        'check_recent_trades': {
+        'task': 'check_recent_trades',
+        'schedule': crontab(minute='*/1'),
+        'args': ()
+    },
     'online_plus_socket_renew': {
         'task': 'online_plus_socket_renew',
         'schedule': crontab(hour='6', minute='0'),

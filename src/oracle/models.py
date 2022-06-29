@@ -1,4 +1,5 @@
 import pickle
+from tabnanny import verbose
 from django.db import models
 
 
@@ -67,3 +68,11 @@ class Instrument(models.Model):
     def get_instrument(ISIN):
         instruments = Instrument.get_instruments()
         return [instrument for instrument in instruments if instrument.isin == ISIN]
+
+
+class TriggerParameter(models.Model):
+    name_en = models.CharField(max_length=128, verbose_name='English Name', unique=True)
+    name_fa = models.CharField(max_length=128, verbose_name='Persian Name')
+    description = models.CharField(max_length=1024, verbose_name='Description')
+    value = models.CharField(max_length=32, verbose_name='Parameter Value')
+    trigger_name = models.CharField(max_length=128, verbose_name='Trigger Name')

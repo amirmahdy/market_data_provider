@@ -15,6 +15,7 @@ from oracle.triggers import (
     broadcast_instrument_queue_status, 
     broadcast_order_balance_status, 
     broadcast_order_depth_status,
+    broadcast_recent_trades_status,
 )
 from morpheus.services.broadcast import broadcast_trigger, broadcast_market_data
 from mdp.log import Log
@@ -208,5 +209,17 @@ def check_order_depth():
             broadcast_order_depth_status(instrument)
     except Exception as e:
         log({"severity": "high", "path": "tasks/check_order_depth", "error": str(e)})
+        return e
+    return True
+
+
+@shared_task(name='check_recent_trades')
+def check_recent_trades():
+    try:
+        instruments = Instrument.get_instruments()
+        for instrument in instruments:
+            broadcast_recent_trades_status(instrument)
+    except Exception as e:
+        log({"severity": "high", "path": "tasks/check_recent_trades", "error": str(e)})
         return e
     return True

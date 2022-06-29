@@ -1,4 +1,8 @@
 import logging
+from dateutil import parser
+from datetime import datetime as dt
+
+from oracle.models import TriggerParameter
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +57,7 @@ def check_instrument_queue_status(instrument):
     market_data = InstrumentData.get(ref_group="market", isin=instrument.isin)
     if market_data is None:
         market_data = get_tse_instrument_data(instrument, init=True)
-    askbid = get_live_askbid(instrument)
+    askbid = get_live_askbid(instrument.tse_id)
     status = queue_detection(askbid, market_data)
 
     return status
@@ -81,15 +85,16 @@ def order_balance(askbid):
 def check_order_balance_status(instrument):
     from oracle.services.tsetmc_askbid import get_live_askbid
 
-    askbid = get_live_askbid(instrument)
+    askbid = get_live_askbid(instrument.tse_id)
     status = order_balance(askbid)
 
     return status
 
 def order_depth(askbid, side):
-    # TODO: This parameters should be provided out of the method
-    high_depth_threshold = 500000
-    low_depth_threshold = 200000
+    from oracle.models import TriggerParameter
+
+    high_depth_threshold = int(TriggerParameter.objects.get(name_en='high depth threshold').value)
+    low_depth_threshold = int(TriggerParameter.objects.get(name_en='low depth threshold').value)
     
     try:
         if side == 'BUY':
@@ -121,7 +126,7 @@ def order_depth(askbid, side):
 def check_buy_order_depth_status(instrument):
     from oracle.services.tsetmc_askbid import get_live_askbid
 
-    askbid = get_live_askbid(instrument)
+    askbid = get_live_askbid(instrument.tse_id)
     status = order_depth(askbid, 'BUY')
 
     return status
@@ -130,7 +135,56 @@ def check_buy_order_depth_status(instrument):
 def check_sell_order_depth_status(instrument):
     from oracle.services.tsetmc_askbid import get_live_askbid
 
-    askbid = get_live_askbid(instrument)
+    askbid = get_live_askbid(instrument.tse_id)
     status = order_depth(askbid, 'SELL')
+
+    return status
+
+
+def recent_trades(trades):
+    """
+    Finds in window trades with time window format of seconds
+    returns status values regarding to trades volume
+    """
+
+    high_volume_threshold = int(TriggerParameter.objects.get(name_en='high volume threshold').value)
+    low_volume_threshold = int(TriggerParameter.objects.get(name_en='high volume threshold').value)
+    time_window = int(TriggerParameter.objects.get(name_en='rolling window').value) * 60
+
+    try:
+        in_window_trades = []
+        in_window = True
+        i = len(trades)-1
+        now = dt.now()
+        while in_window and i >= 0:
+            time_diff = (now - parser.parse(trades[i]['t'])).seconds
+            if time_diff < 0:
+                raise Exception('Invalid trades times')
+            elif time_diff < time_window:
+                in_window_trades.append(trades[i])
+                i = i-1
+            else:
+                in_window = False
+    except Exception as e:
+        logger.error(e.__str__)
+        return False
+
+    total_volume = 0
+    for _ in in_window_trades:
+        total_volume = total_volume + _['q']
+
+    if total_volume > high_volume_threshold:
+        return "High"
+    elif total_volume < low_volume_threshold:
+        return "Low"
+    else:
+        return "Normal"
+
+
+def check_recent_trades_status(instrument):
+    from oracle.services.tsetmc_trades import get_trades
+
+    trades = get_trades(instrument)
+    status = recent_trades(trades)
 
     return status

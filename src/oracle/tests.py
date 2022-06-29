@@ -1,11 +1,9 @@
 import os, django
 from django.test import TestCase
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mdp.settings")
-django.setup()
-
-
+from oracle.models import Instrument
 class Test_Service(TestCase):
+
+    fixtures = ['instruments', 'instrumenttypes', 'triggerparameters']
 
     def setUp(self):
 
@@ -95,6 +93,8 @@ class Test_Service(TestCase):
                 "no_best_sell": 2
             }
         ]
+
+        self.instrument = Instrument.objects.get(isin='IRO1BANK0001')
 
     def test_instrument_queue_status(self):
         from oracle.utils import queue_detection
@@ -248,6 +248,7 @@ class Test_Service(TestCase):
         status = order_balance(self.askbid)
         self.assertEqual(status, 'Normal')
 
+    
     def test_order_depth_status(self):
         from oracle.utils import order_depth
 
@@ -269,3 +270,31 @@ class Test_Service(TestCase):
         self.assertEqual(buy_status, 'High')
         sell_status = order_depth(self.askbid, 'SELL')
         self.assertEqual(sell_status, 'Low')
+
+    
+    def test_recent_trades_status(self):
+        from oracle.utils import recent_trades
+        from oracle.services.tsetmc_trades import get_trades
+
+        # 200000 low threshold
+        # 500000 high threshold  
+        # rolling window 10 min
+
+        trades = [{
+            "t":"2022-06-28T01:45:32",
+            "p":9890,
+            "q":990000
+            },
+            {
+               "t":"2022-06-28T01:46:32",
+               "p":9890,
+               "q":125000
+            },
+            {
+               "t":"2022-06-28T01:49:50",
+               "p":9900,
+               "q":336808
+            },
+            ]
+        status = recent_trades(trades)
+        self.assertEqual(status, 'High')
