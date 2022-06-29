@@ -3,8 +3,13 @@ from oracle.services.tsetmc_askbid import get_live_askbid
 from oracle.services.tsetmc_indices import get_indices_live
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.services.tsetmc_indinst import get_live_indinst
-from oracle.utils import check_instrument_queue_status
-
+from oracle.utils import (
+    check_instrument_queue_status,
+    check_order_balance_status,
+    check_buy_order_depth_status,
+    check_sell_order_depth_status,
+    check_recent_trades_status,
+)
 
 def initial_setup():
     from oracle.models import Instrument
@@ -13,8 +18,14 @@ def initial_setup():
         instrument_data = get_tse_instrument_data(instrument, init=True)
         instrument_askbid = get_live_askbid(instrument.tse_id)
         instrument_indinst = get_live_indinst(instrument.tse_id, instrument.isin)
-        instrument_state = {'state': instrument_data['market_status'],
-                            'queue': check_instrument_queue_status(instrument), }
+        instrument_state = {
+            'state': instrument_data['market_status'],
+            'queue': check_instrument_queue_status(instrument),
+            'order_balance': check_order_balance_status(instrument),
+            'buy_order_depth': check_buy_order_depth_status(instrument),
+            'sell_order_depth': check_sell_order_depth_status(instrument),
+            'recent_trades': check_recent_trades_status(instrument),
+        }
 
         InstrumentData.update(instrument.isin, 'market', instrument_data)
         InstrumentData.update(instrument.isin, 'askbid', instrument_askbid)

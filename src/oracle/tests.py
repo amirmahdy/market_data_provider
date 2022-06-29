@@ -1,6 +1,13 @@
 import os, django
 from django.test import TestCase
 from oracle.models import Instrument
+from .enums import (
+    OrderSide,
+    QueueConditionOuput,
+    OrderBalanceOutput,
+    OrderDepthOutput,
+    RecentTradesOutput,
+)
 class Test_Service(TestCase):
 
     fixtures = ['instruments', 'instrumenttypes', 'triggerparameters']
@@ -116,7 +123,7 @@ class Test_Service(TestCase):
         self.askbid[4]['best_sell_price'] = 17350
 
         status = queue_detection(self.askbid, self.market_data)
-        self.assertEqual(status, 'Is Buy Queue')
+        self.assertEqual(status, QueueConditionOuput.IS_BUY_QUEUE)
 
         # Sell_Queue
         self.market_data['high_allowed_price'] = 7690
@@ -135,7 +142,7 @@ class Test_Service(TestCase):
         self.askbid[4]['best_sell_price'] = 0
 
         status = queue_detection(self.askbid, self.market_data)
-        self.assertEqual(status, 'Is Sell Queue')
+        self.assertEqual(status, QueueConditionOuput.IS_SELL_QUEUE)
 
         # Near Buy_Queue
         self.market_data['high_allowed_price'] = 11260
@@ -154,7 +161,7 @@ class Test_Service(TestCase):
         self.askbid[4]['best_sell_price'] = 11180
 
         status = queue_detection(self.askbid, self.market_data)
-        self.assertEqual(status, 'Near Buy Queue')
+        self.assertEqual(status, QueueConditionOuput.NEAR_BUY_QUEUE)
 
         # Near Buy Queue 3
 
@@ -174,7 +181,7 @@ class Test_Service(TestCase):
         self.askbid[4]['best_sell_price'] = 11180
 
         status = queue_detection(self.askbid, self.market_data)
-        self.assertEqual(status, 'Near Buy Queue')
+        self.assertEqual(status, QueueConditionOuput.NEAR_BUY_QUEUE)
 
         # Near Sell Queue 3
 
@@ -194,7 +201,7 @@ class Test_Service(TestCase):
         self.askbid[4]['best_sell_price'] = 11200
 
         status = queue_detection(self.askbid, self.market_data)
-        self.assertEqual(status, 'Near Sell Queue')
+        self.assertEqual(status, QueueConditionOuput.NEAR_SELL_QUEUE)
 
 
     def test_order_balance_status(self):
@@ -214,7 +221,7 @@ class Test_Service(TestCase):
         self.askbid[4]['best_sell_quantity'] = 0
 
         status = order_balance(self.askbid)
-        self.assertEqual(status, 'Buy Heavier')
+        self.assertEqual(status, OrderBalanceOutput.BUY_HEAVIER)
 
         # Sell Deviation
 
@@ -230,7 +237,7 @@ class Test_Service(TestCase):
         self.askbid[4]['best_sell_quantity'] = 0
 
         status = order_balance(self.askbid)
-        self.assertEqual(status, 'Sell Heavier')
+        self.assertEqual(status, OrderBalanceOutput.SELL_HEAVIER)
 
         # Normal
 
@@ -246,12 +253,12 @@ class Test_Service(TestCase):
         self.askbid[4]['best_sell_quantity'] = 0
 
         status = order_balance(self.askbid)
-        self.assertEqual(status, 'Normal')
+        self.assertEqual(status, OrderBalanceOutput.NORMAL)
 
     
     def test_order_depth_status(self):
         from oracle.utils import order_depth
-
+        
         # 200000 low threshold
         # 500000 high threshold
 
@@ -266,10 +273,10 @@ class Test_Service(TestCase):
         self.askbid[3]['best_sell_quantity'] = 0
         self.askbid[4]['best_sell_quantity'] = 0
 
-        buy_status = order_depth(self.askbid, 'BUY')
-        self.assertEqual(buy_status, 'High')
-        sell_status = order_depth(self.askbid, 'SELL')
-        self.assertEqual(sell_status, 'Low')
+        buy_status = order_depth(self.askbid, OrderSide.BUY)
+        self.assertEqual(buy_status, OrderDepthOutput.HEAVY)
+        sell_status = order_depth(self.askbid, OrderSide.SELL)
+        self.assertEqual(sell_status, OrderDepthOutput.LIGHT)
 
     
     def test_recent_trades_status(self):
@@ -297,4 +304,4 @@ class Test_Service(TestCase):
             },
             ]
         status = recent_trades(trades)
-        self.assertEqual(status, 'High')
+        self.assertEqual(status, RecentTradesOutput.LOW)
