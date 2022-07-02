@@ -144,11 +144,12 @@ def trade_tick_data():
         cur_date = datetime.strftime(datetime.now() - timedelta(1), '%Y%m%d')
         for instrument in instruments:
             rows = get_tick_data(instrument.tse_id, cur_date)
-            sym = instrument.en_symbol
-            path = settings.DATA_ROOT + "/equity/usa/tick/" + sym.upper() + "/"
-            zip_filename = cur_date + "_trade.zip"
-            csv_filename = cur_date + "_trade.csv"
-            create_zip_on_csv(path, zip_filename, csv_filename, rows)
+            if rows:
+                sym = instrument.en_symbol
+                path = settings.DATA_ROOT + "/equity/usa/tick/" + sym.upper() + "/"
+                zip_filename = cur_date + "_trade.zip"
+                csv_filename = cur_date + "_trade.csv"
+                create_zip_on_csv(path, zip_filename, csv_filename, rows)
     except Exception as e:
         log({"severity": "high", "path": "tasks/trade_tick_data", "error": str(e)})
         return e
