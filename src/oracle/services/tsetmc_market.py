@@ -82,7 +82,7 @@ def get_tse_instrument_data(instrument, init=False):
             'basis_volume': ticker.base_volume,
             'first_traded_price': ticker.open_price,
             "reference_price": ticker.yesterday_price,
-            "market_status": ticker.state,
+            "market_status": translate_state(ticker.state),
             "max_quantity_order": int(instrument.order_max_size),
             "min_quantity_order": int(instrument.order_min_size),
         }
