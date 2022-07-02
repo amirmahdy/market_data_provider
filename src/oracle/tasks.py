@@ -7,7 +7,7 @@ from mdp.utils import create_csv, create_zip_on_csv
 from oracle.models import Instrument
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.cache.base import Cache
-from oracle.services.tsetmc_market import get_tse_instrument_data, translate_state
+from oracle.services.tsetmc_market import get_tse_instrument_data
 from oracle.services.tsetmc_trades import get_trades, get_kline, get_tick_data
 from oracle.services.tsetmc_askbid import get_askbid_history
 from datetime import datetime, timedelta
@@ -30,10 +30,10 @@ def market_data_update():
             InstrumentData.update(instrument.isin, "market", res)
 
             # update market status
-            if translate_state(res['market_status']) != instrument.market_status:
-                instrument.market_status = translate_state(res['market_status'])
+            if res['market_status'] != instrument.market_status:
+                instrument.market_status = res['market_status']
                 instrument.save()
-                instrument_state = {'state': translate_state(res['market_status'])}
+                instrument_state = {'state': res['market_status']}
                 InstrumentData.update(instrument.isin, 'state', instrument_state)
                 broadcast_trigger(isin=instrument.isin, data={'trigger_type': 'instrument_market_status_change'})
                 broadcast_market_data(isin=instrument.isin,
