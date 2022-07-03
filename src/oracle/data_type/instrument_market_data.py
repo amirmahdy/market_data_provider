@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from oracle.cache.base import Cache
 
 """
@@ -19,6 +20,11 @@ class InstrumentData:
 
     @staticmethod
     def update(isin, ref_group, value):
+        date = str(datetime.now())
+        if ref_group == "askbid":
+            value.append({"t": date})
+        else:
+            value['t'] = date
         ch = Cache()
         try:
             prev_val = ch.get(ref_group=ref_group, ref_value=isin)
