@@ -3,7 +3,7 @@ from datetime import datetime
 import re
 import json
 
-TICK_BASE_URL = "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/{isin}/{cur_date}/true"
+TICK_BASE_URL = "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/{isin}/{cur_date}/false"
 TRADE_HISTORY_TODAY_URL = "http://tsetmc.com/tsev2/data/TradeDetail.aspx?i={tse_isin}"
 TRADE_HISTORY_YESTERDAY_URL = "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/{tse_isin}/{date}/false"
 GATHER_ONE_DAY_URL = "http://service.tsetmc.com/WebService/TsePublicV2.asmx?op=InstTrade"
@@ -105,9 +105,10 @@ def get_tick_data(isin, cur_date):
     tse_res = json.loads(tse_full_data.text)
     new_history_list = []
     for item in tse_res['tradeHistory']:
-        heven = ("%06d" % item["hEven"])
-        h = heven[0:2] + ":" + heven[2:4] + ":" + heven[4:6]
-        new_dict = [h, int(item['qTitTran']), int(item['pTran']), "D", "@", 0]
-        new_history_list.append(new_dict)
+        if int(item["canceled"]) == 0:
+            heven = ("%06d" % item["hEven"])
+            h = heven[0:2] + ":" + heven[2:4] + ":" + heven[4:6]
+            new_dict = [h, int(item['qTitTran']), int(item['pTran']), "D", "@", 0]
+            new_history_list.append(new_dict)
     new_history_list.reverse()
     return new_history_list
