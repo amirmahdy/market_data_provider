@@ -21,7 +21,7 @@ class InstrumentData:
     @staticmethod
     def update(isin, ref_group, value):
         date = str(datetime.now())
-        if ref_group == "askbid":
+        if ref_group in ["askbid", "full_askbid"]:
             value.append({"t": date})
         else:
             value['t'] = date
