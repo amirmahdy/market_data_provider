@@ -26,7 +26,12 @@ def market_data_update():
     try:
         instruments = Instrument.get_instruments()
         for instrument in instruments:
-            res = get_tse_instrument_data(instrument)
+            try:
+                res = get_tse_instrument_data(instrument)
+            except Exception as e:
+                log({"severity": "high", "path": "tasks/market_data_update", "error": "TSETMC_ERROR: " + str(e)})
+                break
+
             InstrumentData.update(instrument.isin, "market", res)
 
             # update market status
