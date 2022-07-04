@@ -35,7 +35,7 @@ def market_data_update():
             InstrumentData.update(instrument.isin, "market", res)
 
             # update market status
-            if res['market_status'] != instrument.market_status:
+            if instrument.market_status is not None and ['market_status'] != instrument.market_status:
                 instrument.market_status = res['market_status']
                 instrument.save()
                 instrument_state = {'state': res['market_status']}

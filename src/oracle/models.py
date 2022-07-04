@@ -12,27 +12,6 @@ class InstrumentType(models.Model):
 
 
 class Instrument(models.Model):
-    NOT_PROVIDED = "NOT_PROVIDED"
-    ALLOWED = "ALLOWED"
-    ALLOWED_FROZEN = "ALLOWED_FROZEN"
-    ALLOWED_SUSPENDED = "ALLOWED_SUSPENDED"
-    ALLOWED_RESERVED = "ALLOWED_RESERVED"
-    FORBIDDEN = "FORBIDDEN"
-    FORBIDDEN_FROZEN = "FORBIDDEN_FROZEN"
-    FORBIDDEN_SUSPENDED = "FORBIDDEN_SUSPENDED"
-    FORBIDDEN_RESERVED = "FORBIDDEN_RESERVED"
-
-    InstrumentMarketStatus = [
-        (NOT_PROVIDED, "NOT_PROVIDED"),
-        (ALLOWED, "ALLOWED"),
-        (ALLOWED_FROZEN, "ALLOWED_FROZEN"),
-        (ALLOWED_SUSPENDED, "ALLOWED_SUSPENDED"),
-        (ALLOWED_RESERVED, "ALLOWED_RESERVED"),
-        (FORBIDDEN, "FORBIDDEN"),
-        (FORBIDDEN_FROZEN, "FORBIDDEN_FROZEN"),
-        (FORBIDDEN_SUSPENDED, "FORBIDDEN_SUSPENDED"),
-        (FORBIDDEN_RESERVED, "FORBIDDEN_RESERVED")]
-
     last_trade_date = models.IntegerField(default=0)
     tse_id = models.CharField(max_length=20)
     isin = models.CharField(max_length=12, primary_key=True)
@@ -66,8 +45,7 @@ class Instrument(models.Model):
     order_min_size = models.CharField(default="", max_length=20)
     order_max_size = models.CharField(default="", max_length=20)
     valid = models.BooleanField(default=False)
-    market_status = models.CharField(max_length=20, choices=InstrumentMarketStatus,
-                                     default=NOT_PROVIDED)
+    market_status = models.CharField(max_length=20, default="A")
     rahavard_id = models.CharField(default="0", max_length=20)
     tick_needed = models.BooleanField(default=False)
     tadbir_id = models.CharField(default="", max_length=20)

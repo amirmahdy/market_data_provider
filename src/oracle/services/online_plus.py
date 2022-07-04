@@ -230,7 +230,7 @@ class LSClient(object):
             print("No subscription key %s found!", subcription_key)
 
     def _forward_update_message(self, update_message):
-        print("Received update message: <%s>", update_message)
+        print("Received update message: <%s>")
         try:
             tok = update_message.split(",", 1)
             table, item = int(tok[0]), tok[1]
@@ -245,10 +245,8 @@ class LSClient(object):
         rebind = False
         receive = True
         while receive:
-            print("Waiting for a new message")
             try:
                 message = self._read_from_stream()
-                print("Received message: <%s>", message)
                 if not message.strip():
                     message = None
             except Exception:
@@ -438,7 +436,6 @@ class LS_Class:
         # Cache data
         InstrumentData.update(res["SymbolISIN"], 'index', res)
         broadcast_indices_data(index_data=InstrumentData.get(res["SymbolISIN"], ref_group='index'))
-        print(res)
 
     def verify(self, vals, res, key, local_key, type):
         if vals.get(key) is None:
@@ -510,7 +507,6 @@ class LS_Class:
                 "ins_sell_value": int(vals["IndInstTrade_Institutional_SellValue"]),
             }
 
-            print(data_indinst)
             # Cache data_indinst
             InstrumentData.update(isin, ref_group='indinst', value=data_indinst)
             broadcast_indinst_data(isin=isin, indinst_data=InstrumentData.get(isin=isin, ref_group='indinst'))
