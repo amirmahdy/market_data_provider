@@ -3,6 +3,7 @@ import traceback
 from urllib.request import urlopen as _urlopen
 from urllib.parse import urlparse as parse_url, urljoin, urlencode
 import time
+from oracle.data_type.heart_beat import HeartBeat
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.models import Instrument
 from morpheus.services.broadcast import broadcast_market_data, broadcast_askbid_data, broadcast_indices_data, \
@@ -27,6 +28,7 @@ ERROR_CMD = "ERROR"
 SYNC_ERROR_CMD = "SYNC ERROR"
 OK_CMD = "OK"
 
+source = "O+"
 
 class Subscription(object):
     def __init__(self, mode, items, fields, adapter=""):
@@ -435,6 +437,7 @@ class LS_Class:
         res.update({key: float(item_update['values'][key]) for key in item_update['values'].keys()})
         # Cache data
         InstrumentData.update(res["SymbolISIN"], 'index', res)
+        HeartBeat.update(source, 'index')
         broadcast_indices_data(index_data=InstrumentData.get(res["SymbolISIN"], ref_group='index'))
 
     def verify(self, vals, res, key, local_key, type):
@@ -471,6 +474,7 @@ class LS_Class:
         }
         # Cache data
         InstrumentData.update(isin, ref_group='market', value=data)
+        HeartBeat.update(source, 'market')
         broadcast_market_data(isin=isin, market_data=InstrumentData.get(isin=isin, ref_group='market'))
 
         data_askbid = []
@@ -485,11 +489,10 @@ class LS_Class:
                     "no_best_buy": int(vals[f"NumberOfOrdersAtBestBuy_{i + 1}"]),
                 }
             )
-
         # Cache data
         InstrumentData.update(isin, ref_group='askbid', value=data_askbid)
+        HeartBeat.update(source, 'askbid')
         broadcast_askbid_data(isin=isin, askbid_data=InstrumentData.get(isin=isin, ref_group='askbid'))
-
         try:
             data_indinst = {
                 "symbol_isin": isin,
@@ -506,9 +509,9 @@ class LS_Class:
                 "ins_sell_number": int(vals["IndInstTrade_Institutional_SellNumber"]),
                 "ins_sell_value": int(vals["IndInstTrade_Institutional_SellValue"]),
             }
-
             # Cache data_indinst
             InstrumentData.update(isin, ref_group='indinst', value=data_indinst)
+            HeartBeat.update(source, 'indinst')
             broadcast_indinst_data(isin=isin, indinst_data=InstrumentData.get(isin=isin, ref_group='indinst'))
 
         except Exception as e:
@@ -538,3 +541,4 @@ class LS_Class:
         data = ast.literal_eval(decompressed_data)
 
         InstrumentData.update(isin, ref_group='full_askbid', value=data)
+        HeartBeat.update(source, 'full_askbid')

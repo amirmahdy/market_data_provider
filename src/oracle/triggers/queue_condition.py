@@ -1,3 +1,6 @@
+from oracle.data_type.heart_beat import HeartBeat
+
+
 def check_instrument_queue_status(instrument):
     from oracle.data_type.instrument_market_data import InstrumentData
     from oracle.services.tsetmc_market import get_tse_instrument_data
@@ -19,5 +22,6 @@ def broadcast_instrument_queue_status(instrument):
     queue_condition = check_instrument_queue_status(instrument)
     instrument_state = {"queue": queue_condition}
     InstrumentData.update(instrument.isin, "state", instrument_state)
+    HeartBeat.update("TSETMC", 'state')
     if queue_condition:
         broadcast_trigger(isin=instrument.isin, data={"trigger_type": "queue_condition", "queue_side": queue_condition})
