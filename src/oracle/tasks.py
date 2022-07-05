@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 from oracle.triggers.queue_condition import broadcast_instrument_queue_status
 from morpheus.services.broadcast import broadcast_trigger, broadcast_market_data
 from mdp.log import Log
+from mdp.exception_handler import exception_handler
 
 log = Log()
 
@@ -22,35 +23,28 @@ env = environ.Env()
 
 
 @shared_task(name="tsetmc_market_data_update")
+@exception_handler("DEBUG")
 def market_data_update():
-    try:
-        instruments = Instrument.get_instruments()
-        for instrument in instruments:
-            try:
-                res = get_tse_instrument_data(instrument)
-            except Exception as e:
-                log({"severity": "high", "path": "tasks/market_data_update", "error": "TSETMC_ERROR: " + str(e)})
-                break
+    instruments = Instrument.get_instruments()
+    for instrument in instruments:
+        res = get_tse_instrument_data(instrument)
+        InstrumentData.update(instrument.isin, "market", res)
 
-            InstrumentData.update(instrument.isin, "market", res)
+        # update market status
+        if instrument.market_status is not None and ['market_status'] != instrument.market_status:
+            instrument.market_status = res['market_status']
+            instrument.save()
+            instrument_state = {'state': res['market_status']}
+            InstrumentData.update(instrument.isin, 'state', instrument_state)
+            broadcast_trigger(isin=instrument.isin, data={'trigger_type': 'instrument_market_status_change'})
+            broadcast_market_data(isin=instrument.isin,
+                                  market_data=InstrumentData.get(isin=instrument.isin, ref_group='market'))
 
-            # update market status
-            if instrument.market_status is not None and ['market_status'] != instrument.market_status:
-                instrument.market_status = res['market_status']
-                instrument.save()
-                instrument_state = {'state': res['market_status']}
-                InstrumentData.update(instrument.isin, 'state', instrument_state)
-                broadcast_trigger(isin=instrument.isin, data={'trigger_type': 'instrument_market_status_change'})
-                broadcast_market_data(isin=instrument.isin,
-                                      market_data=InstrumentData.get(isin=instrument.isin, ref_group='market'))
-
-    except Exception as e:
-        log({"severity": "high", "path": "tasks/market_data_update", "error": str(e)})
-        return e
     return True
 
 
 @shared_task(name="tsetmc_askbid_yesterday_update")
+@exception_handler("DEBUG")
 def tsetmc_askbid_yesterday_update(days):
     try:
         instruments = Instrument.get_instruments()
@@ -83,6 +77,7 @@ def tsetmc_askbid_yesterday_update(days):
 
 
 @shared_task(name="tsetmc_trade_yesterday_update")
+@exception_handler("DEBUG")
 def trade_data_yesterday_update(days):
     try:
         instruments = Instrument.get_instruments()
@@ -103,6 +98,7 @@ def trade_data_yesterday_update(days):
 
 
 @shared_task(name="tsetmc_trade_today_update")
+@exception_handler("DEBUG")
 def trade_data_today_update():
     try:
         instruments = Instrument.get_instruments()
@@ -116,6 +112,7 @@ def trade_data_today_update():
 
 
 @shared_task(name="tsetmc_trade_kline")
+@exception_handler("DEBUG")
 def tsetmc_trade_kline(days):
     try:
         instruments = Instrument.get_instruments()
@@ -143,6 +140,7 @@ def tsetmc_trade_kline(days):
 
 
 @shared_task(name="trade_tick_data")
+@exception_handler("DEBUG")
 def trade_tick_data():
     try:
         instruments = Instrument.get_instruments()
@@ -162,6 +160,7 @@ def trade_tick_data():
 
 
 @shared_task(name='online_plus_socket_renew')
+@exception_handler("DEBUG")
 def online_plus_socket_renew():
     try:
         from oracle.services.online_plus import LS_Class
@@ -174,6 +173,7 @@ def online_plus_socket_renew():
 
 
 @shared_task(name='check_queue_condition')
+@exception_handler("DEBUG")
 def check_queue_condition():
     try:
         instruments = Instrument.get_instruments()
