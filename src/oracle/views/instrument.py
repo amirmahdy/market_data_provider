@@ -119,7 +119,7 @@ class InstrumentAppendAPIView(GenericAPIView):
                         valid=int(data["Valid"]),
                         order_min_size=int(data["QtitMinSaiOmProd"]),
                         order_max_size=int(data["QtitMaxSaiOmProd"]),
-                        market_status="ALLOWED",
+                        market_status="A",
                         tadbir_id=self.get_tadbir_id(data["CValMne"], current_instruments.get(data['InstrumentID']))
                     )
                 )

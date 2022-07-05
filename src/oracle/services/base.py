@@ -5,8 +5,10 @@ from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.services.tsetmc_indinst import get_live_indinst
 from oracle.triggers.queue_condition import check_instrument_queue_status
 from oracle.data_type.heart_beat import HeartBeat
+from mdp.exception_handler import unpredicted_exception_handler
 
 
+@unpredicted_exception_handler("DEBUG")
 def initial_setup():
     from oracle.models import Instrument
     instruments = Instrument.get_instruments()
