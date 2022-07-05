@@ -19,7 +19,7 @@ from mdp.exception_handler import unpredicted_exception_handler
 def initial_setup():
     from oracle.models import Instrument
     instruments = Instrument.get_instruments()
-    source = "O+"
+    source = "TSETMC"
     for instrument in instruments:
         instrument_data = get_tse_instrument_data(instrument, init=True)
         instrument_askbid = get_live_askbid(instrument.tse_id)

@@ -4,6 +4,7 @@ from mdp import settings
 import fsutil
 import zipfile
 from mdp.utils import create_csv, create_zip_on_csv
+from oracle.data_type.heart_beat import HeartBeat
 from oracle.models import Instrument
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.cache.base import Cache
@@ -23,7 +24,7 @@ import inspect
 
 cache = Cache()
 env = environ.Env()
-
+source = "TSETMC"
 
 @shared_task(name="tsetmc_market_data_update")
 @unpredicted_exception_handler("DEBUG")
@@ -33,6 +34,7 @@ def market_data_update():
         try:
             res = get_tse_instrument_data(instrument)
             InstrumentData.update(instrument.isin, "market", res)
+            HeartBeat.update(source, 'market')
 
             # update market status
             if instrument.market_status is not None and ['market_status'] != instrument.market_status:
@@ -40,6 +42,7 @@ def market_data_update():
                 instrument.save()
                 instrument_state = {'state': res['market_status']}
                 InstrumentData.update(instrument.isin, 'state', instrument_state)
+                HeartBeat.update(source, 'state')
                 broadcast_trigger(isin=instrument.isin, data={'trigger_type': 'instrument_market_status_change'})
                 broadcast_market_data(isin=instrument.isin,
                                       market_data=InstrumentData.get(isin=instrument.isin, ref_group='market'))
@@ -105,6 +108,7 @@ def trade_data_today_update():
         try:
             today_trades = get_trades(instrument.tse_id)
             InstrumentData.update(instrument.isin, 'trades', today_trades)
+            HeartBeat.update(source, 'trades')
         except Exception:
             exception_handler("DEBUG", inspect.currentframe())
     return True
