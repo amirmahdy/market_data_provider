@@ -4,11 +4,21 @@ from dateutil import parser
 from datetime import datetime as dt
 
 from oracle.models import TriggerParameter
+from .enums import QueueConditionOuput, OrderBalanceOutput
+
 
 logger = logging.getLogger(__name__)
 
-def queue_detection(askbid, market_data):
-    from .enums import QueueConditionOuput
+
+def check_instrument_queue_status(instrument):
+    from oracle.data_type.instrument_market_data import InstrumentData
+    from oracle.services.tsetmc_market import get_tse_instrument_data
+    from oracle.services.tsetmc_askbid import get_live_askbid
+    
+    market_data = InstrumentData.get(ref_group="market", isin=instrument.isin)
+    if market_data is None:
+        market_data = get_tse_instrument_data(instrument, init=True)
+    askbid = get_live_askbid(instrument.tse_id)
 
     high_allowed = market_data['high_allowed_price']
     low_allowed = market_data['low_allowed_price']
@@ -47,26 +57,13 @@ def queue_detection(askbid, market_data):
         if (last_price <= ask_1):
             status = QueueConditionOuput.NEAR_SELL_QUEUE
 
-    return status
+    return status.text.__str__()
 
 
-def check_instrument_queue_status(instrument):
-    from oracle.data_type.instrument_market_data import InstrumentData
-    from oracle.services.tsetmc_market import get_tse_instrument_data
+def check_order_balance_status(instrument):
     from oracle.services.tsetmc_askbid import get_live_askbid
-    
-    market_data = InstrumentData.get(ref_group="market", isin=instrument.isin)
-    if market_data is None:
-        market_data = get_tse_instrument_data(instrument, init=True)
+
     askbid = get_live_askbid(instrument.tse_id)
-    status = queue_detection(askbid, market_data).text.__str__()
-
-    return status
-
-
-def order_balance(askbid):
-    from .enums import OrderBalanceOutput
-
     balance_check_multiplier = 1.5
     total_buy_volume = 0
     total_sell_volume = 0
@@ -85,16 +82,8 @@ def order_balance(askbid):
         status = OrderBalanceOutput.SELL_HEAVIER
     else:
         status = OrderBalanceOutput.NORMAL
-    return status
+    return status.text.__str__()
 
-
-def check_order_balance_status(instrument):
-    from oracle.services.tsetmc_askbid import get_live_askbid
-
-    askbid = get_live_askbid(instrument.tse_id)
-    status = order_balance(askbid).text.__str__()
-
-    return status
 
 def order_depth(askbid, side):
     from oracle.models import TriggerParameter
@@ -162,7 +151,11 @@ def check_sell_order_depth_status(instrument):
     return status
 
 
-def recent_trades(trades):
+def check_recent_trades_status(instrument):
+    from oracle.services.tsetmc_trades import get_trades
+
+    trades = get_trades(instrument)
+
     """
     Finds in window trades with time window format of seconds
     returns status values regarding to trades volume
@@ -203,12 +196,4 @@ def recent_trades(trades):
     else:
         status = RecentTradesOutput.NORMAL
 
-    return status
-
-def check_recent_trades_status(instrument):
-    from oracle.services.tsetmc_trades import get_trades
-
-    trades = get_trades(instrument)
-    status = recent_trades(trades).text.__str__()
-
-    return status
+    return status.text.__str__()
