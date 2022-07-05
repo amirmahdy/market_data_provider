@@ -12,8 +12,8 @@ from oracle.services.tsetmc_trades import get_trades, get_kline, get_tick_data
 from oracle.services.tsetmc_askbid import get_askbid_history
 from datetime import datetime, timedelta
 from oracle.triggers import (
-    broadcast_instrument_queue_status, 
-    broadcast_order_balance_status, 
+    broadcast_instrument_queue_status,
+    broadcast_order_balance_status,
     broadcast_order_depth_status,
     broadcast_recent_trades_status,
 )
@@ -176,37 +176,39 @@ def check_queue_condition():
             exception_handler("DEBUG", inspect.currentframe())
     return True
 
+
 @shared_task(name='check_order_balance')
+@unpredicted_exception_handler("DEBUG")
 def check_order_balance():
-    try:
-        instruments = Instrument.get_instruments()
-        for instrument in instruments:
+    instruments = Instrument.get_instruments()
+    for instrument in instruments:
+        try:
             broadcast_order_balance_status(instrument)
-    except Exception as e:
-        log({"severity": "high", "path": "tasks/check_order_balance", "error": str(e)})
-        return e
+        except Exception:
+            exception_handler("DEBUG", inspect.currentframe())
     return True
 
 
 @shared_task(name='check_order_depth')
+@unpredicted_exception_handler("DEBUG")
 def check_order_depth():
-    try:
-        instruments = Instrument.get_instruments()
-        for instrument in instruments:
+    instruments = Instrument.get_instruments()
+    for instrument in instruments:
+        try:
             broadcast_order_depth_status(instrument)
-    except Exception as e:
-        log({"severity": "high", "path": "tasks/check_order_depth", "error": str(e)})
-        return e
+        except Exception:
+            exception_handler("DEBUG", inspect.currentframe())
     return True
 
 
 @shared_task(name='check_recent_trades')
+@unpredicted_exception_handler("DEBUG")
 def check_recent_trades():
-    try:
-        instruments = Instrument.get_instruments()
-        for instrument in instruments:
+    instruments = Instrument.get_instruments()
+    for instrument in instruments:
+        try:
             broadcast_recent_trades_status(instrument)
-    except Exception as e:
-        log({"severity": "high", "path": "tasks/check_recent_trades", "error": str(e)})
-        return e
+        except Exception:
+            exception_handler("DEBUG", inspect.currentframe())
+
     return True
