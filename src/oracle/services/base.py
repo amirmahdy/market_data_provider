@@ -10,7 +10,11 @@ from oracle.utils import (
     check_sell_order_depth_status,
     check_recent_trades_status,
 )
+from oracle.triggers.queue_condition import check_instrument_queue_status
+from mdp.exception_handler import unpredicted_exception_handler
 
+
+@unpredicted_exception_handler("DEBUG")
 def initial_setup():
     from oracle.models import Instrument
     instruments = Instrument.get_instruments()
