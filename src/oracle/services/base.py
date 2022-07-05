@@ -11,6 +11,7 @@ from oracle.utils import (
     check_recent_trades_status,
 )
 from oracle.triggers.queue_condition import check_instrument_queue_status
+from oracle.data_type.heart_beat import HeartBeat
 from mdp.exception_handler import unpredicted_exception_handler
 
 
@@ -18,6 +19,7 @@ from mdp.exception_handler import unpredicted_exception_handler
 def initial_setup():
     from oracle.models import Instrument
     instruments = Instrument.get_instruments()
+    source = "O+"
     for instrument in instruments:
         instrument_data = get_tse_instrument_data(instrument, init=True)
         instrument_askbid = get_live_askbid(instrument.tse_id)
@@ -32,10 +34,15 @@ def initial_setup():
         }
 
         InstrumentData.update(instrument.isin, 'market', instrument_data)
+        HeartBeat.update(source, 'market')
         InstrumentData.update(instrument.isin, 'askbid', instrument_askbid)
+        HeartBeat.update(source, 'askbid')
         InstrumentData.update(instrument.isin, 'indinst', instrument_indinst)
+        HeartBeat.update(source, 'indinst')
         InstrumentData.update(instrument.isin, 'state', instrument_state)
+        HeartBeat.update(source, 'state')
 
     instrument_indices = get_indices_live()
     for index in instrument_indices:
         InstrumentData.update(index['SymbolISIN'], 'index', index)
+        HeartBeat.update(source, 'index')
