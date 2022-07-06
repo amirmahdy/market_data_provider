@@ -1,6 +1,7 @@
 import enum
 from django.utils.translation import gettext_lazy as _
 
+
 def to_snake(string_to_convert: str) -> str:
     import re
 
@@ -40,6 +41,7 @@ def to_fullcase(string_to_convert: str):
 
 def snake_to_titlecase(string_to_convert: str) -> str:
     return string_to_convert.replace("_", " ").title()
+
 
 @enum.unique
 class AutoNameEnum(str, enum.Enum):

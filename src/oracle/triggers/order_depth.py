@@ -3,7 +3,6 @@ def broadcast_order_depth_status(instrument):
     from oracle.utils import check_buy_order_depth_status, check_sell_order_depth_status
     from oracle.data_type.instrument_market_data import InstrumentData
 
-
     buy_order_depth = check_buy_order_depth_status(instrument)
     sell_order_depth = check_sell_order_depth_status(instrument)
     instrument_state = InstrumentData.get(instrument.isin, "state")

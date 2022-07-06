@@ -1,10 +1,10 @@
 from oracle.data_type.heart_beat import HeartBeat
 
+
 def broadcast_instrument_queue_status(instrument):
     from morpheus.services.broadcast import broadcast_trigger
     from oracle.data_type.instrument_market_data import InstrumentData
     from oracle.utils import check_instrument_queue_status
-
 
     queue_condition = check_instrument_queue_status(instrument)
     instrument_state = InstrumentData.get(instrument.isin, 'state')

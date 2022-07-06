@@ -3,7 +3,6 @@ def broadcast_recent_trades_status(instrument):
     from oracle.utils import check_recent_trades_status
     from oracle.data_type.instrument_market_data import InstrumentData
 
-
     recent_trades = check_recent_trades_status(instrument)
     instrument_state = InstrumentData.get(instrument.isin, 'state')
     instrument_state["recent_trades"] = recent_trades

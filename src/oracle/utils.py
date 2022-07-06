@@ -1,11 +1,9 @@
 import logging
-import queue
 from dateutil import parser
 from datetime import datetime as dt
 
 from oracle.models import TriggerParameter
 from .enums import QueueConditionOuput, OrderBalanceOutput
-
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +12,7 @@ def check_instrument_queue_status(instrument):
     from oracle.data_type.instrument_market_data import InstrumentData
     from oracle.services.tsetmc_market import get_tse_instrument_data
     from oracle.services.tsetmc_askbid import get_live_askbid
-    
+
     market_data = InstrumentData.get(ref_group="market", isin=instrument.isin)
     if market_data is None:
         market_data = get_tse_instrument_data(instrument, init=True)
@@ -36,25 +34,25 @@ def check_instrument_queue_status(instrument):
     midp = (ask_1 + bid_1) / 2
 
     status = QueueConditionOuput.NOTHING
-    if (high_allowed == bid_1):
+    if high_allowed == bid_1:
         status = QueueConditionOuput.IS_BUY_QUEUE
-    elif (low_allowed == ask_1):
+    elif low_allowed == ask_1:
         status = QueueConditionOuput.IS_SELL_QUEUE
     elif (a <= bid_1 < high_allowed) and (ask_1 != 0):
         if (ask_4 == 0) and (ask_5 == 0):
             status = QueueConditionOuput.NEAR_BUY_QUEUE
-        elif (last_price >= midp):
+        elif last_price >= midp:
             status = QueueConditionOuput.NEAR_BUY_QUEUE
     elif (a <= bid_1 < high_allowed) and (ask_1 == 0):
-        if (last_price >= bid_1):
+        if last_price >= bid_1:
             status = QueueConditionOuput.NEAR_BUY_QUEUE
     elif (low_allowed < ask_1 <= b) and (bid_1 != 0):
         if (bid_4 == 0) and (bid_5 == 0):
             status = QueueConditionOuput.NEAR_SELL_QUEUE
-        elif (last_price <= ask_1):
+        elif last_price <= ask_1:
             status = QueueConditionOuput.NEAR_SELL_QUEUE
     elif (low_allowed < ask_1 <= b) and (bid_1 == 0):
-        if (last_price <= ask_1):
+        if last_price <= ask_1:
             status = QueueConditionOuput.NEAR_SELL_QUEUE
 
     return status.text.__str__()
@@ -73,8 +71,8 @@ def check_order_balance_status(instrument):
             total_buy_volume = total_buy_volume + askbid[i]['best_buy_quantity']
         if askbid[i]['best_sell_quantity'] and askbid[i]['best_sell_quantity'] > 0:
             total_sell_volume = total_sell_volume + askbid[i]['best_sell_quantity']
-    
-    status =  None
+
+    status = None
     # check if each side has higher volume equal to multiplier
     if total_buy_volume > balance_check_multiplier * total_sell_volume:
         status = OrderBalanceOutput.BUY_HEAVIER
@@ -89,16 +87,16 @@ def order_depth(askbid, side):
     from oracle.models import TriggerParameter
     from .enums import OrderDepthOutput, OrderSide
 
+    status = None
     try:
         high_depth_threshold = int(TriggerParameter.objects.get(name_en='high depth threshold').value)
         low_depth_threshold = int(TriggerParameter.objects.get(name_en='low depth threshold').value)
-    
-        status = None
+
         if side == OrderSide.BUY:
             total_buy_volume = 0
             for i in range(5):
                 if askbid[i]['best_buy_quantity']:
-                   total_buy_volume = total_buy_volume + askbid[i]['best_buy_quantity']
+                    total_buy_volume = total_buy_volume + askbid[i]['best_buy_quantity']
 
             if total_buy_volume == 0:
                 status = OrderDepthOutput.NONE
@@ -108,12 +106,12 @@ def order_depth(askbid, side):
                 status = OrderDepthOutput.LIGHT
             else:
                 status = OrderDepthOutput.NORMAL
-            
+
         elif side == OrderSide.SELL:
             total_sell_volume = 0
             for i in range(5):
                 if askbid[i]['best_sell_quantity']:
-                   total_sell_volume = total_sell_volume + askbid[i]['best_sell_quantity']
+                    total_sell_volume = total_sell_volume + askbid[i]['best_sell_quantity']
 
             if total_sell_volume == 0:
                 status = OrderDepthOutput.NONE
@@ -129,10 +127,10 @@ def order_depth(askbid, side):
 
     return status
 
+
 def check_buy_order_depth_status(instrument):
     from oracle.services.tsetmc_askbid import get_live_askbid
     from .enums import OrderSide
-
 
     askbid = get_live_askbid(instrument.tse_id)
     status = order_depth(askbid, OrderSide.BUY).text.__str__()
@@ -143,7 +141,6 @@ def check_buy_order_depth_status(instrument):
 def check_sell_order_depth_status(instrument):
     from oracle.services.tsetmc_askbid import get_live_askbid
     from .enums import OrderSide
-
 
     askbid = get_live_askbid(instrument.tse_id)
     status = order_depth(askbid, OrderSide.SELL).text.__str__()
@@ -169,7 +166,7 @@ def check_recent_trades_status(instrument):
 
         in_window_trades = []
         in_window = True
-        i = len(trades)-1
+        i = len(trades) - 1
         now = dt.now()
         while in_window and i >= 0:
             time_diff = (now - parser.parse(trades[i]['t'])).seconds
@@ -177,7 +174,7 @@ def check_recent_trades_status(instrument):
                 raise Exception('Invalid trades times')
             elif time_diff < time_window:
                 in_window_trades.append(trades[i])
-                i = i-1
+                i = i - 1
             else:
                 in_window = False
     except Exception as e:

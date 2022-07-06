@@ -26,6 +26,7 @@ cache = Cache()
 env = environ.Env()
 source = "TSETMC"
 
+
 @shared_task(name="tsetmc_market_data_update")
 @unpredicted_exception_handler("DEBUG")
 def market_data_update():
