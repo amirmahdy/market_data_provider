@@ -1,0 +1,57 @@
+[
+{
+    "model": "oracle.triggerparameter",
+    "pk": 1,
+    "fields": {
+        "name_en": "high depth threshold",
+        "name_fa": "آستانه عمق سنگین",
+        "description": "مقدار عددی",
+        "value": "500000",
+        "trigger_name": "order depth"
+    }
+},
+{
+    "model": "oracle.triggerparameter",
+    "pk": 2,
+    "fields": {
+        "name_en": "low depth threshold",
+        "name_fa": "آستانه عمق سبک",
+        "description": "مقدار عددی",
+        "value": "200000",
+        "trigger_name": "order depth"
+    }
+},
+{
+    "model": "oracle.triggerparameter",
+    "pk": 3,
+    "fields": {
+        "name_en": "high volume threshold",
+        "name_fa": "آستانه حجم زیاد",
+        "description": "مقدار عددی",
+        "value": "500000",
+        "trigger_name": "recent trades"
+    }
+},
+{
+    "model": "oracle.triggerparameter",
+    "pk": 4,
+    "fields": {
+        "name_en": "low volume threshold",
+        "name_fa": "آستانه حجم کم",
+        "description": "مقدار عددی",
+        "value": "200000",
+        "trigger_name": "recent trades"
+    }
+},
+{
+    "model": "oracle.triggerparameter",
+    "pk": 5,
+    "fields": {
+        "name_en": "rolling window",
+        "name_fa": "پنجره زمانی",
+        "description": "مقدار عددی (دقیقه)",
+        "value": "10",
+        "trigger_name": "recent trades"
+    }
+}
+]

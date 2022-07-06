@@ -12,7 +12,12 @@ from oracle.services.tsetmc_market import get_tse_instrument_data
 from oracle.services.tsetmc_trades import get_trades, get_kline, get_tick_data
 from oracle.services.tsetmc_askbid import get_askbid_history
 from datetime import datetime, timedelta
-from oracle.triggers.queue_condition import broadcast_instrument_queue_status
+from oracle.triggers import (
+    broadcast_instrument_queue_status,
+    broadcast_order_balance_status,
+    broadcast_order_depth_status,
+    broadcast_recent_trades_status,
+)
 from morpheus.services.broadcast import broadcast_trigger, broadcast_market_data
 from mdp.exception_handler import unpredicted_exception_handler, exception_handler
 import inspect
@@ -173,4 +178,41 @@ def check_queue_condition():
             broadcast_instrument_queue_status(instrument)
         except Exception:
             exception_handler("DEBUG", inspect.currentframe())
+    return True
+
+
+@shared_task(name='check_order_balance')
+@unpredicted_exception_handler("DEBUG")
+def check_order_balance():
+    instruments = Instrument.get_instruments()
+    for instrument in instruments:
+        try:
+            broadcast_order_balance_status(instrument)
+        except Exception:
+            exception_handler("DEBUG", inspect.currentframe())
+    return True
+
+
+@shared_task(name='check_order_depth')
+@unpredicted_exception_handler("DEBUG")
+def check_order_depth():
+    instruments = Instrument.get_instruments()
+    for instrument in instruments:
+        try:
+            broadcast_order_depth_status(instrument)
+        except Exception:
+            exception_handler("DEBUG", inspect.currentframe())
+    return True
+
+
+@shared_task(name='check_recent_trades')
+@unpredicted_exception_handler("DEBUG")
+def check_recent_trades():
+    instruments = Instrument.get_instruments()
+    for instrument in instruments:
+        try:
+            broadcast_recent_trades_status(instrument)
+        except Exception:
+            exception_handler("DEBUG", inspect.currentframe())
+
     return True

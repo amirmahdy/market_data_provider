@@ -3,6 +3,13 @@ from oracle.services.tsetmc_askbid import get_live_askbid
 from oracle.services.tsetmc_indices import get_indices_live
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.services.tsetmc_indinst import get_live_indinst
+from oracle.utils import (
+    check_instrument_queue_status,
+    check_order_balance_status,
+    check_buy_order_depth_status,
+    check_sell_order_depth_status,
+    check_recent_trades_status,
+)
 from oracle.triggers.queue_condition import check_instrument_queue_status
 from oracle.data_type.heart_beat import HeartBeat
 from mdp.exception_handler import unpredicted_exception_handler
@@ -20,7 +27,12 @@ def initial_setup():
         instrument_state = {
             'state': instrument_data['market_status'],
             'queue': check_instrument_queue_status(instrument),
+            'order_balance': check_order_balance_status(instrument),
+            'buy_order_depth': check_buy_order_depth_status(instrument),
+            'sell_order_depth': check_sell_order_depth_status(instrument),
+            'recent_trades': check_recent_trades_status(instrument),
         }
+
         InstrumentData.update(instrument.isin, 'market', instrument_data)
         HeartBeat.update(source, 'market')
         InstrumentData.update(instrument.isin, 'askbid', instrument_askbid)
