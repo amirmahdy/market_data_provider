@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('oracle', '0001_initial'),
     ]
@@ -20,5 +19,10 @@ class Migration(migrations.Migration):
                 ('value', models.CharField(max_length=32, verbose_name='Parameter Value')),
                 ('trigger_name', models.CharField(max_length=128, verbose_name='Trigger Name')),
             ],
+        ),
+        migrations.AlterField(
+            model_name='instrument',
+            name='market_status',
+            field=models.CharField(default='A', max_length=20),
         ),
     ]
