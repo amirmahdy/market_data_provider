@@ -3,65 +3,52 @@ from dateutil import parser
 from datetime import datetime as dt
 
 from oracle.models import TriggerParameter
-from .enums import QueueConditionOuput, OrderBalanceOutput
+from oracle.enums import (
+    QueueConditionOuput,
+    OrderBalanceOutput,
+    OrderDepthOutput,
+    OrderSide,
+    RecentTradesOutput,
+)
+from oracle.data_type.instrument_market_data import InstrumentData
+from oracle.models import TriggerParameter
 
 logger = logging.getLogger(__name__)
 
 
 def check_instrument_queue_status(instrument):
-    from oracle.data_type.instrument_market_data import InstrumentData
-    from oracle.services.tsetmc_market import get_tse_instrument_data
-    from oracle.services.tsetmc_askbid import get_live_askbid
 
     market_data = InstrumentData.get(ref_group="market", isin=instrument.isin)
-    if market_data is None:
-        market_data = get_tse_instrument_data(instrument, init=True)
-    askbid = get_live_askbid(instrument.tse_id)
-
-    high_allowed = market_data['high_allowed_price']
-    low_allowed = market_data['low_allowed_price']
-    last_price = market_data['last_traded_price']
-
-    ask_1 = askbid[0]['best_buy_price']
-    bid_1 = askbid[0]['best_sell_price']
-    ask_4 = askbid[3]['best_buy_price']
-    bid_4 = askbid[3]['best_sell_price']
-    ask_5 = askbid[4]['best_buy_price']
-    bid_5 = askbid[4]['best_sell_price']
-
-    a = 0.99 * high_allowed
-    b = 1.01 * low_allowed
-    midp = (ask_1 + bid_1) / 2
+    askbid = InstrumentData.get(ref_group="askbid", isin=instrument.isin)
 
     status = QueueConditionOuput.NOTHING
-    if high_allowed == bid_1:
+    if market_data['high_allowed_price'] == askbid[0]['best_sell_price']:
         status = QueueConditionOuput.IS_BUY_QUEUE
-    elif low_allowed == ask_1:
+    elif market_data['low_allowed_price'] == askbid[0]['best_buy_price']:
         status = QueueConditionOuput.IS_SELL_QUEUE
-    elif (a <= bid_1 < high_allowed) and (ask_1 != 0):
-        if (ask_4 == 0) and (ask_5 == 0):
+    elif (0.99 * market_data['high_allowed_price'] <= askbid[0]['best_sell_price'] < market_data['high_allowed_price']) and (askbid[0]['best_buy_price'] != 0):
+        if (askbid[3]['best_buy_price'] == 0) and (askbid[4]['best_buy_price'] == 0):
             status = QueueConditionOuput.NEAR_BUY_QUEUE
-        elif last_price >= midp:
+        elif market_data['last_traded_price'] >= (askbid[0]['best_buy_price'] + askbid[0]['best_sell_price']) / 2:
             status = QueueConditionOuput.NEAR_BUY_QUEUE
-    elif (a <= bid_1 < high_allowed) and (ask_1 == 0):
-        if last_price >= bid_1:
+    elif (0.99 * market_data['high_allowed_price'] <= askbid[0]['best_sell_price'] < market_data['high_allowed_price']) and (askbid[0]['best_buy_price'] == 0):
+        if market_data['last_traded_price'] >= askbid[0]['best_sell_price']:
             status = QueueConditionOuput.NEAR_BUY_QUEUE
-    elif (low_allowed < ask_1 <= b) and (bid_1 != 0):
-        if (bid_4 == 0) and (bid_5 == 0):
+    elif (market_data['low_allowed_price'] < askbid[0]['best_buy_price'] <= 1.01 * market_data['low_allowed_price']) and (askbid[0]['best_sell_price'] != 0):
+        if (askbid[3]['best_sell_price'] == 0) and (askbid[4]['best_sell_price'] == 0):
             status = QueueConditionOuput.NEAR_SELL_QUEUE
-        elif last_price <= ask_1:
+        elif market_data['last_traded_price'] <= askbid[0]['best_buy_price']:
             status = QueueConditionOuput.NEAR_SELL_QUEUE
-    elif (low_allowed < ask_1 <= b) and (bid_1 == 0):
-        if last_price <= ask_1:
+    elif (market_data['low_allowed_price'] < askbid[0]['best_buy_price'] <= 1.01 * market_data['low_allowed_price']) and (askbid[0]['best_sell_price'] == 0):
+        if market_data['last_traded_price'] <= askbid[0]['best_buy_price']:
             status = QueueConditionOuput.NEAR_SELL_QUEUE
 
     return status.text.__str__()
 
 
 def check_order_balance_status(instrument):
-    from oracle.services.tsetmc_askbid import get_live_askbid
 
-    askbid = get_live_askbid(instrument.tse_id)
+    askbid = InstrumentData.get(ref_group="askbid", isin=instrument.isin)
     balance_check_multiplier = 1.5
     total_buy_volume = 0
     total_sell_volume = 0
@@ -84,8 +71,6 @@ def check_order_balance_status(instrument):
 
 
 def order_depth(askbid, side):
-    from oracle.models import TriggerParameter
-    from .enums import OrderDepthOutput, OrderSide
 
     status = None
     try:
@@ -129,39 +114,33 @@ def order_depth(askbid, side):
 
 
 def check_buy_order_depth_status(instrument):
-    from oracle.services.tsetmc_askbid import get_live_askbid
-    from .enums import OrderSide
 
-    askbid = get_live_askbid(instrument.tse_id)
+    askbid = InstrumentData.get(ref_group="askbid", isin=instrument.isin)
     status = order_depth(askbid, OrderSide.BUY).text.__str__()
 
     return status
 
 
 def check_sell_order_depth_status(instrument):
-    from oracle.services.tsetmc_askbid import get_live_askbid
-    from .enums import OrderSide
 
-    askbid = get_live_askbid(instrument.tse_id)
+    askbid = InstrumentData.get(ref_group="askbid", isin=instrument.isin)
     status = order_depth(askbid, OrderSide.SELL).text.__str__()
 
     return status
 
 
 def check_recent_trades_status(instrument):
-    from oracle.services.tsetmc_trades import get_trades
 
-    trades = get_trades(instrument)
+    trades = InstrumentData.get(ref_group="trades", isin=instrument.isin)
 
     """
     Finds in window trades with time window format of seconds
     returns status values regarding to trades volume
     """
-    from .enums import RecentTradesOutput
 
     try:
         high_volume_threshold = int(TriggerParameter.objects.get(name_en='high volume threshold').value)
-        low_volume_threshold = int(TriggerParameter.objects.get(name_en='high volume threshold').value)
+        low_volume_threshold = int(TriggerParameter.objects.get(name_en='low volume threshold').value)
         time_window = int(TriggerParameter.objects.get(name_en='rolling window').value) * 60
 
         in_window_trades = []
