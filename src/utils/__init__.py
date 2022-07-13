@@ -65,6 +65,10 @@ class AutoNameEnum(str, enum.Enum):
     def text(self):
         return _(snake_to_titlecase(self.value))
 
+    @property
+    def text_capital(self):
+        return self.value.upper()
+
     def __str__(self) -> str:
         return self.value
 

@@ -9,6 +9,7 @@ from oracle.enums import (
     OrderDepthOutput,
     OrderSide,
     RecentTradesOutput,
+    TriggerParameterName,
 )
 from oracle.data_type.instrument_market_data import InstrumentData
 from oracle.models import TriggerParameter
@@ -74,8 +75,8 @@ def order_depth(askbid, side):
 
     status = None
     try:
-        high_depth_threshold = int(TriggerParameter.objects.get(name_en='high depth threshold').value)
-        low_depth_threshold = int(TriggerParameter.objects.get(name_en='low depth threshold').value)
+        high_depth_threshold = int(TriggerParameter.objects.get(pk=TriggerParameterName.HDT.text_capital).value)
+        low_depth_threshold = int(TriggerParameter.objects.get(pk=TriggerParameterName.LDT.text_capital).value)
 
         if side == OrderSide.BUY:
             total_buy_volume = 0
@@ -139,9 +140,9 @@ def check_recent_trades_status(instrument):
     """
 
     try:
-        high_volume_threshold = int(TriggerParameter.objects.get(name_en='high volume threshold').value)
-        low_volume_threshold = int(TriggerParameter.objects.get(name_en='low volume threshold').value)
-        time_window = int(TriggerParameter.objects.get(name_en='rolling window').value) * 60
+        high_volume_threshold = int(TriggerParameter.objects.get(pk=TriggerParameterName.HVT.text_capital).value)
+        low_volume_threshold = int(TriggerParameter.objects.get(pk=TriggerParameterName.LVT.text_capital).value)
+        time_window = int(TriggerParameter.objects.get(pk=TriggerParameterName.ROW.text_capital).value) * 60
 
         in_window_trades = []
         in_window = True

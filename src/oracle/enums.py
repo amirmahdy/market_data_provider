@@ -32,3 +32,11 @@ class RecentTradesOutput(AutoNameEnum):
     HIGH = auto()
     LOW = auto()
     NORMAL = auto()
+
+
+class TriggerParameterName(AutoNameEnum):
+    ROW = auto()    # Rolling Window
+    LVT = auto()    # Low Volume Threashold
+    HVT = auto()    # High Volume Threshold
+    LDT = auto()    # High Depth Threshold
+    HDT = auto()    # Low Depth Threshold
