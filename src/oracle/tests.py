@@ -1,4 +1,5 @@
-import os, django
+import os
+import django
 from django.test import TestCase
 from oracle.models import Instrument
 from .enums import (
@@ -8,6 +9,8 @@ from .enums import (
     OrderDepthOutput,
     RecentTradesOutput,
 )
+
+
 class Test_Service(TestCase):
 
     fixtures = ['instruments', 'instrumenttypes', 'triggerparameters']
@@ -103,205 +106,219 @@ class Test_Service(TestCase):
 
         self.instrument = Instrument.objects.get(isin='IRO1BANK0001')
 
-    def test_instrument_queue_status(self):
-        from oracle.utils import queue_detection
+    def test_triggers(self):
+        from oracle.services.base import initial_setup
+        from oracle.utils import (
+            check_instrument_queue_status,
+            check_buy_order_depth_status,
+            check_order_balance_status,
+            check_recent_trades_status,
+            check_sell_order_depth_status,
+        )
 
-        # Buy Queue
-        self.market_data['high_allowed_price'] = 17660
-        self.market_data['low_allowed_price'] = 16640
-        self.market_data['last_traded_price'] = 17660
+        initial_setup()
 
-        self.askbid[0]['best_buy_price'] = 0
-        self.askbid[1]['best_buy_price'] = 0
-        self.askbid[2]['best_buy_price'] = 0
-        self.askbid[3]['best_buy_price'] = 0
-        self.askbid[4]['best_buy_price'] = 0
-        self.askbid[0]['best_sell_price'] = 17660
-        self.askbid[1]['best_sell_price'] = 17650
-        self.askbid[2]['best_sell_price'] = 17600
-        self.askbid[3]['best_sell_price'] = 17400
-        self.askbid[4]['best_sell_price'] = 17350
+        queue_status = check_instrument_queue_status(self.instrument)
+        order_depth_status = check_buy_order_depth_status(self.instrument)
+        order_balance_status = check_order_balance_status(self.instrument)
+        recent_trades_status = check_recent_trades_status(self.instrument)
+        order_depth_status = check_sell_order_depth_status(self.instrument)
+        pass
+    # def test_instrument_queue_status(self):
+    #     from oracle.utils import queue_detection
 
-        status = queue_detection(self.askbid, self.market_data)
-        self.assertEqual(status, QueueConditionOuput.IS_BUY_QUEUE)
+    #     # Buy Queue
+    #     self.market_data['high_allowed_price'] = 17660
+    #     self.market_data['low_allowed_price'] = 16640
+    #     self.market_data['last_traded_price'] = 17660
 
-        # Sell_Queue
-        self.market_data['high_allowed_price'] = 7690
-        self.market_data['low_allowed_price'] = 7250
-        self.market_data['last_traded_price'] = 17660
+    #     self.askbid[0]['best_buy_price'] = 0
+    #     self.askbid[1]['best_buy_price'] = 0
+    #     self.askbid[2]['best_buy_price'] = 0
+    #     self.askbid[3]['best_buy_price'] = 0
+    #     self.askbid[4]['best_buy_price'] = 0
+    #     self.askbid[0]['best_sell_price'] = 17660
+    #     self.askbid[1]['best_sell_price'] = 17650
+    #     self.askbid[2]['best_sell_price'] = 17600
+    #     self.askbid[3]['best_sell_price'] = 17400
+    #     self.askbid[4]['best_sell_price'] = 17350
 
-        self.askbid[0]['best_buy_price'] = 7250
-        self.askbid[1]['best_buy_price'] = 7460
-        self.askbid[2]['best_buy_price'] = 7470
-        self.askbid[3]['best_buy_price'] = 7580
-        self.askbid[4]['best_buy_price'] = 7600
-        self.askbid[0]['best_sell_price'] = 0
-        self.askbid[1]['best_sell_price'] = 0
-        self.askbid[2]['best_sell_price'] = 0
-        self.askbid[3]['best_sell_price'] = 0
-        self.askbid[4]['best_sell_price'] = 0
+    #     status = queue_detection(self.askbid, self.market_data)
+    #     self.assertEqual(status, QueueConditionOuput.IS_BUY_QUEUE)
 
-        status = queue_detection(self.askbid, self.market_data)
-        self.assertEqual(status, QueueConditionOuput.IS_SELL_QUEUE)
+    #     # Sell_Queue
+    #     self.market_data['high_allowed_price'] = 7690
+    #     self.market_data['low_allowed_price'] = 7250
+    #     self.market_data['last_traded_price'] = 17660
 
-        # Near Buy_Queue
-        self.market_data['high_allowed_price'] = 11260
-        self.market_data['low_allowed_price'] = 10620
-        self.market_data['last_traded_price'] = 11260
+    #     self.askbid[0]['best_buy_price'] = 7250
+    #     self.askbid[1]['best_buy_price'] = 7460
+    #     self.askbid[2]['best_buy_price'] = 7470
+    #     self.askbid[3]['best_buy_price'] = 7580
+    #     self.askbid[4]['best_buy_price'] = 7600
+    #     self.askbid[0]['best_sell_price'] = 0
+    #     self.askbid[1]['best_sell_price'] = 0
+    #     self.askbid[2]['best_sell_price'] = 0
+    #     self.askbid[3]['best_sell_price'] = 0
+    #     self.askbid[4]['best_sell_price'] = 0
 
-        self.askbid[0]['best_buy_price'] = 11260
-        self.askbid[1]['best_buy_price'] = 0
-        self.askbid[2]['best_buy_price'] = 0
-        self.askbid[3]['best_buy_price'] = 0
-        self.askbid[4]['best_buy_price'] = 0
-        self.askbid[0]['best_sell_price'] = 11250
-        self.askbid[1]['best_sell_price'] = 11240
-        self.askbid[2]['best_sell_price'] = 11210
-        self.askbid[3]['best_sell_price'] = 11200
-        self.askbid[4]['best_sell_price'] = 11180
+    #     status = queue_detection(self.askbid, self.market_data)
+    #     self.assertEqual(status, QueueConditionOuput.IS_SELL_QUEUE)
 
-        status = queue_detection(self.askbid, self.market_data)
-        self.assertEqual(status, QueueConditionOuput.NEAR_BUY_QUEUE)
+    #     # Near Buy_Queue
+    #     self.market_data['high_allowed_price'] = 11260
+    #     self.market_data['low_allowed_price'] = 10620
+    #     self.market_data['last_traded_price'] = 11260
 
-        # Near Buy Queue 3
+    #     self.askbid[0]['best_buy_price'] = 11260
+    #     self.askbid[1]['best_buy_price'] = 0
+    #     self.askbid[2]['best_buy_price'] = 0
+    #     self.askbid[3]['best_buy_price'] = 0
+    #     self.askbid[4]['best_buy_price'] = 0
+    #     self.askbid[0]['best_sell_price'] = 11250
+    #     self.askbid[1]['best_sell_price'] = 11240
+    #     self.askbid[2]['best_sell_price'] = 11210
+    #     self.askbid[3]['best_sell_price'] = 11200
+    #     self.askbid[4]['best_sell_price'] = 11180
 
-        self.market_data['high_allowed_price'] = 11260
-        self.market_data['low_allowed_price'] = 10620
-        self.market_data['last_traded_price'] = 11260
+    #     status = queue_detection(self.askbid, self.market_data)
+    #     self.assertEqual(status, QueueConditionOuput.NEAR_BUY_QUEUE)
 
-        self.askbid[0]['best_buy_price'] = 0
-        self.askbid[1]['best_buy_price'] = 0
-        self.askbid[2]['best_buy_price'] = 0
-        self.askbid[3]['best_buy_price'] = 0
-        self.askbid[4]['best_buy_price'] = 0
-        self.askbid[0]['best_sell_price'] = 11250
-        self.askbid[1]['best_sell_price'] = 11240
-        self.askbid[2]['best_sell_price'] = 11210
-        self.askbid[3]['best_sell_price'] = 11200
-        self.askbid[4]['best_sell_price'] = 11180
+    #     # Near Buy Queue 3
 
-        status = queue_detection(self.askbid, self.market_data)
-        self.assertEqual(status, QueueConditionOuput.NEAR_BUY_QUEUE)
+    #     self.market_data['high_allowed_price'] = 11260
+    #     self.market_data['low_allowed_price'] = 10620
+    #     self.market_data['last_traded_price'] = 11260
 
-        # Near Sell Queue 3
+    #     self.askbid[0]['best_buy_price'] = 0
+    #     self.askbid[1]['best_buy_price'] = 0
+    #     self.askbid[2]['best_buy_price'] = 0
+    #     self.askbid[3]['best_buy_price'] = 0
+    #     self.askbid[4]['best_buy_price'] = 0
+    #     self.askbid[0]['best_sell_price'] = 11250
+    #     self.askbid[1]['best_sell_price'] = 11240
+    #     self.askbid[2]['best_sell_price'] = 11210
+    #     self.askbid[3]['best_sell_price'] = 11200
+    #     self.askbid[4]['best_sell_price'] = 11180
 
-        self.market_data['high_allowed_price'] = 11750
-        self.market_data['low_allowed_price'] = 11070
-        self.market_data['last_traded_price'] = 11080
+    #     status = queue_detection(self.askbid, self.market_data)
+    #     self.assertEqual(status, QueueConditionOuput.NEAR_BUY_QUEUE)
 
-        self.askbid[0]['best_buy_price'] = 11130
-        self.askbid[1]['best_buy_price'] = 11140
-        self.askbid[2]['best_buy_price'] = 11180
-        self.askbid[3]['best_buy_price'] = 11190
-        self.askbid[4]['best_buy_price'] = 11200
-        self.askbid[0]['best_sell_price'] = 11080
-        self.askbid[1]['best_sell_price'] = 11090
-        self.askbid[2]['best_sell_price'] = 11100
-        self.askbid[3]['best_sell_price'] = 11150
-        self.askbid[4]['best_sell_price'] = 11200
+    #     # Near Sell Queue 3
 
-        status = queue_detection(self.askbid, self.market_data)
-        self.assertEqual(status, QueueConditionOuput.NEAR_SELL_QUEUE)
+    #     self.market_data['high_allowed_price'] = 11750
+    #     self.market_data['low_allowed_price'] = 11070
+    #     self.market_data['last_traded_price'] = 11080
 
+    #     self.askbid[0]['best_buy_price'] = 11130
+    #     self.askbid[1]['best_buy_price'] = 11140
+    #     self.askbid[2]['best_buy_price'] = 11180
+    #     self.askbid[3]['best_buy_price'] = 11190
+    #     self.askbid[4]['best_buy_price'] = 11200
+    #     self.askbid[0]['best_sell_price'] = 11080
+    #     self.askbid[1]['best_sell_price'] = 11090
+    #     self.askbid[2]['best_sell_price'] = 11100
+    #     self.askbid[3]['best_sell_price'] = 11150
+    #     self.askbid[4]['best_sell_price'] = 11200
 
-    def test_order_balance_status(self):
-        from oracle.utils import order_balance
+    #     status = queue_detection(self.askbid, self.market_data)
+    #     self.assertEqual(status, QueueConditionOuput.NEAR_SELL_QUEUE)
 
-        # Buy Deviation
+    # def test_order_balance_status(self):
+    #     from oracle.utils import order_balance
 
-        self.askbid[0]['best_buy_quantity'] = 100
-        self.askbid[1]['best_buy_quantity'] = 200
-        self.askbid[2]['best_buy_quantity'] = 10000
-        self.askbid[3]['best_buy_quantity'] = 0
-        self.askbid[4]['best_buy_quantity'] = 0
-        self.askbid[0]['best_sell_quantity'] = 50
-        self.askbid[1]['best_sell_quantity'] = 200
-        self.askbid[2]['best_sell_quantity'] = 300
-        self.askbid[3]['best_sell_quantity'] = 0
-        self.askbid[4]['best_sell_quantity'] = 0
+    #     # Buy Deviation
 
-        status = order_balance(self.askbid)
-        self.assertEqual(status, OrderBalanceOutput.BUY_HEAVIER)
+    #     self.askbid[0]['best_buy_quantity'] = 100
+    #     self.askbid[1]['best_buy_quantity'] = 200
+    #     self.askbid[2]['best_buy_quantity'] = 10000
+    #     self.askbid[3]['best_buy_quantity'] = 0
+    #     self.askbid[4]['best_buy_quantity'] = 0
+    #     self.askbid[0]['best_sell_quantity'] = 50
+    #     self.askbid[1]['best_sell_quantity'] = 200
+    #     self.askbid[2]['best_sell_quantity'] = 300
+    #     self.askbid[3]['best_sell_quantity'] = 0
+    #     self.askbid[4]['best_sell_quantity'] = 0
 
-        # Sell Deviation
+    #     status = order_balance(self.askbid)
+    #     self.assertEqual(status, OrderBalanceOutput.BUY_HEAVIER)
 
-        self.askbid[0]['best_buy_quantity'] = 100
-        self.askbid[1]['best_buy_quantity'] = 200
-        self.askbid[2]['best_buy_quantity'] = 0
-        self.askbid[3]['best_buy_quantity'] = 0
-        self.askbid[4]['best_buy_quantity'] = 0
-        self.askbid[0]['best_sell_quantity'] = 50
-        self.askbid[1]['best_sell_quantity'] = 200
-        self.askbid[2]['best_sell_quantity'] = 10000
-        self.askbid[3]['best_sell_quantity'] = 0
-        self.askbid[4]['best_sell_quantity'] = 0
+    #     # Sell Deviation
 
-        status = order_balance(self.askbid)
-        self.assertEqual(status, OrderBalanceOutput.SELL_HEAVIER)
+    #     self.askbid[0]['best_buy_quantity'] = 100
+    #     self.askbid[1]['best_buy_quantity'] = 200
+    #     self.askbid[2]['best_buy_quantity'] = 0
+    #     self.askbid[3]['best_buy_quantity'] = 0
+    #     self.askbid[4]['best_buy_quantity'] = 0
+    #     self.askbid[0]['best_sell_quantity'] = 50
+    #     self.askbid[1]['best_sell_quantity'] = 200
+    #     self.askbid[2]['best_sell_quantity'] = 10000
+    #     self.askbid[3]['best_sell_quantity'] = 0
+    #     self.askbid[4]['best_sell_quantity'] = 0
 
-        # Normal
+    #     status = order_balance(self.askbid)
+    #     self.assertEqual(status, OrderBalanceOutput.SELL_HEAVIER)
 
-        self.askbid[0]['best_buy_quantity'] = 100
-        self.askbid[1]['best_buy_quantity'] = 200
-        self.askbid[2]['best_buy_quantity'] = 0
-        self.askbid[3]['best_buy_quantity'] = 0
-        self.askbid[4]['best_buy_quantity'] = 0
-        self.askbid[0]['best_sell_quantity'] = 50
-        self.askbid[1]['best_sell_quantity'] = 200
-        self.askbid[2]['best_sell_quantity'] = 10
-        self.askbid[3]['best_sell_quantity'] = 0
-        self.askbid[4]['best_sell_quantity'] = 0
+    #     # Normal
 
-        status = order_balance(self.askbid)
-        self.assertEqual(status, OrderBalanceOutput.NORMAL)
+    #     self.askbid[0]['best_buy_quantity'] = 100
+    #     self.askbid[1]['best_buy_quantity'] = 200
+    #     self.askbid[2]['best_buy_quantity'] = 0
+    #     self.askbid[3]['best_buy_quantity'] = 0
+    #     self.askbid[4]['best_buy_quantity'] = 0
+    #     self.askbid[0]['best_sell_quantity'] = 50
+    #     self.askbid[1]['best_sell_quantity'] = 200
+    #     self.askbid[2]['best_sell_quantity'] = 10
+    #     self.askbid[3]['best_sell_quantity'] = 0
+    #     self.askbid[4]['best_sell_quantity'] = 0
 
-    
-    def test_order_depth_status(self):
-        from oracle.utils import order_depth
-        
-        # 200000 low threshold
-        # 500000 high threshold
+    #     status = order_balance(self.askbid)
+    #     self.assertEqual(status, OrderBalanceOutput.NORMAL)
 
-        self.askbid[0]['best_buy_quantity'] = 400000
-        self.askbid[1]['best_buy_quantity'] = 200000
-        self.askbid[2]['best_buy_quantity'] = 100000
-        self.askbid[3]['best_buy_quantity'] = 0
-        self.askbid[4]['best_buy_quantity'] = 0
-        self.askbid[0]['best_sell_quantity'] = 50
-        self.askbid[1]['best_sell_quantity'] = 200
-        self.askbid[2]['best_sell_quantity'] = 300
-        self.askbid[3]['best_sell_quantity'] = 0
-        self.askbid[4]['best_sell_quantity'] = 0
+    # def test_order_depth_status(self):
+    #     from oracle.utils import order_depth
 
-        buy_status = order_depth(self.askbid, OrderSide.BUY)
-        self.assertEqual(buy_status, OrderDepthOutput.HEAVY)
-        sell_status = order_depth(self.askbid, OrderSide.SELL)
-        self.assertEqual(sell_status, OrderDepthOutput.LIGHT)
+    #     # 200000 low threshold
+    #     # 500000 high threshold
 
-    
-    def test_recent_trades_status(self):
-        from oracle.utils import recent_trades
-        from oracle.services.tsetmc_trades import get_trades
+    #     self.askbid[0]['best_buy_quantity'] = 400000
+    #     self.askbid[1]['best_buy_quantity'] = 200000
+    #     self.askbid[2]['best_buy_quantity'] = 100000
+    #     self.askbid[3]['best_buy_quantity'] = 0
+    #     self.askbid[4]['best_buy_quantity'] = 0
+    #     self.askbid[0]['best_sell_quantity'] = 50
+    #     self.askbid[1]['best_sell_quantity'] = 200
+    #     self.askbid[2]['best_sell_quantity'] = 300
+    #     self.askbid[3]['best_sell_quantity'] = 0
+    #     self.askbid[4]['best_sell_quantity'] = 0
 
-        # 200000 low threshold
-        # 500000 high threshold  
-        # rolling window 10 min
+    #     buy_status = order_depth(self.askbid, OrderSide.BUY)
+    #     self.assertEqual(buy_status, OrderDepthOutput.HEAVY)
+    #     sell_status = order_depth(self.askbid, OrderSide.SELL)
+    #     self.assertEqual(sell_status, OrderDepthOutput.LIGHT)
 
-        trades = [{
-            "t":"2022-06-28T01:45:32",
-            "p":9890,
-            "q":990000
-            },
-            {
-               "t":"2022-06-28T01:46:32",
-               "p":9890,
-               "q":125000
-            },
-            {
-               "t":"2022-06-28T01:49:50",
-               "p":9900,
-               "q":336808
-            },
-            ]
-        status = recent_trades(trades)
-        self.assertEqual(status, RecentTradesOutput.LOW)
+    # def test_recent_trades_status(self):
+    #     from oracle.utils import recent_trades
+
+    #     # 200000 low threshold
+    #     # 500000 high threshold
+    #     # rolling window 10 min
+
+    #     trades = [{
+    #         "t": "2022-06-28T01:45:32",
+    #         "p": 9890,
+    #         "q": 990000
+    #     },
+    #         {
+    #         "t": "2022-06-28T01:46:32",
+    #         "p": 9890,
+    #         "q": 125000
+    #     },
+    #         {
+    #         "t": "2022-06-28T01:49:50",
+    #         "p": 9900,
+    #         "q": 336808
+    #     },
+    #     ]
+    #     status = recent_trades(trades)
+    #     self.assertEqual(status, RecentTradesOutput.LOW)
