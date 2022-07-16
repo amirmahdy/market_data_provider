@@ -1,5 +1,6 @@
 import pickle
 from django.db import models
+from django.core.cache import cache
 
 
 class InstrumentType(models.Model):
@@ -58,9 +59,8 @@ class Instrument(models.Model):
 
     @staticmethod
     def get_instruments():
-        from django.core.cache import cache
         if cache.get("INSTRUMENT") is None:
-            cache.set("INSTRUMENT", pickle.dumps(list(Instrument.objects.all())), 60)
+            cache.set("INSTRUMENT", pickle.dumps(list(Instrument.objects.all())))
         return pickle.loads(cache.get("INSTRUMENT"))
 
     @staticmethod
