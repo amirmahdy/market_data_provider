@@ -70,8 +70,11 @@ class Instrument(models.Model):
 
 
 class TriggerParameter(models.Model):
-    name_en = models.CharField(max_length=128, verbose_name='English Name', unique=True)
+    name = models.CharField(max_length=3, verbose_name='Parameter Name', primary_key=True)
     name_fa = models.CharField(max_length=128, verbose_name='Persian Name')
     description = models.CharField(max_length=1024, verbose_name='Description')
     value = models.CharField(max_length=32, verbose_name='Parameter Value')
     trigger_name = models.CharField(max_length=128, verbose_name='Trigger Name')
+
+    def __str__(self):
+        return self.name_fa
