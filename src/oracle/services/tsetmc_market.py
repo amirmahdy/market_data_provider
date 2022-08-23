@@ -87,4 +87,11 @@ def get_tse_instrument_data(instrument, init=False):
             "min_quantity_order": int(instrument.order_min_size),
         }
 
+    if instrument.type.code == 305:
+        instrument_data.update({
+            'nav_value': ticker.nav,
+            'nav_date': ticker.nav_date,
+        })
+
+
     return instrument_data
