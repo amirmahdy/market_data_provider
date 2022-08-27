@@ -1,8 +1,5 @@
 from pytse_client import Ticker
 from mdp.exception_handler import unpredicted_exception_handler, exception_handler
-from mdp.log import Log
-
-log = Log()
 
 
 def translate_state(item):
@@ -85,5 +82,4 @@ def get_tse_instrument_data(instrument, init=False):
             'nav_value': ticker.nav,
             'nav_date': ticker.nav_date,
         })
-    log(f"get_tse_instrument_data: {instrument_data}")
     return instrument_data
