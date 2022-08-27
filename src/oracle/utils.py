@@ -1,8 +1,8 @@
 import logging
 from dateutil import parser
 from datetime import datetime as dt
+from mdp.exception_handler import unpredicted_exception_handler
 
-from oracle.models import TriggerParameter
 from oracle.enums import (
     QueueConditionOuput,
     OrderBalanceOutput,
@@ -17,8 +17,8 @@ from oracle.models import TriggerParameter
 logger = logging.getLogger(__name__)
 
 
+@unpredicted_exception_handler("DEBUG")
 def check_instrument_queue_status(instrument):
-
     market_data = InstrumentData.get(ref_group="market", isin=instrument.isin)
     askbid = InstrumentData.get(ref_group="askbid", isin=instrument.isin)
 
@@ -27,28 +27,32 @@ def check_instrument_queue_status(instrument):
         status = QueueConditionOuput.IS_BUY_QUEUE
     elif market_data['low_allowed_price'] == askbid[0]['best_buy_price']:
         status = QueueConditionOuput.IS_SELL_QUEUE
-    elif (0.99 * market_data['high_allowed_price'] <= askbid[0]['best_sell_price'] < market_data['high_allowed_price']) and (askbid[0]['best_buy_price'] != 0):
+    elif (0.99 * market_data['high_allowed_price'] <= askbid[0]['best_sell_price'] < market_data[
+        'high_allowed_price']) and (askbid[0]['best_buy_price'] != 0):
         if (askbid[3]['best_buy_price'] == 0) and (askbid[4]['best_buy_price'] == 0):
             status = QueueConditionOuput.NEAR_BUY_QUEUE
         elif market_data['last_traded_price'] >= (askbid[0]['best_buy_price'] + askbid[0]['best_sell_price']) / 2:
             status = QueueConditionOuput.NEAR_BUY_QUEUE
-    elif (0.99 * market_data['high_allowed_price'] <= askbid[0]['best_sell_price'] < market_data['high_allowed_price']) and (askbid[0]['best_buy_price'] == 0):
+    elif (0.99 * market_data['high_allowed_price'] <= askbid[0]['best_sell_price'] < market_data[
+        'high_allowed_price']) and (askbid[0]['best_buy_price'] == 0):
         if market_data['last_traded_price'] >= askbid[0]['best_sell_price']:
             status = QueueConditionOuput.NEAR_BUY_QUEUE
-    elif (market_data['low_allowed_price'] < askbid[0]['best_buy_price'] <= 1.01 * market_data['low_allowed_price']) and (askbid[0]['best_sell_price'] != 0):
+    elif (market_data['low_allowed_price'] < askbid[0]['best_buy_price'] <= 1.01 * market_data[
+        'low_allowed_price']) and (askbid[0]['best_sell_price'] != 0):
         if (askbid[3]['best_sell_price'] == 0) and (askbid[4]['best_sell_price'] == 0):
             status = QueueConditionOuput.NEAR_SELL_QUEUE
         elif market_data['last_traded_price'] <= askbid[0]['best_buy_price']:
             status = QueueConditionOuput.NEAR_SELL_QUEUE
-    elif (market_data['low_allowed_price'] < askbid[0]['best_buy_price'] <= 1.01 * market_data['low_allowed_price']) and (askbid[0]['best_sell_price'] == 0):
+    elif (market_data['low_allowed_price'] < askbid[0]['best_buy_price'] <= 1.01 * market_data[
+        'low_allowed_price']) and (askbid[0]['best_sell_price'] == 0):
         if market_data['last_traded_price'] <= askbid[0]['best_buy_price']:
             status = QueueConditionOuput.NEAR_SELL_QUEUE
 
     return status.text.__str__()
 
 
+@unpredicted_exception_handler("DEBUG")
 def check_order_balance_status(instrument):
-
     askbid = InstrumentData.get(ref_group="askbid", isin=instrument.isin)
     balance_check_multiplier = 1.5
     total_buy_volume = 0
@@ -71,8 +75,8 @@ def check_order_balance_status(instrument):
     return status.text.__str__()
 
 
+@unpredicted_exception_handler("DEBUG")
 def order_depth(askbid, side):
-
     status = None
     try:
         high_depth_threshold = int(TriggerParameter.objects.get(pk=TriggerParameterName.HDT.text_capital).value)
@@ -114,24 +118,24 @@ def order_depth(askbid, side):
     return status
 
 
+@unpredicted_exception_handler("DEBUG")
 def check_buy_order_depth_status(instrument):
-
     askbid = InstrumentData.get(ref_group="askbid", isin=instrument.isin)
     status = order_depth(askbid, OrderSide.BUY).text.__str__()
 
     return status
 
 
+@unpredicted_exception_handler("DEBUG")
 def check_sell_order_depth_status(instrument):
-
     askbid = InstrumentData.get(ref_group="askbid", isin=instrument.isin)
     status = order_depth(askbid, OrderSide.SELL).text.__str__()
 
     return status
 
 
+@unpredicted_exception_handler("DEBUG")
 def check_recent_trades_status(instrument):
-
     trades = InstrumentData.get(ref_group="trades", isin=instrument.isin)
 
     """

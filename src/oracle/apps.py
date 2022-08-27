@@ -10,7 +10,7 @@ class OracleConfig(AppConfig):
     def ready(self):
         from .services.online_plus import LS_Class
         from oracle.services.base import initial_setup
-        from oracle.services.rayan import manage_rayan_webscoket
+        # from oracle.services.rayan import manage_rayan_webscoket
 
         if "worker" not in sys.argv:
             return True
