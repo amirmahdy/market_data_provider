@@ -1,20 +1,8 @@
-from oracle.models import Instrument
 from pytse_client import Ticker
+from mdp.exception_handler import unpredicted_exception_handler, exception_handler
 
 
 def translate_state(item):
-    # PYTSE_CLIENT State standard
-    # states = {
-    #         "I ": "ممنوع",
-    #         "A ": "مجاز",
-    #         "AG": "مجاز-مسدود",
-    #         "AS": "مجاز-متوقف",
-    #         "AR": "مجاز-محفوظ",
-    #         "IG": "ممنوع-مسدود",
-    #         "IS": "ممنوع-متوقف",
-    #         "IR": "ممنوع-محفوظ",
-    # }
-
     states = {
         "ممنوع": "I",
         "مجاز": "A",
@@ -29,6 +17,7 @@ def translate_state(item):
 
 
 # Validating askbid input data
+@unpredicted_exception_handler("DEBUG")
 def v(inp, index, ky, default=0):
     if len(inp) > 0:
         return int(getattr(inp[index], ky))
@@ -36,6 +25,7 @@ def v(inp, index, ky, default=0):
         return default
 
 
+@unpredicted_exception_handler("DEBUG")
 def get_tse_instrument_data(instrument, init=False):
     ticker = Ticker(symbol='', index=instrument.tse_id)
     realtime_data = ticker.get_ticker_real_time_info_response()
@@ -92,6 +82,5 @@ def get_tse_instrument_data(instrument, init=False):
             'nav_value': ticker.nav,
             'nav_date': ticker.nav_date,
         })
-
 
     return instrument_data
