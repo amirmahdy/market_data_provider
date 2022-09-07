@@ -78,3 +78,17 @@ class TriggerParameter(models.Model):
 
     def __str__(self):
         return self.name_fa
+
+
+class SourceType(models.TextChoices):
+    SOCKET = 'SOCKET'
+    SERVICE = 'SERVICE'
+
+
+class Sources(models.Model):
+    name = models.CharField(max_length=10, verbose_name='Parameter Name', primary_key=True)
+    name_fa = models.CharField(max_length=128, verbose_name='Persian Name')
+    source_type = models.CharField(max_length=10, choices=SourceType.choices)
+
+    def __str__(self):
+        return self.name + " " + self.source_type + " " + self.name_fa

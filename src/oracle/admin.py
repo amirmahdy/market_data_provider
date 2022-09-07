@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Instrument, InstrumentType, TriggerParameter
+from .models import Instrument, InstrumentType, TriggerParameter, Sources
 
 
 @admin.register(TriggerParameter)
@@ -8,4 +8,5 @@ class TriggerParameterAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Instrument)
+admin.site.register(Sources)
 admin.site.register(InstrumentType)
