@@ -24,19 +24,21 @@ class InstrumentAppendAPIView(GenericAPIView):
         A method for updating instrument DB
         """
         serializer = InstrumentSerializer(data=request.data)
-        if serializer.is_valid():
+        if request.data['isin'] == "":
+            with open("oracle/fixtures/instrument.csv", "rt") as fp:
+                cisins_csv = csv.reader(fp, delimiter=',')
+                cisins = [cisin_csv[0] for cisin_csv in cisins_csv]
+
+            t = Thread(target=self.background_instrument_fetch, args=(cisins,))
+            t.start()
+            return Response({"Response": "Process is undergoing"})
+
+        elif serializer.is_valid():
             cisins = serializer.validated_data['isin']
             if cisins is not None:
                 t = Thread(target=self.background_instrument_fetch, args=(cisins.split(','),))
                 t.start()
-            else:
-                with open("oracle/fixtures/instrument.csv", "rt") as fp:
-                    cisins_csv = csv.reader(fp, delimiter=',')
-                    cisins = [cisin_csv[0] for cisin_csv in cisins_csv]
-
-                t = Thread(target=self.background_instrument_fetch, args=(cisins,))
-                t.start()
-            return Response({"Response": "Process is undergoing"})
+                return Response({"Response": "Process is undergoing"})
         else:
             return Response({"Response": "Wrong ISIN data"})
 
