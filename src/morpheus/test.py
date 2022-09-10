@@ -1,4 +1,5 @@
 import os, django
+from oracle.services.tsetmc_indinst import get_live_indinst
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mdp.settings")
 django.setup()
@@ -30,5 +31,10 @@ class MorpheusViewsTestCase(TestCase):
         log("Hello from app")
 
 
+    def test_initial_indinst(self):
+        response = get_live_indinst('7711282667602555', 'IRO1PARK0001')
+        print(response)
+
 test = MorpheusViewsTestCase()
-test.test_log_splunk()
+# test.test_log_splunk()
+test.test_initial_indinst()
