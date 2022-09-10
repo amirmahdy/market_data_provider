@@ -11,7 +11,6 @@ from oracle.utils import (
     check_sell_order_depth_status,
     check_recent_trades_status,
 )
-from oracle.utils import check_instrument_queue_status
 from oracle.data_type.heart_beat import HeartBeat
 from mdp.exception_handler import unpredicted_exception_handler
 

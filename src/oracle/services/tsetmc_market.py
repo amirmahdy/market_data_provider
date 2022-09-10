@@ -9,15 +9,6 @@ TSETMC_ASK_BID_URL = "http://cdn.tsetmc.com/api/BestLimits/{tse_id}"
 TSETMC_NAV_URL = "http://cdn.tsetmc.com/api/Fund/GetETFByInsCode/{tse_id}"
 
 
-# Validating askbid input data
-@unpredicted_exception_handler("DEBUG")
-def v(inp, index, ky, default=0):
-    if len(inp) > 0:
-        return int(getattr(inp[index], ky))
-    else:
-        return default
-
-
 def change_by_yesterday(desired_val, yesterday):
     return float("%.2f" % (100 * (int(desired_val) - int(yesterday)) / int(yesterday)))
 
