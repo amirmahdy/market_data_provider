@@ -19,6 +19,11 @@ class Test_Service(TestCase):
         res = get_tse_instrument_data(instruments)
         print(res)
 
+    def test_get_indices_live(self):
+        from oracle.services.tsetmc_indices import get_indices_live
+        res = get_indices_live()
+        print(res)
+
 
 TS = Test_Service()
-TS.test_get_tse_instrument_data()
+TS.test_get_indices_live()

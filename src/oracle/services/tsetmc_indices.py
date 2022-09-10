@@ -1,24 +1,15 @@
 import requests
-import re
 
-BASE_URL = 'http://www.tsetmc.com/Loader.aspx?Partree=151315&Flow=1'
 INDEX_URL = 'http://cdn.tsetmc.com/api/Index/GetIndexB1LastAll/All/1'
 
 indices = {"10523825119011581": "IRX6XS300006", "43754960038275285": "IRX6XSNT0006",
            "32097828799138957": "IRX6XTPI0006", "8384385859414435": "IRXYXTPI0026",
            "46342955726788357": "IRX6XSLC0006"}
 
-INDEX_LIST = ["10523825119011581", "43754960038275285",
-              "32097828799138957", "8384385859414435",
-              "46342955726788357"]
-
-regex = '<tr><td><a.*{index}">(.*)<\\/a>.*\\s\\n<td>(.*)<\\/td>\\s\\n<td>(.*)<\\/td>\\s\\n<td>.*>(.*)<.*<\\/td>\\s\\n<td>.*>(.*)<.*<\\/td>'
-
 
 def _f(flt):
     chars_to_remove = [',', '(', ')']
     return float(''.join([c for c in flt if c not in chars_to_remove]))
-
 
 
 def get_indices_live():
@@ -32,7 +23,7 @@ def get_indices_live():
     response = requests.get(INDEX_URL, headers=headers).json()['indexB1']
     index_list = []
     for idx in response:
-        if idx['insCode'] in INDEX_LIST:
+        if idx['insCode'] in indices:
             index_dict = {
                 "IndexChanges": idx['indexChange'],
                 "LastIndexValue": idx['xDrNivJIdx004'],
