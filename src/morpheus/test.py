@@ -30,10 +30,10 @@ class MorpheusViewsTestCase(TestCase):
         log = Log()
         log("Hello from app")
 
-
     def test_initial_indinst(self):
         response = get_live_indinst('7711282667602555', 'IRO1PARK0001')
         print(response)
+
 
 test = MorpheusViewsTestCase()
 # test.test_log_splunk()
