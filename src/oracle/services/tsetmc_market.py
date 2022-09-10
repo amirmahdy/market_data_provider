@@ -22,14 +22,13 @@ def change_by_yesterday(desired_val, yesterday):
     return float("%.2f" % (100 * (int(desired_val) - int(yesterday)) / int(yesterday)))
 
 
-def get_market_data_datetime(market_data):
+def jalali_market_data(market_data):
     date = datetime.strptime(str(market_data['dEven']), '%Y%m%d')
-    time = str(market_data['hEven'])
-    if len(time) < 6:
-        time = '0' + time
-    time = ':'.join([time[:2], time[2:4], time[4:]])
+    time = ("%06d" % market_data["hEven"])
+    time = ':'.join([time[0:2], time[2:4], time[4:6]])
     jalali_data = gregorian_to_jdate(date)[:10]
     return ' '.join([str(jalali_data), str(time)])
+
 
 @unpredicted_exception_handler("DEBUG")
 def get_tse_instrument_data(instrument):
@@ -91,7 +90,7 @@ def get_tse_instrument_data(instrument):
         "company_name": instrument_data['lVal30'],
         "symbol_isin": instrument.isin,
         "symbol_fa": instrument.symbol,
-        "trade_date" : get_market_data_datetime(market_data),
+        "trade_date": jalali_market_data(market_data),
     }
 
     if instrument.type.code == 305:

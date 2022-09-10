@@ -180,8 +180,11 @@ def check_recent_trades_status(instrument):
 
     return status.text.__str__()
 
+
 @unpredicted_exception_handler("DEBUG")
-def gregorian_to_jdate(datetime : dt):
-    jalili_date = jdatetime.date.fromgregorian(day=datetime.day, month=datetime.month, year=datetime.year).strftime("%Y/%m/%d")
+def gregorian_to_jdate(datetime: dt):
+    jalili_date = jdatetime.date.fromgregorian(day=datetime.day,
+                                               month=datetime.month,
+                                               year=datetime.year).strftime("%Y/%m/%d")
     date = f"{jalili_date} {datetime.time()}"
     return str(date)
