@@ -1,4 +1,5 @@
 import os, django
+from oracle.services.tsetmc_indices import get_indices_live
 from oracle.services.tsetmc_indinst import get_live_indinst
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mdp.settings")
@@ -34,7 +35,12 @@ class MorpheusViewsTestCase(TestCase):
         response = get_live_indinst('7711282667602555', 'IRO1PARK0001')
         print(response)
 
+    def test_initial_indices(self):
+        response = get_indices_live()
+        print(response)
+
 
 test = MorpheusViewsTestCase()
 # test.test_log_splunk()
-test.test_initial_indinst()
+# test.test_initial_indinst()
+test.test_initial_indices()
