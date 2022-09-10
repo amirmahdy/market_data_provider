@@ -1,5 +1,7 @@
 import requests
 from mdp.exception_handler import unpredicted_exception_handler, exception_handler
+from datetime import datetime
+from oracle.utils import gregorian_to_jdate
 
 TSETMC_MARKET_URL = "http://cdn.tsetmc.com/api/ClosingPrice/GetClosingPriceInfo/{tse_id}"
 TSETMC_INSTRUMENT_INFO_URL = "http://cdn.tsetmc.com/api/Instrument/GetInstrumentInfo/{tse_id}"
@@ -19,6 +21,15 @@ def v(inp, index, ky, default=0):
 def change_by_yesterday(desired_val, yesterday):
     return float("%.2f" % (100 * (int(desired_val) - int(yesterday)) / int(yesterday)))
 
+
+def get_market_data_datetime(market_data):
+    date = datetime.strptime(str(market_data['dEven']), '%Y%m%d')
+    time = str(market_data['hEven'])
+    if len(time) < 6:
+        time = '0' + time
+    time = ':'.join([time[:2], time[2:4], time[4:]])
+    jalali_data = gregorian_to_jdate(date)[:10]
+    return ' '.join([str(jalali_data), str(time)])
 
 @unpredicted_exception_handler("DEBUG")
 def get_tse_instrument_data(instrument):
@@ -80,6 +91,7 @@ def get_tse_instrument_data(instrument):
         "company_name": instrument_data['lVal30'],
         "symbol_isin": instrument.isin,
         "symbol_fa": instrument.symbol,
+        "trade_date" : get_market_data_datetime(market_data),
     }
 
     if instrument.type.code == 305:
