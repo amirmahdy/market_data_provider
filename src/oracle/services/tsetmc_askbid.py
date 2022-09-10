@@ -1,13 +1,13 @@
 import requests
 import copy
 from typing import List, Dict
-from pytse_client import Ticker
 
 BESTLIMITS_BASE_URL = "http://cdn.tsetmc.com/api/BestLimits/{isin}/{date}"
+TODAY_BESTLIMITS_BASE_URL = "http://cdn.tsetmc.com/api/BestLimits/{isin}"
 
 
-def get_askbid_history(tse_isin: str, date: str) -> List[Dict]:
-    url = BESTLIMITS_BASE_URL.format(isin=tse_isin, date=date)
+def get_askbid_history(tse_id: str, date: str) -> List[Dict]:
+    url = BESTLIMITS_BASE_URL.format(isin=tse_id, date=date)
     headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0",
                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
                "Host": "cdn.tsetmc.com",
@@ -33,26 +33,29 @@ def get_askbid_history(tse_isin: str, date: str) -> List[Dict]:
     for item in all_askbid_changes:
         if item['hEven'] != current_captured_askbid['time'] and current_captured_askbid['time'] != 0:
             all_askbid_rows.append(copy.deepcopy(current_captured_askbid))
-        current_captured_askbid['time'] = item['hEven']
-        current_captured_askbid['buy_price_{num}'.format(
-            num=item['number'])] = item['pMeDem']
-        current_captured_askbid['buy_volume_{num}'.format(
-            num=item['number'])] = item['qTitMeDem']
-        current_captured_askbid['buy_count_{num}'.format(
-            num=item['number'])] = item['zOrdMeDem']
-        current_captured_askbid['sell_price_{num}'.format(
-            num=item['number'])] = item['pMeOf']
-        current_captured_askbid['sell_volume_{num}'.format(
-            num=item['number'])] = item['qTitMeOf']
-        current_captured_askbid['sell_count_{num}'.format(
-            num=item['number'])] = item['zOrdMeOf']
+        item['hEven'] = ("%06d" % item["hEven"])
+        current_captured_askbid['time'] = item['hEven'][0:2] + ":" + item['hEven'][2:4] + ":" + item['hEven'][4:6]
+        current_captured_askbid['buy_price_{num}'.format(num=item['number'])] = item['pMeDem']
+        current_captured_askbid['buy_volume_{num}'.format(num=item['number'])] = item['qTitMeDem']
+        current_captured_askbid['buy_count_{num}'.format(num=item['number'])] = item['zOrdMeDem']
+        current_captured_askbid['sell_price_{num}'.format(num=item['number'])] = item['pMeOf']
+        current_captured_askbid['sell_volume_{num}'.format(num=item['number'])] = item['qTitMeOf']
+        current_captured_askbid['sell_count_{num}'.format(num=item['number'])] = item['zOrdMeOf']
 
     return all_askbid_rows
 
 
 def get_live_askbid(tse_id: str):
-    ticker = Ticker(symbol='', index=tse_id)
-    realtime_data = ticker.get_ticker_real_time_info_response()
+    url = TODAY_BESTLIMITS_BASE_URL.format(isin=tse_id)
+    headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0",
+               "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+               "Host": "cdn.tsetmc.com",
+               "Accept-Encoding": "gzip, deflate",
+               "Accept-Language": "en-US,en;q=0.5",
+               "Upgrade-Insecure-Requests": "1"
+               }
+    resp = requests.get(url, headers=headers)
+    realtime_data = resp.json()['bestLimits']
 
     askbid_output = []
     empty_askbid_row = {
@@ -66,16 +69,16 @@ def get_live_askbid(tse_id: str):
     for i in range(5):
         askbid_output.append(copy.deepcopy(empty_askbid_row))
         try:
-            askbid_output[i]['no_best_buy'] = int(realtime_data.buy_orders[i].count)
-            askbid_output[i]['best_buy_price'] = int(realtime_data.buy_orders[i].price)
-            askbid_output[i]['best_buy_quantity'] = int(realtime_data.buy_orders[i].volume)
+            askbid_output[i]['no_best_buy'] = int(realtime_data[i]['zOrdMeDem'])
+            askbid_output[i]['best_buy_price'] = int(realtime_data[i]['pMeDem'])
+            askbid_output[i]['best_buy_quantity'] = int(realtime_data[i]['qTitMeDem'])
         except Exception as e:
             # no order in askbid realtime data so should left empty
             pass
         try:
-            askbid_output[i]['no_best_sell'] = int(realtime_data.sell_orders[i].count)
-            askbid_output[i]['best_sell_price'] = int(realtime_data.sell_orders[i].price)
-            askbid_output[i]['best_sell_quantity'] = int(realtime_data.sell_orders[i].volume)
+            askbid_output[i]['no_best_sell'] = int(realtime_data[i]['zOrdMeOf'])
+            askbid_output[i]['best_sell_price'] = int(realtime_data[i]['pMeOf'])
+            askbid_output[i]['best_sell_quantity'] = int(realtime_data[i]['qTitMeOf'])
         except Exception as e:
             # no order in askbid realtime data so should left empty
             pass
