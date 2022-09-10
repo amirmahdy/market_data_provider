@@ -65,7 +65,7 @@ def get_tse_instrument_data(instrument):
         "total_trade_value": int(market_data['qTotCap']),
         "low_price": int(market_data['priceMin']),
         "high_price": int(market_data['priceMax']),
-        "market_status": market_data['instrumentState']['cEtaval'],
+        "market_status": market_data['instrumentState']['cEtaval'].strip(),
         "first_traded_price": int(market_data['priceFirst']),
 
         # Change by start_day data
