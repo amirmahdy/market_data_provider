@@ -2,6 +2,7 @@ import logging
 from dateutil import parser
 from datetime import datetime as dt
 from mdp.exception_handler import unpredicted_exception_handler
+import jdatetime
 
 from oracle.enums import (
     QueueConditionOuput,
@@ -178,3 +179,9 @@ def check_recent_trades_status(instrument):
         status = RecentTradesOutput.NORMAL
 
     return status.text.__str__()
+
+@unpredicted_exception_handler("DEBUG")
+def gregorian_to_jdate(datetime : dt):
+    jalili_date = jdatetime.date.fromgregorian(day=datetime.day, month=datetime.month, year=datetime.year).strftime("%Y/%m/%d")
+    date = f"{jalili_date} {datetime.time()}"
+    return str(date)
