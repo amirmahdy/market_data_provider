@@ -1,8 +1,10 @@
 import requests
+from mdp.exception_handler import unpredicted_exception_handler, exception_handler
 
 INDINST_BASE_URL = "http://cdn.tsetmc.com/api/ClientType/GetClientType/{tse_id}/1/0"
 
 
+@unpredicted_exception_handler("DEBUG")
 def get_live_indinst(instrument):
     url = INDINST_BASE_URL.format(tse_id=instrument.tse_id)
     headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0",

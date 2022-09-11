@@ -1,11 +1,13 @@
 import requests
 import copy
 from typing import List, Dict
+from mdp.exception_handler import unpredicted_exception_handler, exception_handler
 
 BESTLIMITS_BASE_URL = "http://cdn.tsetmc.com/api/BestLimits/{isin}/{date}"
 TODAY_BESTLIMITS_BASE_URL = "http://cdn.tsetmc.com/api/BestLimits/{isin}"
 
 
+@unpredicted_exception_handler("DEBUG")
 def get_askbid_history(tse_id: str, date: str) -> List[Dict]:
     url = BESTLIMITS_BASE_URL.format(isin=tse_id, date=date)
     headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0",
@@ -45,6 +47,7 @@ def get_askbid_history(tse_id: str, date: str) -> List[Dict]:
     return all_askbid_rows
 
 
+@unpredicted_exception_handler("DEBUG")
 def get_live_askbid(instrument):
     url = TODAY_BESTLIMITS_BASE_URL.format(isin=instrument.tse_id)
     headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0",

@@ -2,6 +2,7 @@ import requests
 from datetime import datetime
 import re
 import json
+from mdp.exception_handler import unpredicted_exception_handler, exception_handler
 
 TICK_BASE_URL = "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/{isin}/{cur_date}/false"
 TRADE_HISTORY_TODAY_URL = "http://tsetmc.com/tsev2/data/TradeDetail.aspx?i={tse_id}"
@@ -9,6 +10,7 @@ TRADE_HISTORY_YESTERDAY_URL = "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/{
 GATHER_ONE_DAY_URL = "http://service.tsetmc.com/WebService/TsePublicV2.asmx?op=InstTrade"
 
 
+@unpredicted_exception_handler("DEBUG")
 def get_trades(instrument, day=None):
     if day is None:
         today = datetime.now().strftime('%Y-%m-%dT')
@@ -37,7 +39,8 @@ def get_trades(instrument, day=None):
             "Accept-Language": "en-US,en;q=0.5",
             "Upgrade-Insecure-Requests": "1"
         }
-        tse_full_data = requests.get(TRADE_HISTORY_YESTERDAY_URL.format(tse_id=instrument.tse_id, date=day), headers=headers)
+        tse_full_data = requests.get(TRADE_HISTORY_YESTERDAY_URL.format(
+            tse_id=instrument.tse_id, date=day), headers=headers)
         tse_res = json.loads(tse_full_data.text)
         new_history_list = []
         day = datetime.strptime(day, '%Y%m%d').strftime('%Y-%m-%dT')
@@ -54,6 +57,7 @@ def get_trades(instrument, day=None):
         return new_history_list
 
 
+@unpredicted_exception_handler("DEBUG")
 def get_kline(from_date, to_date, tse_id, val_user, val_pass):
     headers = {'content-type': 'text/xml', 'SOAPAction': 'http://tsetmc.com/InstTrade'}
     body = """<?xml version="1.0" encoding="utf-8"?>
@@ -91,9 +95,9 @@ def get_kline(from_date, to_date, tse_id, val_user, val_pass):
         return
     xml_row = []
     for xml_ins in xml_data:
-            xml_row.append([xml_ins[0] + ' 00:00', "{:.0f}".format(float(xml_ins[13])),
-                            "{:.0f}".format(float(xml_ins[11])), "{:.0f}".format(float(xml_ins[10])),
-                            "{:.0f}".format(float(xml_ins[2])), "{:.0f}".format(float(xml_ins[7]))])
+        xml_row.append([xml_ins[0] + ' 00:00', "{:.0f}".format(float(xml_ins[13])),
+                        "{:.0f}".format(float(xml_ins[11])), "{:.0f}".format(float(xml_ins[10])),
+                        "{:.0f}".format(float(xml_ins[2])), "{:.0f}".format(float(xml_ins[7]))])
     return xml_row
 
 
