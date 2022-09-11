@@ -22,6 +22,14 @@ def jalali_market_data(market_data):
 
 
 @unpredicted_exception_handler("DEBUG")
+def v(inp, index, ky, default=0):
+    if len(inp) > 0:
+        return int(getattr(inp[index], ky))
+    else:
+        return default
+
+
+@unpredicted_exception_handler("DEBUG")
 def get_tse_instrument_data(instrument):
     headers = {
         "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0",
@@ -47,12 +55,12 @@ def get_tse_instrument_data(instrument):
     instrument_data = {
         # High Frequent data
         "bid_ask_first_row": {
-            "best_buy_price": int(ask_bid_data[0]['pMeDem']),
-            "best_sell_price": int(ask_bid_data[0]['pMeOf']),
-            "best_sell_quantity": int(ask_bid_data[0]['qTitMeOf']),
-            "best_buy_quantity": int(ask_bid_data[0]['qTitMeDem']),
-            "no_best_buy": int(ask_bid_data[0]['zOrdMeDem']),
-            "no_best_sell": int(ask_bid_data[0]['zOrdMeOf']),
+            "best_buy_price": v(ask_bid_data, 0, "pMeDem"),
+            "best_sell_price": v(ask_bid_data, 0, "pMeOf"),
+            "best_sell_quantity": v(ask_bid_data, 0, "qTitMeOf"),
+            "best_buy_quantity": v(ask_bid_data, 0, "qTitMeDem"),
+            "no_best_buy": v(ask_bid_data, 0, "zOrdMeDem"),
+            "no_best_sell": v(ask_bid_data, 0, "zOrdMeOf"),
         },
         "last_traded_price": int(market_data['pDrCotVal']),
         "closing_price": int(market_data['pClosing']),

@@ -45,7 +45,7 @@ class TestService(TestCase):
         from oracle.models import Instrument
         from oracle.services.tsetmc_askbid import get_live_askbid
         instruments = Instrument.get_instrument("IRO1BANK0001")
-        res = get_live_askbid(instruments[0].tse_id)
+        res = get_live_askbid(instruments[0])
         print(res)
 
     def test_get_history_askbid(self):

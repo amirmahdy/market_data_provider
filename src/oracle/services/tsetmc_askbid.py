@@ -45,8 +45,8 @@ def get_askbid_history(tse_id: str, date: str) -> List[Dict]:
     return all_askbid_rows
 
 
-def get_live_askbid(tse_id: str):
-    url = TODAY_BESTLIMITS_BASE_URL.format(isin=tse_id)
+def get_live_askbid(instrument):
+    url = TODAY_BESTLIMITS_BASE_URL.format(isin=instrument.tse_id)
     headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0",
                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
                "Host": "cdn.tsetmc.com",

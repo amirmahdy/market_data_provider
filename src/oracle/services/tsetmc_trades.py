@@ -4,15 +4,15 @@ import re
 import json
 
 TICK_BASE_URL = "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/{isin}/{cur_date}/false"
-TRADE_HISTORY_TODAY_URL = "http://tsetmc.com/tsev2/data/TradeDetail.aspx?i={tse_isin}"
-TRADE_HISTORY_YESTERDAY_URL = "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/{tse_isin}/{date}/false"
+TRADE_HISTORY_TODAY_URL = "http://tsetmc.com/tsev2/data/TradeDetail.aspx?i={tse_id}"
+TRADE_HISTORY_YESTERDAY_URL = "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/{tse_id}/{date}/false"
 GATHER_ONE_DAY_URL = "http://service.tsetmc.com/WebService/TsePublicV2.asmx?op=InstTrade"
 
 
-def get_trades(tse_isin: str, day=None):
+def get_trades(instrument, day=None):
     if day is None:
         today = datetime.now().strftime('%Y-%m-%dT')
-        url = TRADE_HISTORY_TODAY_URL.format(tse_isin=tse_isin)
+        url = TRADE_HISTORY_TODAY_URL.format(tse_id=instrument.tse_id)
         session = requests.Session()
         resp = session.get(url).text
         rgx = (
@@ -37,7 +37,7 @@ def get_trades(tse_isin: str, day=None):
             "Accept-Language": "en-US,en;q=0.5",
             "Upgrade-Insecure-Requests": "1"
         }
-        tse_full_data = requests.get(TRADE_HISTORY_YESTERDAY_URL.format(tse_isin=tse_isin, date=day), headers=headers)
+        tse_full_data = requests.get(TRADE_HISTORY_YESTERDAY_URL.format(tse_id=instrument.tse_id, date=day), headers=headers)
         tse_res = json.loads(tse_full_data.text)
         new_history_list = []
         day = datetime.strptime(day, '%Y%m%d').strftime('%Y-%m-%dT')
@@ -54,7 +54,7 @@ def get_trades(tse_isin: str, day=None):
         return new_history_list
 
 
-def get_kline(from_date, to_date, tse_isin, val_user, val_pass):
+def get_kline(from_date, to_date, tse_id, val_user, val_pass):
     headers = {'content-type': 'text/xml', 'SOAPAction': 'http://tsetmc.com/InstTrade'}
     body = """<?xml version="1.0" encoding="utf-8"?>
                             <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -67,7 +67,7 @@ def get_kline(from_date, to_date, tse_isin, val_user, val_pass):
                                   <DateTo>{4}</DateTo>
                                 </InstTrade>
                               </soap:Body>
-                            </soap:Envelope>""".format(val_user, val_pass, tse_isin, from_date, to_date)
+                            </soap:Envelope>""".format(val_user, val_pass, tse_id, from_date, to_date)
     session = requests.Session()
     response = session.post(GATHER_ONE_DAY_URL, data=body, headers=headers)
     xml_raw = response.content.decode('utf-8')

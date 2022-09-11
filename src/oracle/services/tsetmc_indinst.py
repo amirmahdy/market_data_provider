@@ -3,8 +3,8 @@ import requests
 INDINST_BASE_URL = "http://cdn.tsetmc.com/api/ClientType/GetClientType/{tse_id}/1/0"
 
 
-def get_live_indinst(tse_id: str, symbol_isin):
-    url = INDINST_BASE_URL.format(tse_id=tse_id)
+def get_live_indinst(instrument):
+    url = INDINST_BASE_URL.format(tse_id=instrument.tse_id)
     headers = {"User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0",
                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
                "Host": "cdn.tsetmc.com",
@@ -14,7 +14,7 @@ def get_live_indinst(tse_id: str, symbol_isin):
                }
     response = requests.get(url, headers=headers).json()['clientType']
     indinst_initial_data = {
-        "symbol_isin": symbol_isin,
+        "symbol_isin": instrument.isin,
         "ind_buy_volume": response['buy_I_Volume'],
         "ind_buy_number": response['buy_CountI'],
         "ind_buy_value": 0,
