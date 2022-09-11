@@ -24,7 +24,7 @@ def jalali_market_data(market_data):
 @unpredicted_exception_handler("DEBUG")
 def v(inp, index, ky, default=0):
     if len(inp) > 0:
-        return int(getattr(inp[index], ky))
+        return int(inp[index].get(ky))
     else:
         return default
 
