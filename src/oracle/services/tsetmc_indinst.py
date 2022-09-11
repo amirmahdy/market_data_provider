@@ -14,7 +14,10 @@ def get_live_indinst(instrument):
                "Accept-Language": "en-US,en;q=0.5",
                "Upgrade-Insecure-Requests": "1"
                }
-    response = requests.get(url, headers=headers).json()['clientType']
+    response = requests.get(url, headers=headers)
+    if response.status_code != 200:
+         return False
+    response = response.json()['clientType']
     indinst_initial_data = {
         "symbol_isin": instrument.isin,
         "ind_buy_volume": response['buy_I_Volume'],
