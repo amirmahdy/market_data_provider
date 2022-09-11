@@ -12,8 +12,10 @@ def unpredicted_exception_handler(log_type):
                 return func(*args, **kwargs)
             except Exception:
                 _, value, traceback = sys.exc_info()
-                log('\nTYPE: %s \nFILE: %s \nFUNC: %s \nLINE: %s \nERRR: %s \nINPT: %s' % (log_type, inspect.getfile(
+                err = ('\nTYPE: %s \nFILE: %s \nFUNC: %s \nLINE: %s \nERRR: %s \nINPT: %s' % (log_type, inspect.getfile(
                     func), func.__name__, str(traceback.tb_next.tb_lineno), str(value), str(args) + str(kwargs)))
+                log(err)
+                print(err)
                 return "Internal Error"
         return inner
 
@@ -23,5 +25,7 @@ def unpredicted_exception_handler(log_type):
 def exception_handler(log_type, frame):
     frames = inspect.getframeinfo(frame)
     _, value, traceback = sys.exc_info()
-    log('\nTYPE: %s \nFILE: %s \nFUNC: %s \nLINE: %s \nERRR: %s ' % (
+    err = ('\nTYPE: %s \nFILE: %s \nFUNC: %s \nLINE: %s \nERRR: %s ' % (
         log_type, frames.function, frames.filename, str(traceback.tb_lineno), str(value)))
+    log(err)
+    print(err)
