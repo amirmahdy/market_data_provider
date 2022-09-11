@@ -1,4 +1,5 @@
-import os, django
+import os
+import django
 from django.test import TestCase
 
 from mdp.utils import create_csv
@@ -9,14 +10,6 @@ django.setup()
 
 
 class TestService(TestCase):
-
-    def test_trades(self):
-        from oracle.data_type.instrument_market_data import InstrumentData
-        from oracle.services.tsetmc_trades import get_trades
-        res = get_trades('48010225447410247', '20220517')
-        sym = 'bank1'
-        create_csv('./data/trade/' + sym + "/" + "20220517" + ".csv", res, ['t', 'q', 'p'], "w+")
-        print(res)
 
     def test_get_kline(self):
         from oracle.services.tsetmc_trades import get_kline

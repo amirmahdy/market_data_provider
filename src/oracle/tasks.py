@@ -91,7 +91,7 @@ def trade_data_yesterday_update(days):
         path = settings.DATA_ROOT + "/trade/"
         for instrument in instruments:
             try:
-                today_trades = get_trades(instrument.tse_id, yesterday)
+                today_trades = get_trades(instrument, yesterday)
                 if today_trades:
                     sym = instrument.en_symbol.lower()
                     create_csv(path + sym + "/" + yesterday + ".csv", today_trades,
@@ -107,7 +107,7 @@ def trade_data_today_update():
     instruments = Instrument.get_instruments()
     for instrument in instruments:
         try:
-            today_trades = get_trades(instrument.tse_id)
+            today_trades = get_trades(instrument)
             InstrumentData.update(instrument.isin, 'trades', today_trades)
             HeartBeat.update(source, 'trades')
         except Exception:
