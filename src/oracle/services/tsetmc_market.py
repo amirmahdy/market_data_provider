@@ -75,6 +75,7 @@ def get_tse_instrument_data(instrument):
         "high_price": int(market_data['priceMax']),
         "market_status": market_data['instrumentState']['cEtaval'].strip(),
         "first_traded_price": int(market_data['priceFirst']),
+        "trade_date": jalali_market_data(market_data),
 
         # Change by start_day data
         "high_allowed_price": int(instrument_data['staticThreshold']['psGelStaMax']),
@@ -89,7 +90,6 @@ def get_tse_instrument_data(instrument):
         "company_name": instrument_data['lVal30'],
         "symbol_isin": instrument.isin,
         "symbol_fa": instrument.symbol,
-        "trade_date": jalali_market_data(market_data),
     }
 
     if instrument.type.code == 305:
