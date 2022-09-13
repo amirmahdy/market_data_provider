@@ -217,3 +217,20 @@ def check_recent_trades():
             exception_handler("DEBUG", inspect.currentframe())
 
     return True
+
+
+@shared_task(name='instrument_update')
+@unpredicted_exception_handler("DEBUG")
+def instrument_update():
+    import csv
+    from threading import Thread
+    from oracle.views.instrument import InstrumentAppendAPIView
+    instrument_view = InstrumentAppendAPIView()
+
+    with open("oracle/fixtures/instrument.csv", "rt") as fp:
+        cisins_csv = csv.reader(fp, delimiter=',')
+        cisins = [cisin_csv[0] for cisin_csv in cisins_csv]
+
+    t = Thread(target=instrument_view.background_instrument_fetch, args=(cisins,))
+    t.start()
+    return True

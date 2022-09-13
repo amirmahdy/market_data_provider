@@ -10,6 +10,7 @@ import environ
 from rest_framework.decorators import action
 from drf_yasg.utils import swagger_auto_schema
 from oracle.serializers import InstrumentSerializer
+from mdp.exception_handler import unpredicted_exception_handler, exception_handler
 
 env = environ.Env()
 
@@ -51,6 +52,8 @@ class InstrumentAppendAPIView(GenericAPIView):
         else:
             return current_val.tadbir_id
 
+
+    @unpredicted_exception_handler("DEBUG")
     def background_instrument_fetch(self, cisins):
         """
         Generates a complete list of instruments

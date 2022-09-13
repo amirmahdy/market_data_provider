@@ -29,8 +29,7 @@ class Test_Service(TestCase):
         from oracle.services.tsetmc_indices import get_indices_live
         res = get_indices_live()
         print(res)
-    
 
-
-TS = Test_Service()
-TS.test_get_live_indinst()
+    def test_task_instrument_update(self):
+        from oracle.tasks import instrument_update
+        instrument_update()
